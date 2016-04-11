@@ -65,6 +65,8 @@ def find_template(template_file):#pass template to function
         #randTime(1,2)
         findOptionClick(x,y, menu_x, menu_y, menu)
         randTime(0,1,9)
+        break
+    find_template(template_file)
     randTime(1,2,9)
 
 def gen_coords(pt,btmX,btmY):
