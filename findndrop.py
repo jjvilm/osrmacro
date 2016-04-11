@@ -35,8 +35,7 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
         moveTo(x,y)
         
         autopy.mouse.click()
-        randTime(0,1,1,0,2,9)
-        randTime(0,0,0,0,2,9,) 
+        randTime(0,0,0,0,1,9)
 
 def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
@@ -182,13 +181,15 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(0,1,0,0,9,9)
+            randTime(0,0,1,0,9,9)
 
         #slows down if closer to target coord
-        if (len_x) <= random.randint(1,13) and  (len_y) <= random.randint(1,13):
-            randTime(0,1,1,0,2,9)
+        if (len_x) <= random.randint(1,10) and  (len_y) <= random.randint(1,10):
+            randTime(0,0,0,0,2,9)
         else:
-            randTime(0,0,1,0,0,2)
+            randTime(0,0,0,0,0,2)
+            if random.randint(0,3) == 0:
+                randTime(0,0,0,0,0,9)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
