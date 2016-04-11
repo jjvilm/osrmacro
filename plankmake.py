@@ -61,6 +61,7 @@ def find_template(template_file):#pass template to function
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
         randTime(0,1,0,0,9, 9)
+        break
 
     time.sleep(.5)
 
@@ -89,6 +90,7 @@ def find_spell(template_file):#pass template to function
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
         randTime(0,1,0,0,9, 9)
+        break
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
