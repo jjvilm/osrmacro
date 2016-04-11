@@ -237,7 +237,6 @@ def run_it():
     for num in range(25):
         find_template(cur_dir+"/imgs/plankmake.png")
         find_template(cur_dir+"/imgs/mahagonylog.png"
-    print "Finished!"
 
     
 

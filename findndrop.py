@@ -65,7 +65,7 @@ def find_template(template_file):#pass template to function
         randTime(0,0,0,0,0, 1)
         findOptionClick(x,y, menu_x, menu_y, menu)
 
-    time.sleep(1)
+    time.sleep(.5)
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
