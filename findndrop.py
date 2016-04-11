@@ -182,11 +182,14 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(1,5,9)
-        elif overshoot >= 20:
-            randTime(0,0,4)
+            randTime(0,9,9)
+            print("overshooting!")
+
+        if (len_x) <= random.randint(1,15) and  (len_y) <= random.randint(1,15):
+            print("close to target")
+            randTime(0,9,9)
         else:
-            randTime(0,0,9)
+            randTime(0,0,1)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
