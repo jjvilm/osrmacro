@@ -3,7 +3,7 @@ import subprocess
 
 def centering():
 
-    subprocess.getoutput('xdotool getdisplaygeometry')
+    display_x = subprocess.getoutput('xdotool getdisplaygeometry')
     display_x = display_x[:4]
     display_x = int(display_x)
     display_x //= 2
