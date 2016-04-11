@@ -13,6 +13,7 @@ from math import sqrt
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
+timer = 0
 
 #Find given option inside the options menu e.g use,eat,drop,examine,exit,
 def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in bag
@@ -33,9 +34,9 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
         
         moveTo(x,y)
         
-        randTime(0,5,9,) 
         autopy.mouse.click()
-        randTime(0,1,9)
+        randTime(0,1,1,0,2,9)
+        randTime(0,0,0,0,2,9,) 
 
 def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
@@ -62,11 +63,10 @@ def find_template(template_file):#pass template to function
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 3)#right clicks on given x,y coords
         menu_x, menu_y, menu = getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
-        randTime(0,0, 1)
+        randTime(0,0,0,0,0, 1)
         findOptionClick(x,y, menu_x, menu_y, menu)
-     #   randTime(0,1,9)
-    randTime(1,2,9)
 
+    time.sleep(1)
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
@@ -182,14 +182,14 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(0,9,9)
+            randTime(0,1,0,0,9,9)
             print("overshooting!")
 
-        if (len_x) <= random.randint(1,15) and  (len_y) <= random.randint(1,15):
+        if (len_x) <= random.randint(1,13) and  (len_y) <= random.randint(1,13):
             print("close to target")
-            randTime(0,9,9)
+            randTime(0,0,0,0,2,9)
         else:
-            randTime(0,0,1)
+            randTime(0,0,1,0,0,2)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
@@ -205,19 +205,21 @@ def my_screenshot(x1,y1,x2,y2):#pass top-left coord and btm-right coord of scree
 
     return cv_gray
 
-def randTime(fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.sdigit+tdigit+random
+def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.sdigit+tdigit+random
+    global timer
     random.seed()
     n = random.random()
     n = str(n)
     n = n[2:]
     
-    fdigit = str(random.randint(0,fdigit))
-    sdigit = str(random.randint(0,sdigit))
-    tdigit = str(random.randint(0,tdigit))
+    fdigit = str(random.randint(x,fdigit))
+    sdigit = str(random.randint(y,sdigit))
+    tdigit = str(random.randint(z,tdigit))
 
     
     milisecs = fdigit+'.'+sdigit+tdigit+n
     milisecs = float(milisecs)
+    timer += milisecs
     time.sleep(milisecs)
  
 
@@ -246,3 +248,4 @@ if __name__ == '__main__':
     find_template(cur_dir+'/imgs/trout.png')
     find_template(cur_dir+'/imgs/burntfish.png')
     find_template(cur_dir+'/imgs/salmon.png')
+    print("Time taken:",timer)
