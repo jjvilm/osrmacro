@@ -61,7 +61,7 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 1)#right clicks on given x,y coords
-        randTime(3,2)
+        randTime(3,2,0)
         break
         
 
