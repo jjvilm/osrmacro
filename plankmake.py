@@ -13,6 +13,7 @@ import os #needed to
 bag_coord =( ((549,225),(189,261)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 timer = 0
+spell = ()
 
 #Find given option inside the options menu e.g use,eat,drop,examine,exit,
 #def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in bag
@@ -63,9 +64,10 @@ def find_template(template_file):#pass template to function
         randTime(0,1,0,0,9, 9)
         break
 
-    time.sleep(.5)
+    time.sleep(.1)
 
 def find_spell(template_file):#pass template to function
+    global spell
     x1, y1 = rsPosition() #Get runescapes top-left coords
     
     x1 += 549    #make The Bag's top-left, and btm-right coords
@@ -73,7 +75,11 @@ def find_spell(template_file):#pass template to function
     x2 = x1 + 189 
     y2 = y1 + 261
      
-    rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
+    if spell == ():
+        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
+    else:
+        moveTo(spell[0], spell[1])
+        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
     #template
     template = cv2.imread(template_file,0)
@@ -90,7 +96,10 @@ def find_spell(template_file):#pass template to function
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
         randTime(0,1,0,0,9, 9)
-        break
+        if spell == ():
+            break
+        else:
+            spell = (x,y)
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
