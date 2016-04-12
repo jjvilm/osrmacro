@@ -180,7 +180,7 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(0,0,1,0,9,9)
+            randTime(0,0,1,0,2,9)
 
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,10) and  (len_y) <= random.randint(1,10):
@@ -245,7 +245,7 @@ def rsPosition():
 
 if __name__ == '__main__':
     iteration = 1
-    for n in range(25):
+    for n in range(33):
         find_spell(cur_dir+'/imgs/plankmake.png')
         find_template(cur_dir+'/imgs/mahagonylog.png')
         print("iteration:",iteration)
