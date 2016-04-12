@@ -14,15 +14,26 @@ bag_coord =( ((549,225),(189,261)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 timer = 0
 spell = ()
+first_time = True
 
 def find_template(template_file):#pass template to function
+    global first_time
+
     x1, y1 = rsPosition() #Get runescapes top-left coords
-    
+    spell_x = x1
+    spell_y = y1
+    if first_time:
+        print('First Time')
+        moveClick((random.randint(565,572)+spell_x),(random.randint(376,394)+spell_y))
+        first_time = False
+
     x1 += 549    #make The Bag's top-left, and btm-right coords
     y1 += 225    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 189 
     y2 = y1 + 261
      
+    time.sleep(.3)
+    randTime(0,1,1,0,9,9)
     rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
     #template
@@ -39,45 +50,54 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
-        randTime(0,0,1,0,0,9)
+
+        randTime(0,1,1,0,9,9)
+        moveClick((random.randint(565,572)+spell_x),(random.randint(376,394)+spell_y))
         break
 
-def find_spell(template_file):#pass template to function
-    global spell
-    x1, y1 = rsPosition() #Get runescapes top-left coords
-    
-    x1 += 549    #make The Bag's top-left, and btm-right coords
-    y1 += 225    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 189 
-    y2 = y1 + 261
-     
-    if spell == ():
-        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
-    else:
-        moveTo(spell[0], spell[1])
-        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
-    
-    #template
-    template = cv2.imread(template_file,0)
-    w, h = template.shape[::-1]
-    res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 #default is 8 
-    loc = np.where( res >= threshold)
-    for pt in zip(*loc[::-1]):#goes through each found image
-        btmX = pt[0] + w - 2#pt == top-left coord of template, bottom-right point of of template image
-        btmY = pt[1] + h - 2
-        #moving the pt coord of the template a bit to the right, so options menu get brought up
-        pt = (pt[0] + 2, pt[1] + 2)
-        
-        x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
-        moveClick(x,y)#right clicks on given x,y coords
-        if spell == ():
-            spell = (x,y)
-            break
-        else:
-            spell = (x,y)
-            break
-
+#def find_spell(template_file):#pass template to function
+#    global spell
+#    x1, y1 = rsPosition() #Get runescapes top-left coords
+#    
+#    x1 += 549    #make The Bag's top-left, and btm-right coords
+#    y1 += 225    #x2,y2 == btm-right coord, width and height
+#    x2 = x1 + 189 
+#    y2 = y1 + 261
+#     
+#    if spell == ():
+#        randTime(0,0,1,0,0,9)
+#        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
+#    else:
+#        spell_x = spell[0] 
+#        spell_y = spell[1] 
+#        spell_x += x1 - 549
+#        spell_y += y1 - 225
+#        
+#        moveTo(spell_x, spell_y)
+#        randTime(0,0,1,0,0,9)
+#        rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
+#    
+#    #template
+#    template = cv2.imread(template_file,0)
+#    w, h = template.shape[::-1]
+#    res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
+#    threshold = .8 #default is 8 
+#    loc = np.where( res >= threshold)
+#    for pt in zip(*loc[::-1]):#goes through each found image
+#        btmX = pt[0] + w - 2#pt == top-left coord of template, bottom-right point of of template image
+#        btmY = pt[1] + h - 2
+#        #moving the pt coord of the template a bit to the right, so options menu get brought up
+#        pt = (pt[0] + 2, pt[1] + 2)
+#        
+#        x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
+#        moveClick(x,y)#right clicks on given x,y coords
+#        if spell == ():
+#            spell = (x,y)
+#            break
+#        else:
+#            spell = (x,y)
+#            break
+#
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
@@ -180,15 +200,15 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(0,0,1,0,2,9)
+            randTime(0,0,1,0,1,9)
 
         #slows down if closer to target coord
-        if (len_x) <= random.randint(1,10) and  (len_y) <= random.randint(1,10):
-            randTime(0,0,0,0,2,9)
+        if (len_x) <= random.randint(1,7) and  (len_y) <= random.randint(1,7):
+            randTime(0,0,0,0,1,9)
         else:
             randTime(0,0,0,0,0,2)
             if random.randint(0,3) == 0:
-                randTime(0,0,0,0,0,9)
+                randTime(0,0,0,0,0,7)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
@@ -239,14 +259,9 @@ def rsPosition():
     ##change from str to int
     return int(x), int(y)
 
-#def calc_distance(pt1, pt2):
-#    #distance == sqr of (x2 -x1)^2 + (y2 - y1)^2
-#    return int( sqrt( ((pt2[0]-pt1[0])**2) + ((pt2[1] - pt1[1])**2)) )
-
 if __name__ == '__main__':
     iteration = 1
-    for n in range(33):
-        find_spell(cur_dir+'/imgs/plankmake.png')
+    for n in range(25):
         find_template(cur_dir+'/imgs/mahagonylog.png')
         print("iteration:",iteration)
         iteration += 1
