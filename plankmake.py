@@ -17,6 +17,9 @@ timer = 0
 def find_template(template_file):#pass template to function
     first_run = True
     x1, y1 = rsPosition() #Get runescapes top-left coords
+
+    #moves to spellbook and clicks it
+    moveClick(x1 + 744 + random.randint(0,15), y1 + 205 + random.randint(0,15)  )
     spell_x = x1
     spell_y = y1
     moveClick((random.randint(560,567)+spell_x),(random.randint(386,399)+spell_y))
