@@ -99,9 +99,9 @@ def find_spell(template_file):#pass template to function
         moveClick(x,y)#right clicks on given x,y coords
         randTime(0,1,0,0,9, 9)
         if spell == ():
-            break
-        else:
             spell = (x,y)
+        else:
+            break
 
     time.sleep(.1)
 def gen_coords(pt,btmX,btmY):
