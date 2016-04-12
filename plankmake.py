@@ -15,28 +15,6 @@ cur_dir = os.getcwd()
 timer = 0
 spell = ()
 
-#Find given option inside the options menu e.g use,eat,drop,examine,exit,
-#def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in bag
-#    img_gray = menu #screenshot of menu
-#    
-#    #template
-#    template = cv2.imread(cur_dir+'/imgs/drop.png',0)#0 here means turned gray
-#    w, h = template.shape[::-1]#Width, height of template image
-#    res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
-#    threshold = .8 
-#    loc = np.where( res >= threshold)
-#    
-#    for pt in zip(*loc[::-1]):#goes through each found image
-#        pt_x, pt_y = pt #point of drop found inside the option menu screenshot
-#        
-#        x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
-#        y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
-#        
-#        moveTo(x,y)
-#        
-#        autopy.mouse.click()
-#        randTime(0,0,0,0,1,9)
-
 def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
     
@@ -61,10 +39,8 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
-        randTime(0,1,0,0,9, 9)
+        randTime(0,0,1,0,0,9)
         break
-
-    time.sleep(.1)
 
 def find_spell(template_file):#pass template to function
     global spell
@@ -76,10 +52,8 @@ def find_spell(template_file):#pass template to function
     y2 = y1 + 261
      
     if spell == ():
-        print('Spell emtpy')
         rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     else:
-        print('moving to spell before taking screenshot', spell[0], spell[1])
         moveTo(spell[0], spell[1])
         rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
@@ -97,7 +71,6 @@ def find_spell(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y)#right clicks on given x,y coords
-        randTime(0,1,0,0,9, 9)
         if spell == ():
             spell = (x,y)
             break
@@ -105,7 +78,6 @@ def find_spell(template_file):#pass template to function
             spell = (x,y)
             break
 
-    time.sleep(.1)
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
@@ -117,17 +89,6 @@ def gen_coords(pt,btmX,btmY):
     within_x = random.randint(x1,x2)#generates a range of clickable locations 
     within_y = random.randint(y1,y2)
     return within_x, within_y
-
-#def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
-#    rs_x, rs_y = rsPosition()#Top-Left coords of where RS window is
-#    menu_x = rs_x + x        #Adding Rs coords to the options menu to get its location relevant to the window
-#    menu_y = rs_y + y - 24   #24 here goes up on Y since sometimes screenshot needs to get more of the top Y to find the right option in the options menu. 
-#    menu_x -= 90#55 default moves x location 70px to top-left of options menu
-#    menu_x2 = menu_x + 80 #Plus width
-#    menu_y2 = menu_y + 120 #Plus height 
-#
-#    menu = my_screenshot(menu_x, menu_y,menu_x2, menu_y2) 
-#    return menu_x, menu_y, menu
 
 def moveClick(x,y):#moves to random X,Y of found match of template
     rsx, rsy = rsPosition()
@@ -291,3 +252,4 @@ if __name__ == '__main__':
         iteration += 1
 
     print("Done")
+    print("Time taken:",timer)
