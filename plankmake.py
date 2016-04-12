@@ -44,6 +44,7 @@ def find_template(template_file):#pass template to function
     loc = np.where( res >= threshold)
     iteration = 1
     for pt in zip(*loc[::-1]):#goes through each found image
+        pt= ((rs_x+ pt[0]),(rs_y+pt[1]))
         if iteration <= 25:
             print(iteration)
             btmX = pt[0] + w - 10#pt == top-left coord of template, bottom-right point of of template image
@@ -114,6 +115,7 @@ def moveTo(x,y):
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 3 and  (len_y) <= 3:
+            randTime(0,0,1,0,0,9)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -122,7 +124,9 @@ def moveTo(x,y):
             elif len_x <= 7:
                 cur_x -= random.randint(1,3)
                 if overshoot == 7:
-                    cur_x -= random.randint(5,15)
+                    cur_x -= random.randint(1,15)
+            elif len_x <= 11:
+                cur_x -= random.randint(1,5)
             elif len_x <= 19:
                 cur_x -= random.randint(1,9)
             elif len_x <= 50:
@@ -136,7 +140,9 @@ def moveTo(x,y):
             elif len_x <= 7:
                 cur_x += random.randint(1,3)
                 if overshoot == 7:
-                    cur_x += random.randint(5,15)
+                    cur_x += random.randint(1,15)
+            elif len_x <= 11:
+                cur_x += random.randint(1,5)
             elif len_x <= 19:
                 cur_x += random.randint(1,9)
             elif len_x <= 50:
@@ -152,6 +158,8 @@ def moveTo(x,y):
                 cur_y -= random.randint(1,3)
                 if overshoot == 7:
                     cur_x -= random.randint(5,15)
+            elif len_y <= 11:
+                cur_y -= random.randint(1,5)
             elif len_y <= 19:
                 cur_y -= random.randint(1,9)
             elif len_y <= 50:
@@ -165,6 +173,8 @@ def moveTo(x,y):
                 cur_y += random.randint(1,3)
                 if overshoot == 7:
                     cur_x += random.randint(5,15)
+            elif len_y <= 11:
+                cur_y += random.randint(1,5)
             elif len_y <= 19:
                 cur_y += random.randint(1,9)
             elif len_y <= 50:
@@ -178,7 +188,8 @@ def moveTo(x,y):
 
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-            randTime(0,0,0,0,1,9)
+            randTime(0,0,1,0,0,9)
+            print('slowing down')
         else:
             randTime(0,0,0,0,0,2)
             if random.randint(0,3) == 0:

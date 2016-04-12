@@ -18,6 +18,13 @@ class App:
                 command=self.making)
         self.plankmake.pack()
 
+        self.center_btn = Button(frame, 
+                text="center",
+                fg='black',
+                bg='teal',
+                command=self.centering)
+        self.center_btn.pack()
+
         self.rezise_btn = Button(frame,
                 text="Rezise RS",
                 fg="black",
@@ -25,11 +32,6 @@ class App:
                 command=self.resize_rs)
         self.rezise_btn.pack()
 
-        self.center_btn = Button(frame, 
-                text="center",
-                fg='black',
-                bg='teal',
-                command=self.centering)
 
     def making(self):
         cwd = os.getcwd()
