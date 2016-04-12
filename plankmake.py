@@ -19,9 +19,11 @@ def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
 
     #moves to spellbook and clicks it
-    moveClick(x1 + 744 + random.randint(0,15), y1 + 205 + random.randint(0,15)  )
+    moveClick(x1 + 744 + random.randint(0,7), y1 + 205 + random.randint(0,7)  )
     spell_x = x1
     spell_y = y1
+    
+    #moves to spell and clicks
     moveClick((random.randint(560,567)+spell_x),(random.randint(386,399)+spell_y))
 
     x1 += 549    #make The Bag's top-left, and btm-right coords
@@ -36,11 +38,12 @@ def find_template(template_file):#pass template to function
     template = cv2.imread(template_file,0)
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 #default is 8 
+    threshold = .9 #default is 8 
     loc = np.where( res >= threshold)
     iteration = 1
     for pt in zip(*loc[::-1]):#goes through each found image
-        if first_run and iteration <= 25:
+        if iteration <= 25:
+            print(iteration)
             btmX = pt[0] + w - 10#pt == top-left coord of template, bottom-right point of of template image
             btmY = pt[1] + h - 10
             #moving the pt coord of the template a bit to the right, so options menu get brought up
@@ -67,9 +70,6 @@ def find_template(template_file):#pass template to function
                 autopy.mouse.click()
 
             iteration += 1
-            first_run = False
-        else:
-            first_run = True
 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
