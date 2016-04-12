@@ -39,7 +39,6 @@ def find_template(template_file):#pass template to function
     threshold = .8 #default is 8 
     loc = np.where( res >= threshold)
     iteration = 1
-    print("First run")
     for pt in zip(*loc[::-1]):#goes through each found image
         if first_run and iteration <= 25:
             btmX = pt[0] + w - 10#pt == top-left coord of template, bottom-right point of of template image
@@ -55,7 +54,7 @@ def find_template(template_file):#pass template to function
             autopy.mouse.click()
             randTime(0,0,0,0,0,5)
 
-           # moveClick((random.randint(560,567)+spell_x),(random.randint(386,399)+spell_y))
+            #moves and clicks to spell plank make
             splx = spell_x + random.randint(561,567)
             sply = spell_y + random.randint(386,394)
             moveTo(splx, sply)
@@ -64,9 +63,9 @@ def find_template(template_file):#pass template to function
             else:
                 randTime(0,9,9,0,9,9)
                 randTime(0,0,1,0,0,9)
-            autopy.mouse.click()
-            #randTime(3,0,0,3,9,9)
-            print(iteration)
+            if iteration < 25:
+                autopy.mouse.click()
+
             iteration += 1
             first_run = False
         else:
@@ -94,10 +93,8 @@ def moveClick(x,y):#moves to random X,Y of found match of template
 def moveTo(x,y):
     """Move mouse  NOT in a straight line"""
     cur_x, cur_y = autopy.mouse.get_pos() #Gets initial mouse location
-    #screen_x, screen_y = autopy.screen.get_size() #gets screen size
-   
-    while True:
 
+    while True:
         min_x = min(cur_x, x)#Decides minimun X,Y 
         max_x = max(cur_x, x)#Decides maximum X,Y coords
 
@@ -107,9 +104,6 @@ def moveTo(x,y):
         #find furthest distance of X and Y
         len_x = max_x - min_x
         len_y = max_y - min_y
-        #print("X:",len_x, "Y:",len_y) 
-       # print calc_distance( (cur_x, cur_y), (x,y) )
-
         
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
