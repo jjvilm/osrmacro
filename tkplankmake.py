@@ -42,5 +42,6 @@ class App:
     def centering(self):
         os.system(cwd+'/setup.py')
 root = Tk()
+root.title('Plank Make')
 app = App(root)
 root.mainloop()
