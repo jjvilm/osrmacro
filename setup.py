@@ -10,11 +10,10 @@ def centering():
     display_x //= 2
 
     pos = display_x - 383
-    #os.system('xdotool search old windowmove {0} 0'.format(pos))
-    os.system('xdotool search old windowmove 0 0')
+    #moves window to center of screen
+    os.system('xdotool search old windowmove {0} 0'.format(pos))
+    #os.system('xdotool search old windowmove 0 0')
 
-    #move window
-    os.system('xdotool search old windowsize --sync 767 564')
 
 centering()
 

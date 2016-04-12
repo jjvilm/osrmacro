@@ -15,26 +15,28 @@ cur_dir = os.getcwd()
 timer = 0
 
 def find_template(template_file):#pass template to function
-    first_run = True
-    x1, y1 = rsPosition() #Get runescapes top-left coords
+
+    #Get runescapes top-left coords
+    rs_x, rs_y = rsPosition() 
 
     #moves to spellbook and clicks it
-    moveClick(x1 + 744 + random.randint(0,7), y1 + 205 + random.randint(0,7)  )
-    spell_x = x1
-    spell_y = y1
+    moveClick(744 + random.randint(0,7), 205 + random.randint(0,7)  )
     
     #moves to spell and clicks
-    moveClick((random.randint(560,567)+spell_x),(random.randint(386,399)+spell_y))
+    moveClick((random.randint(560,567)),(random.randint(386,399)))
 
-    x1 += 549    #make The Bag's top-left, and btm-right coords
-    y1 += 225    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 189 
-    y2 = y1 + 261
-     
     time.sleep(.1)
+
+    #makes RECT for screenshot
+    x1 = rs_x + 549
+    y1 = rs_y + 225
+    x2 = x1 + 189
+    y2 = y1 + 261
+
+    #Takes screenshot of inventory
     rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
-    #template
+    #Starts Template search
     template = cv2.imread(template_file,0)
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
@@ -49,23 +51,26 @@ def find_template(template_file):#pass template to function
             #moving the pt coord of the template a bit to the right, so options menu get brought up
             pt = (pt[0] + 7, pt[1] + 7)
             
+            #generates random coordinates withing clickable limits for x,y
             x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
 
-
-            #moves to log
+            #moves to log and clicks it
             moveTo(x,y)
             autopy.mouse.click()
             randTime(0,0,0,0,0,5)
 
-            #moves and clicks to spell plank make
-            splx = spell_x + random.randint(561,567)
-            sply = spell_y + random.randint(386,394)
-            moveTo(splx, sply)
+            #moves to spell "plank make"
+            moveTo(rs_x+random.randint(561,567),rs_y+random.randint(386,394) )
+
             if iteration <= 16:
                 randTime(0,9,9,0,9,9)
             else:
+                if iteration == 17:
+                    randTime(0,9,9,0,9,9)#waits a bit longer if on 17 to give time to move
                 randTime(0,9,9,0,9,9)
                 randTime(0,0,1,0,0,9)
+
+            #Clicks spell "plank make" only if less than 25 iterations
             if iteration < 25:
                 autopy.mouse.click()
 
@@ -84,6 +89,7 @@ def gen_coords(pt,btmX,btmY):
     return within_x, within_y
 
 def moveClick(x,y):#moves to random X,Y of found match of template
+    """No need to add RSpostion to the passed coordinates x, y"""
     rsx, rsy = rsPosition()
     x = rsx + x
     y = rsy + y 
