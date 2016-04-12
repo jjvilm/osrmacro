@@ -46,7 +46,7 @@ def find_template(template_file):#pass template to function
     for pt in zip(*loc[::-1]):#goes through each found image
         pt= ((rs_x+ pt[0]),(rs_y+pt[1]))
         if iteration <= 25:
-            print(iteration)
+            #print(iteration)
             btmX = pt[0] + w - 10#pt == top-left coord of template, bottom-right point of of template image
             btmY = pt[1] + h - 10
             #moving the pt coord of the template a bit to the right, so options menu get brought up
@@ -157,7 +157,7 @@ def moveTo(x,y):
             elif len_y <= 7:
                 cur_y -= random.randint(1,3)
                 if overshoot == 7:
-                    cur_x -= random.randint(5,15)
+                    cur_x -= random.randint(1,15)
             elif len_y <= 11:
                 cur_y -= random.randint(1,5)
             elif len_y <= 19:
@@ -172,7 +172,7 @@ def moveTo(x,y):
             elif len_y <= 7:
                 cur_y += random.randint(1,3)
                 if overshoot == 7:
-                    cur_x += random.randint(5,15)
+                    cur_x += random.randint(1,15)
             elif len_y <= 11:
                 cur_y += random.randint(1,5)
             elif len_y <= 19:
@@ -189,7 +189,7 @@ def moveTo(x,y):
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
             randTime(0,0,1,0,0,9)
-            print('slowing down')
+            #print('slowing down')
         else:
             randTime(0,0,0,0,0,2)
             if random.randint(0,3) == 0:
@@ -246,5 +246,5 @@ def rsPosition():
 
 if __name__ == '__main__':
     find_template(cur_dir+'/imgs/mahagonylog.png')
-    print("Done")
-    print("Time taken:",timer)
+    #print("Done")
+    #print("Time taken:",timer)
