@@ -76,8 +76,10 @@ def find_spell(template_file):#pass template to function
     y2 = y1 + 261
      
     if spell == ():
+        print('Spell emtpy')
         rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     else:
+        print('moving to spell before taking screenshot', spell[0], spell[1])
         moveTo(spell[0], spell[1])
         rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
@@ -100,6 +102,8 @@ def find_spell(template_file):#pass template to function
             break
         else:
             spell = (x,y)
+
+    time.sleep(.1)
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
@@ -277,7 +281,11 @@ def rsPosition():
 #    return int( sqrt( ((pt2[0]-pt1[0])**2) + ((pt2[1] - pt1[1])**2)) )
 
 if __name__ == '__main__':
+    iteration = 1
     for n in range(25):
         find_spell(cur_dir+'/imgs/plankmake.png')
         find_template(cur_dir+'/imgs/mahagonylog.png')
+        print("iteration:",iteration)
+        iteration += 1
+
     print("Done")
