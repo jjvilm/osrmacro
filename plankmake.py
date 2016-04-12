@@ -100,7 +100,9 @@ def find_spell(template_file):#pass template to function
         randTime(0,1,0,0,9, 9)
         if spell == ():
             spell = (x,y)
+            break
         else:
+            spell = (x,y)
             break
 
     time.sleep(.1)
