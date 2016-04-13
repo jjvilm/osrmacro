@@ -104,7 +104,6 @@ def moveTo(x,y):
     #screen_x, screen_y = autopy.screen.get_size() #gets screen size
    
     while True:
-
         min_x = min(cur_x, x)#Decides minimun X,Y 
         max_x = max(cur_x, x)#Decides maximum X,Y coords
 
@@ -114,13 +113,11 @@ def moveTo(x,y):
         #find furthest distance of X and Y
         len_x = max_x - min_x
         len_y = max_y - min_y
-        #print("X:",len_x, "Y:",len_y) 
-       # print calc_distance( (cur_x, cur_y), (x,y) )
 
-        
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 5 and  (len_y) <= 5:
+            randTime(0,0,1,0,0,9)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -129,7 +126,9 @@ def moveTo(x,y):
             elif len_x <= 7:
                 cur_x -= random.randint(1,3)
                 if overshoot == 7:
-                    cur_x -= random.randint(5,55)
+                    cur_x -= random.randint(1,15)
+            elif len_x <= 11:
+                cur_x -= random.randint(1,5)
             elif len_x <= 19:
                 cur_x -= random.randint(1,9)
             elif len_x <= 50:
@@ -143,7 +142,9 @@ def moveTo(x,y):
             elif len_x <= 7:
                 cur_x += random.randint(1,3)
                 if overshoot == 7:
-                    cur_x += random.randint(5,55)
+                    cur_x += random.randint(1,15)
+            elif len_x <= 11:
+                cur_x += random.randint(1,5)
             elif len_x <= 19:
                 cur_x += random.randint(1,9)
             elif len_x <= 50:
@@ -158,7 +159,9 @@ def moveTo(x,y):
             elif len_y <= 7:
                 cur_y -= random.randint(1,3)
                 if overshoot == 7:
-                    cur_x -= random.randint(5,55)
+                    cur_x -= random.randint(1,15)
+            elif len_y <= 11:
+                cur_y -= random.randint(1,5)
             elif len_y <= 19:
                 cur_y -= random.randint(1,9)
             elif len_y <= 50:
@@ -171,7 +174,9 @@ def moveTo(x,y):
             elif len_y <= 7:
                 cur_y += random.randint(1,3)
                 if overshoot == 7:
-                    cur_x += random.randint(5,55)
+                    cur_x += random.randint(1,15)
+            elif len_y <= 11:
+                cur_y += random.randint(1,5)
             elif len_y <= 19:
                 cur_y += random.randint(1,9)
             elif len_y <= 50:
@@ -184,8 +189,8 @@ def moveTo(x,y):
             randTime(0,0,1,0,9,9)
 
         #slows down if closer to target coord
-        if (len_x) <= random.randint(1,10) and  (len_y) <= random.randint(1,10):
-            randTime(0,0,0,0,2,9)
+        if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
+            randTime(0,0,1,0,9,9)
         else:
             randTime(0,0,0,0,0,2)
             if random.randint(0,3) == 0:

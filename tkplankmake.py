@@ -26,7 +26,7 @@ class App:
         self.center_btn.pack()
 
         self.rezise_btn = Button(frame,
-                text="Rezise RS",
+                text="Resize RS",
                 fg="black",
                 bg='yellow',
                 command=self.resize_rs)
@@ -37,7 +37,7 @@ class App:
         cwd = os.getcwd()
         os.system(cwd+'/plankmake.py')
     def resize_rs(self):
-        os.system('xdotool search old windowsize --sync 767 564')
+        os.system('xdotool search --name old windowsize --sync 767 564')
 
     def centering(self):
         os.system(cwd+'/setup.py')
