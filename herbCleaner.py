@@ -34,7 +34,13 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
         
         moveTo(x,y)
         
-        autopy.mouse.click()
+        #autopy.mouse.click()
+        #
+        autopy.mouse.toggle(True,button)
+        randTime(1,1,1,0,9,9)#time between click
+        randTime(1,1,1,0,9,9)
+        #autopy.mouse.toggle(False,button)
+
         randTime(0,0,0,0,1,9)
 
 def find_template(template_file):#pass template to function
@@ -54,16 +60,16 @@ def find_template(template_file):#pass template to function
     threshold = .9 #default is 8 
     loc = np.where( res >= threshold)
     for pt in zip(*loc[::-1]):#goes through each found image
-        btmX = pt[0] + w - 5#pt == top-left coord of template, bottom-right point of of template image
-        btmY = pt[1] + h - 5
+        btmX = pt[0] + w - 10 #pt == top-left coord of template, bottom-right point of of template image
+        btmY = pt[1] + h - 10 
         #moving the pt coord of the template a bit to the right, so options menu get brought up
-        pt = (pt[0] + 5, pt[1] + 2)
+        pt = (pt[0] + 10, pt[1] +10 )
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 1)#right clicks on given x,y coords
-        randTime(0,0,0,0,0,9)
-        randTime(0,0,0,0,0,9)
-        randTime(0,0,0,0,0,9)
+        randTime(0,0,0,0,0,7)
+        randTime(0,0,0,0,0,5)
+        randTime(0,0,0,0,0,1)
 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -93,10 +99,14 @@ def moveClick(x,y, button):#moves to random X,Y of found match of template
     x = rsx + x
     y = rsy + y 
     moveTo(x,y)
-#os.system('xdotool search --sync --name Old mousemove --sync -w %1 {0} {1} click {2}'.format(x,y, button))#right clicks on itme
 
-    autopy.mouse.click(button)
-    randTime(0,0,0,0,0,9)
+    #clicks, holds for a random amount of time, then release click
+    autopy.mouse.toggle(True,button)
+    randTime(0,0,0,0,0,1)
+    randTime(0,0,0,0,0,0)
+    autopy.mouse.toggle(False,button)
+
+    randTime(0,0,0,0,0,3)
 
 def moveTo(x,y):
     """Move mouse  NOT in a straight line"""
@@ -117,19 +127,19 @@ def moveTo(x,y):
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 5 and  (len_y) <= 5:
-            randTime(0,0,0,0,0,9)
+            randTime(0,0,0,0,0,0)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
             if len_x > 100:
                 cur_x -= random.randint(51,99)
             elif len_x <= 7:
-                cur_x -= random.randint(1,3)
+                cur_x -= random.randint(1,5)
                 if overshoot == 7:
                     cur_x -= random.randint(1,15)
-            elif len_x <= 11:
+            elif len_x <= 15:
                 cur_x -= random.randint(1,5)
-            elif len_x <= 19:
+            elif len_x <= 25:
                 cur_x -= random.randint(1,9)
             elif len_x <= 50:
                 cur_x -= random.randint(5,24)
@@ -186,17 +196,17 @@ def moveTo(x,y):
         
         #print("Moving to {0} {1}".format(cur_x, cur_y))
         if overshoot == 7:
-            randTime(0,0,1,0,9,9)
+            randTime(0,0,0,0,9,9)
 
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-            randTime(0,0,1,0,9,9)
+            randTime(0,0,0,0,9,9)
         else:
-            randTime(0,0,0,0,0,2)
-            randTime(0,0,0,0,0,3)
+            randTime(0,0,0,0,0,1)
+            randTime(0,0,0,0,0,1)
             if random.randint(0,3) == 0:
                 randTime(0,0,0,0,0,9)
-                randTime(0,0,0,0,0,9)
+                randTime(0,0,0,0,0,1)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
