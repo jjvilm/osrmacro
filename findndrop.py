@@ -191,11 +191,13 @@ def moveTo(x,y):
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
             randTime(0,0,1,0,9,9)
         else:
-            randTime(0,0,0,0,0,9)
+            randTime(0,0,0,0,0,1)
+            randTime(0,0,0,0,0,1)
             if random.randint(0,3) == 0:
                 randTime(0,0,0,0,0,9)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        #autopy.mouse.move(cur_x, cur_y)
 
 
 
