@@ -11,6 +11,13 @@ class App:
         frame = Frame(master)
         frame.pack()
 
+        self.herbClean_btn = Button(frame, 
+                text="Clean",
+                fg='white',
+                bg='green',
+                command=self.herbClean)
+        self.herbClean_btn.pack()
+
         self.plankmake = Button(frame,
                 text="Make",
                 fg='white',
@@ -41,7 +48,9 @@ class App:
 
     def centering(self):
         os.system(cwd+'/setup.py')
+    def herbClean(self):
+        os.system(cwd+'/herbCleaner.py')
 root = Tk()
-root.title('Plank Make')
+root.title('Various Macros')
 app = App(root)
 root.mainloop()
