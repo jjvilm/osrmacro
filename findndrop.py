@@ -9,11 +9,14 @@ import random #get random time
 import time #for sleep
 import os #needed to 
 from math import sqrt
+### Import my modules
+from modules import MMove
+from modules import RandTime 
 
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
-timer = 0
+#timer = 0
 
 #Find given option inside the options menu e.g use,eat,drop,examine,exit,
 def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in bag
@@ -32,10 +35,10 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
         x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
         y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
         
-        moveTo(x,y)
+        MMove.moveTo(x,y)
         
         autopy.mouse.click()
-        randTime(0,0,0,0,0,9)
+        RandTime.randTime(0,0,0,0,0,9)
 
 def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
@@ -62,7 +65,7 @@ def find_template(template_file):#pass template to function
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 3)#right clicks on given x,y coords
         menu_x, menu_y, menu = getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
-        randTime(0,0,0,0,0, 2)
+        RandTime.randTime(0,0,0,0,0, 2)
         findOptionClick(x,y, menu_x, menu_y, menu)
 
     time.sleep(.5)
@@ -93,111 +96,111 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
     rsx, rsy = rsPosition()
     x = rsx + x
     y = rsy + y 
-    moveTo(x,y)
+    MMove.moveTo(x,y)
 #os.system('xdotool search --sync --name Old mousemove --sync -w %1 {0} {1} click {2}'.format(x,y, button))#right clicks on itme
     autopy.mouse.click(autopy.mouse.RIGHT_BUTTON)
     #randTime(0,1,9)
 
-def moveTo(x,y):
-    """Move mouse  NOT in a straight line"""
-    cur_x, cur_y = autopy.mouse.get_pos() #Gets initial mouse location
-    #screen_x, screen_y = autopy.screen.get_size() #gets screen size
+#def moveTo(x,y):
+    #"""Move mouse  NOT in a straight line"""
+    #cur_x, cur_y = autopy.mouse.get_pos() #Gets initial mouse location
+    ##screen_x, screen_y = autopy.screen.get_size() #gets screen size
    
-    while True:
-        min_x = min(cur_x, x)#Decides minimun X,Y 
-        max_x = max(cur_x, x)#Decides maximum X,Y coords
+    #while True:
+        #min_x = min(cur_x, x)#Decides minimun X,Y 
+        #max_x = max(cur_x, x)#Decides maximum X,Y coords
 
-        min_y = min(cur_y, y)
-        max_y = max(cur_y, y)
+        #min_y = min(cur_y, y)
+        #max_y = max(cur_y, y)
         
-        #find furthest distance of X and Y
-        len_x = max_x - min_x
-        len_y = max_y - min_y
+        ##find furthest distance of X and Y
+        #len_x = max_x - min_x
+        #len_y = max_y - min_y
 
-        overshoot = random.randint(0,40)
-        #breaks once it's around +-2 pixels around the target area
-        if (len_x) <= 5 and  (len_y) <= 5:
-            break
-        #checks if current X is higher or lower than target X
-        if cur_x > x:#Higher X
-            if len_x > 100:
-                cur_x -= random.randint(51,99)
-            elif len_x <= 7:
-                cur_x -= random.randint(1,3)
-                if overshoot == 7:
-                    cur_x -= random.randint(1,15)
-            elif len_x <= 11:
-                cur_x -= random.randint(1,5)
-            elif len_x <= 19:
-                cur_x -= random.randint(1,9)
-            elif len_x <= 50:
-                cur_x -= random.randint(5,24)
-            elif len_x <= 100:
-                cur_x -= random.randint(25,55)
+        #overshoot = random.randint(0,40)
+        ##breaks once it's around +-2 pixels around the target area
+        #if (len_x) <= 5 and  (len_y) <= 5:
+            #break
+        ##checks if current X is higher or lower than target X
+        #if cur_x > x:#Higher X
+            #if len_x > 100:
+                #cur_x -= random.randint(51,99)
+            #elif len_x <= 7:
+                #cur_x -= random.randint(1,3)
+                #if overshoot == 7:
+                    #cur_x -= random.randint(1,15)
+            #elif len_x <= 11:
+                #cur_x -= random.randint(1,5)
+            #elif len_x <= 19:
+                #cur_x -= random.randint(1,9)
+            #elif len_x <= 50:
+                #cur_x -= random.randint(5,24)
+            #elif len_x <= 100:
+                #cur_x -= random.randint(25,55)
 
-        else:#Lower x
-            if len_x > 100:
-                cur_x += random.randint(51,99)
-            elif len_x <= 7:
-                cur_x += random.randint(1,3)
-                if overshoot == 7:
-                    cur_x += random.randint(1,15)
-            elif len_x <= 11:
-                cur_x += random.randint(1,5)
-            elif len_x <= 19:
-                cur_x += random.randint(1,9)
-            elif len_x <= 50:
-                cur_x += random.randint(5,24)
-            elif len_x <= 100:
-                cur_x += random.randint(25,55)
+        #else:#Lower x
+            #if len_x > 100:
+                #cur_x += random.randint(51,99)
+            #elif len_x <= 7:
+                #cur_x += random.randint(1,3)
+                #if overshoot == 7:
+                    #cur_x += random.randint(1,15)
+            #elif len_x <= 11:
+                #cur_x += random.randint(1,5)
+            #elif len_x <= 19:
+                #cur_x += random.randint(1,9)
+            #elif len_x <= 50:
+                #cur_x += random.randint(5,24)
+            #elif len_x <= 100:
+                #cur_x += random.randint(25,55)
 
-        #checks if current Y is higher or lower than target Y
-        if cur_y > y: # Higher Y
-            if len_y > 100:
-                cur_y -= random.randint(51,99)
-            elif len_y <= 7:
-                cur_y -= random.randint(1,3)
-                if overshoot == 7:
-                    cur_x -= random.randint(1,15)
-            elif len_y <= 11:
-                cur_y -= random.randint(1,5)
-            elif len_y <= 19:
-                cur_y -= random.randint(1,9)
-            elif len_y <= 50:
-                cur_y -= random.randint(5,24)
-            elif len_y <= 100:
-                cur_y -= random.randint(25,55)
-        else: #Lower Y
-            if len_y > 100:
-                cur_y += random.randint(51,99)
-            elif len_y <= 7:
-                cur_y += random.randint(1,3)
-                if overshoot == 7:
-                    cur_x += random.randint(1,15)
-            elif len_y <= 11:
-                cur_y += random.randint(1,5)
-            elif len_y <= 19:
-                cur_y += random.randint(1,9)
-            elif len_y <= 50:
-                cur_y += random.randint(5,25)
-            elif len_y <= 100:
-                cur_y += random.randint(25,55)
+        ##checks if current Y is higher or lower than target Y
+        #if cur_y > y: # Higher Y
+            #if len_y > 100:
+                #cur_y -= random.randint(51,99)
+            #elif len_y <= 7:
+                #cur_y -= random.randint(1,3)
+                #if overshoot == 7:
+                    #cur_x -= random.randint(1,15)
+            #elif len_y <= 11:
+                #cur_y -= random.randint(1,5)
+            #elif len_y <= 19:
+                #cur_y -= random.randint(1,9)
+            #elif len_y <= 50:
+                #cur_y -= random.randint(5,24)
+            #elif len_y <= 100:
+                #cur_y -= random.randint(25,55)
+        #else: #Lower Y
+            #if len_y > 100:
+                #cur_y += random.randint(51,99)
+            #elif len_y <= 7:
+                #cur_y += random.randint(1,3)
+                #if overshoot == 7:
+                    #cur_x += random.randint(1,15)
+            #elif len_y <= 11:
+                #cur_y += random.randint(1,5)
+            #elif len_y <= 19:
+                #cur_y += random.randint(1,9)
+            #elif len_y <= 50:
+                #cur_y += random.randint(5,25)
+            #elif len_y <= 100:
+                #cur_y += random.randint(25,55)
         
-        #print("Moving to {0} {1}".format(cur_x, cur_y))
-        if overshoot == 7:
-            randTime(0,0,1,0,9,9)
+        ##print("Moving to {0} {1}".format(cur_x, cur_y))
+        #if overshoot == 7:
+            #randTime(0,0,1,0,9,9)
 
-        #slows down if closer to target coord
-        if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-            randTime(0,0,1,0,9,9)
-        else:
-            randTime(0,0,0,0,0,1)
-            randTime(0,0,0,0,0,1)
-            if random.randint(0,3) == 0:
-                randTime(0,0,0,0,0,9)
+        ##slows down if closer to target coord
+        #if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
+            #randTime(0,0,1,0,9,9)
+        #else:
+            #randTime(0,0,0,0,0,1)
+            #randTime(0,0,0,0,0,1)
+            #if random.randint(0,3) == 0:
+                #randTime(0,0,0,0,0,9)
 
-        autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
-        #autopy.mouse.move(cur_x, cur_y)
+        #autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        ##autopy.mouse.move(cur_x, cur_y)
 
 
 
@@ -211,22 +214,22 @@ def my_screenshot(x1,y1,x2,y2):#pass top-left coord and btm-right coord of scree
 
     return cv_gray
 
-def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.sdigit+tdigit+random
-    global timer
-    random.seed()
-    n = random.random()
-    n = str(n)
-    n = n[2:]
+#def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.sdigit+tdigit+random
+    #global timer
+    #random.seed()
+    #n = random.random()
+    #n = str(n)
+    #n = n[2:]
     
-    fdigit = str(random.randint(x,fdigit))
-    sdigit = str(random.randint(y,sdigit))
-    tdigit = str(random.randint(z,tdigit))
+    #fdigit = str(random.randint(x,fdigit))
+    #sdigit = str(random.randint(y,sdigit))
+    #tdigit = str(random.randint(z,tdigit))
 
     
-    milisecs = fdigit+'.'+sdigit+tdigit+n
-    milisecs = float(milisecs)
-    timer += milisecs
-    time.sleep(milisecs)
+    #milisecs = fdigit+'.'+sdigit+tdigit+n
+    #milisecs = float(milisecs)
+    #timer += milisecs
+    #time.sleep(milisecs)
  
 
 
@@ -256,4 +259,4 @@ if __name__ == '__main__':
     find_template(cur_dir+'/imgs/salmon.png')
     find_template(cur_dir+'/imgs/trout.png')
     find_template(cur_dir+'/imgs/burntfish.png')
-    print("Time taken:",timer)
+    #print("Time taken:",timer)
