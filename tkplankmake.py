@@ -12,23 +12,23 @@ class App:
         frame.pack()
 
         self.herbClean_btn = Button(frame, 
-                text="Clean",
+                text="Clean Herb",
                 fg='white',
                 bg='green',
                 command=self.herbClean)
         self.herbClean_btn.pack()
 
         self.plankmake = Button(frame,
-                text="Make",
+                text="Make Plank",
                 fg='white',
-                bg='green',
+                bg='#65453F',
                 command=self.making)
         self.plankmake.pack()
 
         self.center_btn = Button(frame, 
-                text="center",
+                text="Center RS",
                 fg='black',
-                bg='teal',
+                bg='yellow',
                 command=self.centering)
         self.center_btn.pack()
 

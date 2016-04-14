@@ -117,7 +117,7 @@ def moveTo(x,y):
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 5 and  (len_y) <= 5:
-            randTime(0,0,1,0,0,9)
+            randTime(0,0,1,0,9,9)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -250,7 +250,9 @@ def rsPosition():
 #    return int( sqrt( ((pt2[0]-pt1[0])**2) + ((pt2[1] - pt1[1])**2)) )
 
 if __name__ == '__main__':
+    #find_template(cur_dir+'/imgs/rawShrimp.png')
+    #find_template(cur_dir+'/imgs/cookedShrimp.png')
+    find_template(cur_dir+'/imgs/salmon.png')
     find_template(cur_dir+'/imgs/trout.png')
     find_template(cur_dir+'/imgs/burntfish.png')
-    find_template(cur_dir+'/imgs/salmon.png')
     print("Time taken:",timer)
