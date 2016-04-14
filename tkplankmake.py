@@ -11,6 +11,13 @@ class App:
         frame = Frame(master)
         frame.pack()
 
+        self.dropper_btn = Button(frame, 
+                text="DROP",
+                fg='red',
+                bg='orange',
+                command=self.dropper)
+        self.dropper_btn.pack()
+
         self.herbClean_btn = Button(frame, 
                 text="Clean Herb",
                 fg='white',
@@ -50,6 +57,8 @@ class App:
         os.system(cwd+'/setup.py')
     def herbClean(self):
         os.system(cwd+'/herbCleaner.py')
+    def dropper(self):
+        os.system(cwd+'/findndrop.py')
 root = Tk()
 root.title('Various Macros')
 app = App(root)
