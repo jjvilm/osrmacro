@@ -23,7 +23,7 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
     template = cv2.imread(cur_dir+'/imgs/drop.png',0)#0 here means turned gray
     w, h = template.shape[::-1]#Width, height of template image
     res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 
+    threshold = .9 
     loc = np.where( res >= threshold)
     
     for pt in zip(*loc[::-1]):#goes through each found image
@@ -61,8 +61,9 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 1)#right clicks on given x,y coords
-        randTime(0,0,1,0,0,9)
-        randTime(0,0,1,0,0,9)
+        randTime(0,0,0,0,0,9)
+        randTime(0,0,0,0,0,9)
+        randTime(0,0,0,0,0,9)
 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -116,7 +117,7 @@ def moveTo(x,y):
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 5 and  (len_y) <= 5:
-            randTime(0,0,1,0,0,9)
+            randTime(0,0,0,0,0,9)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -192,7 +193,9 @@ def moveTo(x,y):
             randTime(0,0,1,0,9,9)
         else:
             randTime(0,0,0,0,0,2)
+            randTime(0,0,0,0,0,3)
             if random.randint(0,3) == 0:
+                randTime(0,0,0,0,0,9)
                 randTime(0,0,0,0,0,9)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
@@ -250,6 +253,6 @@ def rsPosition():
 
 if __name__ == '__main__':
     find_template(cur_dir+'/imgs/grimmyGuam.png')
-    find_template(cur_dir+'/imgs/grimmyMarrentil.png')
+    #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
     #find_template(cur_dir+'/imgs/grimmyTarromin.png')
     print("Time taken:",timer)
