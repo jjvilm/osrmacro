@@ -68,7 +68,7 @@ def find_template(template_file):#pass template to function
         moveClick(x,y, 1)#right clicks on given x,y coords
         randTime(0,0,0,0,0,7)
         randTime(0,0,0,0,0,5)
-        randTime(0,0,0,0,0,1)
+        randTime(0,0,1,0,0,1)
 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -126,7 +126,8 @@ def moveTo(x,y):
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 7 and  (len_y) <= 7:
-            randTime(0,0,0,0,0,0)
+            randTime(0,0,0,0,0,9)
+            randTime(0,0,0,0,0,9)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -137,7 +138,7 @@ def moveTo(x,y):
                 if overshoot == 7:
                     cur_x -= random.randint(1,15)
             elif len_x <= 15:
-                cur_x -= random.randint(1,5)
+                cur_x -= random.randint(1,7)
             elif len_x <= 25:
                 cur_x -= random.randint(1,9)
             elif len_x <= 50:
@@ -165,12 +166,12 @@ def moveTo(x,y):
         if cur_y > y: # Higher Y
             if len_y > 100:
                 cur_y -= random.randint(51,99)
-            elif len_y <= 5:
-                cur_y -= random.randint(1,3)
+            elif len_y <= 10:
+                cur_y -= random.randint(1,5)
                 if overshoot == 7:
                     cur_x -= random.randint(1,15)
-            elif len_y <= 11:
-                cur_y -= random.randint(1,5)
+            elif len_y <= 15:
+                cur_y -= random.randint(1,7)
             elif len_y <= 25:
                 cur_y -= random.randint(1,9)
             elif len_y <= 50:
@@ -180,12 +181,12 @@ def moveTo(x,y):
         else: #Lower Y
             if len_y > 100:
                 cur_y += random.randint(51,99)
-            elif len_y <= 7:
+            elif len_y <= 10:
                 cur_y += random.randint(1,5)
                 if overshoot == 7:
                     cur_x += random.randint(1,15)
-            elif len_y <= 11:
-                cur_y += random.randint(1,5)
+            elif len_y <= 15:
+                cur_y += random.randint(1,7)
             elif len_y <= 25:
                 cur_y += random.randint(1,9)
             elif len_y <= 50:
@@ -200,11 +201,12 @@ def moveTo(x,y):
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
             randTime(0,0,0,0,9,9)
+            randTime(0,0,0,0,0,0)
         else:
-            randTime(0,0,0,0,0,1)
+            randTime(0,0,1,0,0,5)
             randTime(0,0,0,0,0,1)
             if random.randint(0,3) == 0:
-                randTime(0,0,0,0,0,9)
+                randTime(0,0,0,0,0,2)
                 randTime(0,0,0,0,0,1)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
@@ -258,6 +260,7 @@ def rsPosition():
 
 
 if __name__ == '__main__':
+    find_template(cur_dir+'/imgs/grimmyIrit.png')
     find_template(cur_dir+'/imgs/grimmyGuam.png')
     #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
     #find_template(cur_dir+'/imgs/grimmyTarromin.png')
