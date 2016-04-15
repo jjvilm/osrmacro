@@ -10,45 +10,26 @@ import time #for sleep
 import os #needed to 
 from math import sqrt
 ### Import my modules
-from modules import MMove
+from modules import Mouse
 from modules import RandTime 
+from modules import Screenshot
+from modules import RS
 
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 #timer = 0
 
-#Find given option inside the options menu e.g use,eat,drop,examine,exit,
-def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in bag
-    img_gray = menu #screenshot of menu
-    
-    #template
-    template = cv2.imread(cur_dir+'/imgs/drop.png',0)#0 here means turned gray
-    w, h = template.shape[::-1]#Width, height of template image
-    res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 
-    loc = np.where( res >= threshold)
-    
-    for pt in zip(*loc[::-1]):#goes through each found image
-        pt_x, pt_y = pt #point of drop found inside the option menu screenshot
-        
-        x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
-        y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
-        
-        MMove.moveTo(x,y)
-        
-        autopy.mouse.click()
-        RandTime.randTime(0,0,0,0,0,9)
 
 def find_template(template_file):#pass template to function
-    x1, y1 = rsPosition() #Get runescapes top-left coords
+    x1, y1 = RS.position() #Get runescapes top-left coords
     
     x1 += 557    #make The Bag's top-left, and btm-right coords
     y1 += 229    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
     y2 = y1 + 253
      
-    rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
+    rs_bag = Screenshot.shoot(x1,y1,x2,y2) #Screenshot taken here, 
     
     #template
     template = cv2.imread(template_file,0)
@@ -64,11 +45,13 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 3)#right clicks on given x,y coords
-        menu_x, menu_y, menu = getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
-        RandTime.randTime(0,0,0,0,0, 2)
-        findOptionClick(x,y, menu_x, menu_y, menu)
-
-    time.sleep(.5)
+        menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
+        RandTime.randTime(0,0,0,0,0,1)
+        
+        RS.findOptionClick(x,y, menu_x, menu_y, menu,'drop')
+        
+    RandTime.randTime(2,0,0,2,9,9)
+ 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
     x1 = pt[0] +( bag_coord[0][0] + 1) #gets top-left location of able to be right clicked
@@ -81,60 +64,19 @@ def gen_coords(pt,btmX,btmY):
     within_y = random.randint(y1,y2)
     return within_x, within_y
 
-def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
-    rs_x, rs_y = rsPosition()#Top-Left coords of where RS window is
-    menu_x = rs_x + x        #Adding Rs coords to the options menu to get its location relevant to the window
-    menu_y = rs_y + y - 24   #24 here goes up on Y since sometimes screenshot needs to get more of the top Y to find the right option in the options menu. 
-    menu_x -= 90#55 default moves x location 70px to top-left of options menu
-    menu_x2 = menu_x + 80 #Plus width
-    menu_y2 = menu_y + 120 #Plus height 
-
-    menu = my_screenshot(menu_x, menu_y,menu_x2, menu_y2) 
-    return menu_x, menu_y, menu
-
 def moveClick(x,y, button=1):#moves to random X,Y of found match of template
-    rsx, rsy = rsPosition()
+    """moves to x,y relative to the RS window"""
+    rsx, rsy = RS.position()
     x = rsx + x
     y = rsy + y 
-    MMove.moveTo(x,y)
-#os.system('xdotool search --sync --name Old mousemove --sync -w %1 {0} {1} click {2}'.format(x,y, button))#right clicks on itme
-    autopy.mouse.click(autopy.mouse.RIGHT_BUTTON)
-    #randTime(0,1,9)
+    Mouse.moveTo(x,y)
 
-
-def my_screenshot(x1,y1,x2,y2):#pass top-left coord and btm-right coord of screenshot
-    """Takes screenshot at given coordinates as PIL image format,
-     then converts to cv2 grayscale image format and returns it"""
-    im = pyscreenshot.grab(bbox=(x1,y1,x2,y2)) #X1,Y1,X2,Y2
-    im = np.array(im)#converts to numpy array
-    cv_img = im.astype(np.uint8)#makes cv2 image object 
-    cv_gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)#turns image gray
-
-    return cv_gray
-
-def rsPosition():
-    """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
-	To make sure, the bag, and options menu coordinates are relevant to the window"""
-    rs_coords = subprocess.check_output(['xdotool','search','--name', 'Old','getwindowgeometry'])
-    rs_coords = str(rs_coords)
+    autopy.mouse.toggle(True,button)
+    RandTime.randTime(0,0,0,0,0,1)
+    autopy.mouse.toggle(False,button)
     
-    ##Find the ":" and "," to get the coordinates after them 
-    first_occurance = rs_coords.find(":")#x, y coordinates extracted from window geometry
-    sec_occurance = rs_coords.find(",")
-    thr_occurance = rs_coords.find("(")
-    x = rs_coords[first_occurance+1: sec_occurance] #gets x coordinate
-    y = rs_coords[sec_occurance+1:thr_occurance] #gets y coordinate
-    
-    ##change from str to int
-    return int(x), int(y)
-
-#def calc_distance(pt1, pt2):
-#    #distance == sqr of (x2 -x1)^2 + (y2 - y1)^2
-#    return int( sqrt( ((pt2[0]-pt1[0])**2) + ((pt2[1] - pt1[1])**2)) )
 
 if __name__ == '__main__':
-    #find_template(cur_dir+'/imgs/rawShrimp.png')
-    #find_template(cur_dir+'/imgs/cookedShrimp.png')
     find_template(cur_dir+'/imgs/salmon.png')
     find_template(cur_dir+'/imgs/trout.png')
     find_template(cur_dir+'/imgs/burntfish.png')

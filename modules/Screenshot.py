@@ -5,10 +5,10 @@ import pyscreenshot
 
 
 def shoot(x1,y1,x2,y2):
-    """Takes screenshot at given coordinates as PIL image format, the converts to cv2 grayscale image format"""
+    """Takes screenshot at given coordinates as PIL image format, the converts to cv2 grayscale image format and returns it"""
     im = pyscreenshot.grab(bbox=(x1,y1,x2,y2)) #X1,Y1,X2,Y2
     #im.save('screenshot.png')
-    im=im.convert('RGB')
+    #im=im.convert('RGB')
    
     im = np.array(im)
     

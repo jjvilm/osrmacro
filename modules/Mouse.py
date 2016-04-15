@@ -96,13 +96,22 @@ def moveTo(x,y):
 
         #slows down if closer to target coord
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-            RandTime.randTime(0,0,1,0,9,9)
+            RandTime.randTime(0,0,0,0,0,9)
         else:
             RandTime.randTime(0,0,0,0,0,1)
             RandTime.randTime(0,0,0,0,0,1)
-            if random.randint(0,3) == 0:
+            if random.randint(0,20) == 0:
                 RandTime.randTime(0,0,0,0,0,9)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
         #autopy.mouse.move(cur_x, cur_y)
 
+def click(button):
+    #autopy.mouse.click()
+    #
+    autopy.mouse.toggle(True,button)
+    randTime(1,1,1,0,9,9)#time between click
+    randTime(1,1,1,0,9,9)
+    #autopy.mouse.toggle(False,button)
+
+    randTime(0,0,0,0,1,9)
