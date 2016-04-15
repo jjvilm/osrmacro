@@ -8,7 +8,6 @@ import subprocess #needed to access xdotool output
 import random #get random time
 import time #for sleep
 import os #needed to 
-from math import sqrt
 
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
@@ -37,11 +36,11 @@ def findOptionClick(x,y,menu_x,menu_y, menu):#X,Y coords of where it clied in ba
         #autopy.mouse.click()
         #
         autopy.mouse.toggle(True,button)
-        randTime(1,1,1,0,9,9)#time between click
-        randTime(1,1,1,0,9,9)
-        #autopy.mouse.toggle(False,button)
+        randTime(0,0,0,0,0,1)#time between click
+        randTime(0,0,0,0,0,0)
+        autopy.mouse.toggle(False,button)
 
-        randTime(0,0,0,0,1,9)
+        randTime(0,0,0,0,0,1)
 
 def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
@@ -106,7 +105,7 @@ def moveClick(x,y, button):#moves to random X,Y of found match of template
     randTime(0,0,0,0,0,0)
     autopy.mouse.toggle(False,button)
 
-    randTime(0,0,0,0,0,3)
+    randTime(0,0,0,0,0,1)
 
 def moveTo(x,y):
     """Move mouse  NOT in a straight line"""
@@ -126,14 +125,14 @@ def moveTo(x,y):
 
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
-        if (len_x) <= 5 and  (len_y) <= 5:
+        if (len_x) <= 7 and  (len_y) <= 7:
             randTime(0,0,0,0,0,0)
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
             if len_x > 100:
                 cur_x -= random.randint(51,99)
-            elif len_x <= 7:
+            elif len_x <= 10:
                 cur_x -= random.randint(1,5)
                 if overshoot == 7:
                     cur_x -= random.randint(1,15)
@@ -149,8 +148,8 @@ def moveTo(x,y):
         else:#Lower x
             if len_x > 100:
                 cur_x += random.randint(51,99)
-            elif len_x <= 7:
-                cur_x += random.randint(1,3)
+            elif len_x <= 10:
+                cur_x += random.randint(1,5)
                 if overshoot == 7:
                     cur_x += random.randint(1,15)
             elif len_x <= 11:
@@ -166,13 +165,13 @@ def moveTo(x,y):
         if cur_y > y: # Higher Y
             if len_y > 100:
                 cur_y -= random.randint(51,99)
-            elif len_y <= 7:
+            elif len_y <= 5:
                 cur_y -= random.randint(1,3)
                 if overshoot == 7:
                     cur_x -= random.randint(1,15)
             elif len_y <= 11:
                 cur_y -= random.randint(1,5)
-            elif len_y <= 19:
+            elif len_y <= 25:
                 cur_y -= random.randint(1,9)
             elif len_y <= 50:
                 cur_y -= random.randint(5,24)
@@ -182,12 +181,12 @@ def moveTo(x,y):
             if len_y > 100:
                 cur_y += random.randint(51,99)
             elif len_y <= 7:
-                cur_y += random.randint(1,3)
+                cur_y += random.randint(1,5)
                 if overshoot == 7:
                     cur_x += random.randint(1,15)
             elif len_y <= 11:
                 cur_y += random.randint(1,5)
-            elif len_y <= 19:
+            elif len_y <= 25:
                 cur_y += random.randint(1,9)
             elif len_y <= 50:
                 cur_y += random.randint(5,25)
@@ -257,9 +256,6 @@ def rsPosition():
     ##change from str to int
     return int(x), int(y)
 
-#def calc_distance(pt1, pt2):
-#    #distance == sqr of (x2 -x1)^2 + (y2 - y1)^2
-#    return int( sqrt( ((pt2[0]-pt1[0])**2) + ((pt2[1] - pt1[1])**2)) )
 
 if __name__ == '__main__':
     find_template(cur_dir+'/imgs/grimmyGuam.png')
