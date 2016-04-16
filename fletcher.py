@@ -16,6 +16,7 @@ from modules import Screenshot
 from modules import RS
 from modules import Match
 from modules import Keyboard
+from modules import Screenshot
 
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
@@ -116,7 +117,63 @@ def moveToFletchingOptions():
         autopy.key.toggle(autopy.key.K_RETURN, False)
         break
 
+def deposit_bow():
+    print("depositing bow")
+    rsx,rsy=RS.position()
+    cwd = os.getcwd()
+    rs_bag = RS.get_bag()
+    loc, w, h = Match.this(rs_bag,cwd+'/imgs/mapleLongBow.png')
+    for pt in zip(*loc[::-1]):
+        x,y= pt
+        x += rsx+557
+        y ++ rsy+229
 
+        x2 = x+173
+        y2 = y+253
+        x = random.randint(x,x2)
+        y = random.randint(y,y2)
+
+        #screenshot taken of menu @ 1st bow in bag
+        menu_x, menu_y, menu =RS.getOptionsMenu(x,y)
+        RS.findOptionClick(x,y,menu_x,menu_y, menu,'withdrawAll')
+        print("breaking")
+        break
+    print("not found")
+
+def withdraw_bow():
+    pass
+
+def checkBank():
+    rsx,rsy = RS.position()
+    cwd= os.getcwd()
+    #position of bank X button relative to rs.position
+    x1= rsx+475
+    y1= rsy+33
+    x2= rsx+496
+    y2= rsy+52
+    timer = 0 
+    while timer < 5:
+        #fletch 
+        find_template('knife.png','click')
+        find_template('mapleLog.png','click')
+        moveToFletchingOptions()
+        #wait for flethcing to be done
+        time.sleep(5)#50 for full inv
+        #check for 5 seconds if bank is open, if not then done
+        while timer < 5:
+            print(timer)
+            bankXbutton = Screenshot.shoot(x1,y1,x2,y2)
+            loc, w, h = Match.this(bankXbutton,cwd+'/imgs/bankXbutton.png')
+            #if x is found then redo again
+            for pt in zip(*loc[::-1]):
+                #deposit long/short bows, take out logs
+                deposit_bow()
+                checkBank()
+                withdraw_bow()
+            time.sleep(1)
+            timer += 1
+    
+    
 
 
     
@@ -125,6 +182,7 @@ def moveToFletchingOptions():
     
     
 if __name__ == '__main__':
+    #checkBank()
     find_template('knife.png','click')
     find_template('mapleLog.png','click')
     moveToFletchingOptions()

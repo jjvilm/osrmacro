@@ -68,14 +68,14 @@ def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it cli
     """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
     #get base directory osrmacro
     cur_dir = os.getcwd()
-    
-    #occurance = cur_dir.rfind("/") #finds the last "/", returns its index
-    #cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
+    if 'modules' in cur_dir: 
+        occurance = cur_dir.rfind("/") #finds the last "/", returns its index
+        cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
     
     img_gray = menu #screenshot of menu
     
     #added for debug purposes
-    #cv2.imwrite('a.png', img_gray)
+    cv2.imwrite('test.png', img_gray)
     
     #template
     template = cv2.imread(cur_dir+'/imgs/'+option+'.png',0)#0 here means turned gray
@@ -118,6 +118,7 @@ def get_bag():
     y2 = y1 + 253
      
     rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+    cv2.imwrite('rs_bag.png',rs_bag)
 
     return rs_bag
 

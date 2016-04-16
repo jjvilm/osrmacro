@@ -16,7 +16,7 @@ def shoot(x1,y1,x2,y2):
     cv_img = im.astype(np.uint8)
     
     cv_gray = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)
-    #cv2.imwrite('cv_gray.png', cv_gray) ##to save img in cv2
+    #cv2.imwrite('test1.png', cv_gray) ##to save img in cv2
     
     return cv_gray
 
