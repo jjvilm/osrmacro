@@ -11,7 +11,8 @@ cwd = os.getcwd()
 
 class App:
     def __init__(self, master):
-        frame = Frame(master)
+        frame = Frame(master, 
+                bg='black')
         frame.pack()
 
         self.dropper_btn = Button(frame, 
@@ -27,6 +28,13 @@ class App:
                 bg='green',
                 command=self.herbClean)
         self.herbClean_btn.pack()
+
+        self.fletcher_btn = Button(frame,
+                text="Fletch",
+                fg='white',
+                bg='#133B18',
+                command=self.fletch)
+        self.fletcher_btn.pack()
 
         self.plankmake = Button(frame,
                 text="Make Plank",
@@ -63,6 +71,8 @@ class App:
         os.system(cwd+'/herbCleaner.py')
     def dropper(self):
         os.system(cwd+'/findndrop.py')
+    def fletch(self):
+        os.system(cwd+'/fletcher.py')
 root = Tk()
 root.title('Various Macros')
 app = App(root)

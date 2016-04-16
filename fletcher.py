@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+#fletcher.py
 import cv2
 import numpy as np
 import autopy #for smooth mouse move
@@ -73,8 +75,12 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
 def moveToFletchingOptions():
     cwd = os.getcwd()
     rsx, rsy = RS.position() #gets position of RS window
-    x = rsx + random.randint(23,167)#x coord range of short bow
-    y = rsy + random.randint(397,469) #y respectivaly
+    #x = rsx + random.randint(23,167)#x coord range of short bow
+    #y = rsy + random.randint(397,469) #y respectivaly
+
+    x = rsx + random.randint(209,299)#x coord range of long bow
+    y = rsy + random.randint(395,456) #BR-coord of longbow
+
     Mouse.moveClick(x,y,3) #right-clicks on short bow
     #taking away rs position since getoptionsmenu func adds them back in
     x = x - rsx
@@ -87,7 +93,7 @@ def moveToFletchingOptions():
         pt_x, pt_y = pt #unpackes the pt into x,y
 
         x_a = menu_x + pt_x + (random.randint(1,(w*2)))
-        y_a = menu_y + pt_y + (random.randint(1,h))
+        y_a = menu_y + pt_y + (random.randint(5,h))
 
         RandTime.randTime(0,0,0,0,0,9)
         RandTime.randTime(0,0,0,0,0,0)
@@ -100,7 +106,7 @@ def moveToFletchingOptions():
         #clicks on 'Make X'
         Mouse.click(1)
 
-        time.sleep(.5)
+        time.sleep(.9)
         RandTime.randTime(0,0,0,0,9,9)
 
         Keyboard.type_this("99")
