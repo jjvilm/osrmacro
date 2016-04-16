@@ -67,7 +67,19 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
 
     autopy.mouse.toggle(True,button)
     RandTime.randTime(0,0,0,0,0,1)
+    RandTime.randTime(0,0,0,0,0,0)
     autopy.mouse.toggle(False,button)
+    
+def moveToFletchingOptions():
+    x, y = RS.position() #gets position of RS window
+    x, y = gen_coords( (23,397), 167,469) #get random coors within template
+    Mouse.moveClick(x,y,3) #right-clicks on short bow
+    RS.getOptions NOT DONE
+    then take pic, find option "make x", click it.  type 99, press enter
+    
+    
+    
+    
     
 if __name__ == '__main__':
     find_tempalte('knife.png','click')

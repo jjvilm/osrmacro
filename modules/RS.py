@@ -32,7 +32,7 @@ def position():
     return int(x), int(y)
     
 def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
-    """Returns"""
+    """Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
     #Top-Left coords of where RS window is
     rs_x, rs_y = position()
     
@@ -51,7 +51,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     return menu_x, menu_y, menu
     
 def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
-    """Finds option bassed to the function from passed menu as cv2 image.  needs the x,y of the menu"""
+    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
     #get base directory osrmacro
     cur_dir = os.getcwd()
     
