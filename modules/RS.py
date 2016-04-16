@@ -51,6 +51,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     return menu_x, menu_y, menu
     
 def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
+    """Finds option bassed to the function from passed menu as cv2 image.  needs the x,y of the menu"""
     #get base directory osrmacro
     cur_dir = os.getcwd()
     
@@ -77,4 +78,28 @@ def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it cli
         
         autopy.mouse.click()
         RandTime.randTime(0,0,0,0,0,9)
+        
+def center_window():
+    #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
+    display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
+    display_x = display_x[:4]
+    display_x = int(display_x)
+    display_x //= 2
+
+    pos = display_x - 383
+    #moves window to center of screen
+    os.system('xdotool search old windowmove {0} 0'.format(pos))
+    #os.system('xdotool search old windowmove 0 0')
+
+def get_bag():
+	x1, y1 = position() #Get runescapes top-left coords
     
+    x1 += 557    #make The Bag's top-left, and btm-right coords
+    y1 += 229    #x2,y2 == btm-right coord, width and height
+    x2 = x1 + 173 
+    y2 = y1 + 253
+     
+    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+    
+    return rs_bag
+

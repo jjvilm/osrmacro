@@ -8,7 +8,7 @@ import subprocess #needed to access xdotool output
 import random #get random time
 import time #for sleep
 import os #needed to 
-from math import sqrt
+
 ### Import my modules
 from modules import Mouse
 from modules import RandTime 
@@ -22,6 +22,11 @@ cur_dir = os.getcwd()
 
 
 def find_template(template_file):#pass template to function
+    #checks to see wheater to add cur dir or not
+    if "/" not in template_file:
+        global cur_dir
+        template_file = cur_dir+"/imgs/"+template_file
+        
     x1, y1 = RS.position() #Get runescapes top-left coords
     
     x1 += 557    #make The Bag's top-left, and btm-right coords

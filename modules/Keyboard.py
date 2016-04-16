@@ -2,25 +2,22 @@ import autopy
 import time
 import random
 
-random.seed()
+### My Modules
+import RandTime
 
 def typing(strings):
-    for s in strings:
-        n = random.random()
+	"""Types the passed characters with random pauses in between strokes"""
+	for s in strings:
 
-        milisecs = '.00'
-        n = str(n)
-        milisecs = milisecs + n
-        milisecs = float(milisecs)
-
-        autopy.key.toggle(s, True)
-        time.sleep(milisecs)
-        autopy.key.toggle(s, False)
-
-
-
-
-
-typing("The brown fox jumped over the lazy brown dog.")
-typing("My house is located here, but i dont know hwere here is so i dont know how to find the houe to where im going to go")
+		# delay between key presses--key UP/DOWN
+		autopy.key.toggle(s, True)
+		
+		if random.randint(0,10) == 0:
+			RandTime.randTime(0,0,0,0,2,9)
+		else:
+			RandTime.randTime(0,0,0,0,1,9)
+			
+		autopy.key.toggle(s, False)
+		# delay after key UP--next key 
+		RandTime.randTime(0,0,0,0,0,9) 
 

@@ -49,10 +49,12 @@ def log_in(user='no_user_given', passwd='nopass'):
 	setWindowSize(window)
 
 	x, y = log_in_box()
+	WORK ON THIS LATER
 	os.system('xdotool mousemove --window {0} --sync 456 310'.format(window))
 	os.system('xdotool click 1')
 	time.sleep(1)
-	os.system('xdotool type --delay 50 {0}'.format(user))
+	Keyboard.typing(user)
+	
 	
 	os.system('xdotool key Tab')
 	

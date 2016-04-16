@@ -3,6 +3,9 @@
 from Tkinter import *
 import os
 
+### My Modules
+from modules import RS
+
 
 cwd = os.getcwd()
 
@@ -54,7 +57,8 @@ class App:
         os.system('xdotool search --name old windowsize --sync 767 564')
 
     def centering(self):
-        os.system(cwd+'/setup.py')
+        #os.system(cwd+'/setup.py')
+        RS.center_window()
     def herbClean(self):
         os.system(cwd+'/herbCleaner.py')
     def dropper(self):
