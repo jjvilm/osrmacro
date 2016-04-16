@@ -42,12 +42,17 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     menu_x = rs_x + x
     menu_y = rs_y + y - 24   
     menu_x -= 90#55 default moves x location 70px to top-left of options menu
-    menu_x2 = menu_x + 80 #Plus width
+
+    menu_x2 = menu_x + 120 #Plus width
     menu_y2 = menu_y + 120 #Plus height 
     
     #takes screenshot here
     menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
-    
+
+    #added for debug purposes
+    #cv2.imwrite('img_debug.png', menu)
+
+    #menu is the image, menuy/menux is the top-left coord of the image 
     return menu_x, menu_y, menu
     
 def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
@@ -59,6 +64,9 @@ def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it cli
     #cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
     
     img_gray = menu #screenshot of menu
+    
+    #added for debug purposes
+    #cv2.imwrite('a.png', img_gray)
     
     #template
     template = cv2.imread(cur_dir+'/imgs/'+option+'.png',0)#0 here means turned gray
@@ -76,7 +84,8 @@ def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it cli
         
         Mouse.moveTo(x,y)
         
-        autopy.mouse.click()
+        #autopy.mouse.click()#taking out since it does not delay the click
+        Mouse.click(1)
         RandTime.randTime(0,0,0,0,0,9)
         
 def center_window():
@@ -92,14 +101,14 @@ def center_window():
     #os.system('xdotool search old windowmove 0 0')
 
 def get_bag():
-	x1, y1 = position() #Get runescapes top-left coords
-    
+    x1, y1 = position() #Get runescapes top-left coords
+
     x1 += 557    #make The Bag's top-left, and btm-right coords
     y1 += 229    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
     y2 = y1 + 253
      
     rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-    
+
     return rs_bag
 

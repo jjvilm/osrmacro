@@ -110,14 +110,14 @@ def click(button):
     #autopy.mouse.click()
     #
     autopy.mouse.toggle(True,button)
-    randTime(0,0,0,0,0,1)#time between click
-    randTime(0,0,0,0,0,0)
+    RandTime.randTime(0,0,0,0,0,1)#time between click
+    RandTime.randTime(0,0,0,0,0,0)
     autopy.mouse.toggle(False,button)
 
-    randTime(0,0,0,0,1,9)
+    RandTime.randTime(0,0,0,0,1,9)
 
 def moveClick(x,y, button=0):#moves to random X,Y of found match of template
-    Mouse.moveTo(x,y)
+    moveTo(x,y)
     if button != 0:
         autopy.mouse.toggle(True,button)
         RandTime.randTime(0,0,0,0,0,1)

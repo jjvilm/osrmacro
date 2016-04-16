@@ -5,7 +5,7 @@ import random
 ### My Modules
 import RandTime
 
-def typing(strings):
+def type_this(strings):
 	"""Types the passed characters with random pauses in between strokes"""
 	for s in strings:
 

@@ -13,6 +13,7 @@ from modules import RandTime
 from modules import Screenshot
 from modules import RS
 from modules import Match
+from modules import Keyboard
 
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
@@ -21,29 +22,28 @@ def find_template(template_file, option=None):#pass template to function
 #option == to option in menu when righ-clicked on item
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
-        global cur_dir
         template_file = cur_dir+"/imgs/"+template_file
         
     rs_bag = RS.get_bag() #Screenshot taken here, 
-    
+
     #loc == coordinates found in match
-    loc = Match.this(rs_bag, template_file)
+    loc, w, h = Match.this(rs_bag, template_file)
     for pt in zip(*loc[::-1]):#goes through each found image
-	btmX = pt[0] + w - 5#pt == top-left coord of template, bottom-right point of of template image
+        btmX = pt[0] + w - 5#pt == top-left coord of template, bottom-right point of of template image
         btmY = pt[1] + h - 5
         #moving the pt coord of the template a bit to the right, so options menu get brought up
         pt = (pt[0] + 5, pt[1] + 2)
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
-	if option == 'click':
-	    moveClick(x,y, 1)#right clicks on given x,y coords
-	else:
-	    moveClick(x,y, 3)#right clicks on given x,y coords
-	    menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
-	    RandTime.randTime(0,0,0,0,0,1)
-	    
-	    RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
-	break
+        if option == 'click':
+            moveClick(x,y, 1)#right clicks on given x,y coords
+        else:
+            moveClick(x,y, 3)#right clicks on given x,y coords
+            menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
+            RandTime.randTime(0,0,0,0,0,1)
+            
+            RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
+        break
         
 	 
 def gen_coords(pt,btmX,btmY):
@@ -71,18 +71,56 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
     autopy.mouse.toggle(False,button)
     
 def moveToFletchingOptions():
-    x, y = RS.position() #gets position of RS window
-    x, y = gen_coords( (23,397), 167,469) #get random coors within template
+    cwd = os.getcwd()
+    rsx, rsy = RS.position() #gets position of RS window
+    x = rsx + random.randint(23,167)#x coord range of short bow
+    y = rsy + random.randint(397,469) #y respectivaly
     Mouse.moveClick(x,y,3) #right-clicks on short bow
-    RS.getOptions NOT DONE
-    then take pic, find option "make x", click it.  type 99, press enter
+    #taking away rs position since getoptionsmenu func adds them back in
+    x = x - rsx
+    y = y - rsy
+    #gets screenshot
+    menu_x, menu_y, menu = RS.getOptionsMenu(x,y)
+    loc, w, h = Match.this(menu, cwd+'/imgs/makeX.png')
+    #runs though the imgae to find it and click it
+    for pt in zip(*loc[::-1]):
+        pt_x, pt_y = pt #unpackes the pt into x,y
+
+        x_a = menu_x + pt_x + (random.randint(1,(w*2)))
+        y_a = menu_y + pt_y + (random.randint(1,h))
+
+        RandTime.randTime(0,0,0,0,0,9)
+        RandTime.randTime(0,0,0,0,0,0)
+
+        #moves to 'Make X'
+        Mouse.moveTo(x_a,y_a)
+
+        RandTime.randTime(0,0,0,0,0,1)
+        RandTime.randTime(0,0,0,0,0,0)
+        #clicks on 'Make X'
+        Mouse.click(1)
+
+        time.sleep(.5)
+        RandTime.randTime(0,0,0,0,9,9)
+
+        Keyboard.type_this("99")
+        autopy.key.toggle(autopy.key.K_RETURN, True)
+        RandTime.randTime(0,0,0,0,0,1)
+        RandTime.randTime(0,0,0,0,0,0)
+        autopy.key.toggle(autopy.key.K_RETURN, False)
+        break
+
+
+
+
     
     
     
     
     
 if __name__ == '__main__':
-    find_tempalte('knife.png','click')
-    find_template('MapleLog.png','click')
+    find_template('knife.png','click')
+    find_template('mapleLog.png','click')
+    moveToFletchingOptions()
     #print("Time taken:",timer)
 
