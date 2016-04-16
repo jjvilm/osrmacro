@@ -43,6 +43,13 @@ class App:
                 command=self.making)
         self.plankmake.pack()
 
+        self.login_btn = Button(frame, 
+                text="LogIn",
+                fg='cyan',
+                bg='blue',
+                command=self.login)
+        self.login_btn.pack()
+
         self.center_btn = Button(frame, 
                 text="Center RS",
                 fg='black',
@@ -73,6 +80,9 @@ class App:
         os.system(cwd+'/findndrop.py')
     def fletch(self):
         os.system(cwd+'/fletcher.py')
+    def login(self):
+        os.system(cwd+'/login.py')
+
 root = Tk()
 root.title('Various Macros')
 app = App(root)

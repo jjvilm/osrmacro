@@ -31,6 +31,14 @@ def position():
     
     ##change from str to int
     return int(x), int(y)
+
+def setWindowSize(w=767,h=564):
+    geometry = subprocess.check_output(['xdotool','search','--name', 'Old','getwindowgeometry'])
+    width = geometry[-7:-4]
+    height = geometry[-3:]
+    if width != w or  height != h:
+        os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
+
     
 def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
     """Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
@@ -98,7 +106,7 @@ def center_window():
 
     pos = display_x - 383
     #moves window to center of screen
-    os.system('xdotool search old windowmove {0} 0'.format(pos))
+    os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
     #os.system('xdotool search old windowmove 0 0')
 
 def get_bag():
