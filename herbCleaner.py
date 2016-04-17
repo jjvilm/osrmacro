@@ -10,7 +10,7 @@ import time #for sleep
 import os #needed to 
 
 #Finds an image from the given template.  
-bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
+bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 timer = 0
 
@@ -46,9 +46,9 @@ def find_template(template_file):#pass template to function
     x1, y1 = rsPosition() #Get runescapes top-left coords
     
     x1 += 557    #make The Bag's top-left, and btm-right coords
-    y1 += 229    #x2,y2 == btm-right coord, width and height
+    y1 += 200#default207    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
-    y2 = y1 + 253
+    y2 = y1 + 260#default 253
      
     rs_bag = my_screenshot(x1,y1,x2,y2) #Screenshot taken here, 
     
@@ -260,7 +260,7 @@ def rsPosition():
 
 
 if __name__ == '__main__':
-    find_template(cur_dir+'/imgs/grimmyIrit.png')
+    #find_template(cur_dir+'/imgs/grimmyIrit.png')
     find_template(cur_dir+'/imgs/grimmyGuam.png')
     #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
     #find_template(cur_dir+'/imgs/grimmyTarromin.png')

@@ -18,7 +18,7 @@ from modules import Match
 from modules import Keyboard
 from modules import Screenshot
 
-bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
+bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 
 def find_template(template_file, option=None):#pass template to function
@@ -39,7 +39,7 @@ def find_template(template_file, option=None):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         if option == 'click':
-            moveClick(x,y, 1)#right clicks on given x,y coords
+            moveClick(x,y, 1)#left clicks on given x,y coords
         else:
             moveClick(x,y, 3)#right clicks on given x,y coords
             menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
@@ -48,6 +48,79 @@ def find_template(template_file, option=None):#pass template to function
             RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
         break
         
+def withdraw_from_bank(template_file, option):#pass template to function
+	#option == to option in menu options when righ-clicked on item
+	#checks to see wheater to add cur dir or not
+	cwd = os.getcwd()
+	if "/" not in template_file:
+		template_file = cwd+"/imgs/"+template_file
+	#	print(template_file, "file in withraw_from_bank()")
+
+	#creating bank window coords
+	rsx,rsy = RS.position()
+	x1 = rsx + 21
+	y1 = rsy + 23
+	x2 = rsx + 486
+	y2 = rsy + 335
+	#creates  sceenshot object of bankwindow, 	
+	bankWindow = Screenshot.shoot(x1,y1,x2,y2)
+
+	#saves bankWindow image object for debug purposes
+	#cv2.imwrite('bankWindow_debug.png',bankWindow)
+
+	#loc == coordinates found in match
+	loc, w, h = Match.this(bankWindow, template_file)
+	for pt in zip(*loc[::-1]):#goes through each found image
+		#adds x1,y1 coords to pt to be relative to the window
+		pt = (x1+pt[0], y1+pt[1])
+
+		#Bottom-Right coords of found template
+		btmX =  pt[0] + w - 1
+		btmY =  pt[1] + h - 1
+
+		#create random coords within the coords of the found template
+		rx = random.randint(pt[0],btmX)
+		ry = random.randint(pt[1],btmY)
+
+		#right clicks on given x,y coords
+		print("RC @", rx,ry)
+		Mouse.moveClick(rx,ry, 3)
+
+		#takes screenshot & returns Top-left pt of screenshot
+		menu_x, menu_y, menu = RS.getOptionsMenu(rx,ry)
+
+		#saves image for debug purposes
+		cv2.imwrite('debug_inBankLog.png',menu)
+
+		RandTime.randTime(0,0,0,0,0,1)
+
+		#following line does not work b/ option is set to click * 3 of width of option
+		#only that is applicable for in bag inventory options
+		#RS.findOptionClick(rx,ry, menu_x, menu_y, menu, option)
+
+		#Using match instead to find option and click it
+		print("cwd+'/imgs/'+option+'.png")
+		loc, w, h = Match.this(menu, cwd+'/imgs/withdrawAll.png')
+
+		
+		#runs though the imgae to find 'withdraw all' option and click it
+		for pt in zip(*loc[::-1]):
+			pt = (menu_x+pt[0], menu_y+pt[1])
+
+			#Bottom-Right coords of found template
+			btmX =  pt[0] + w - 1
+			btmY =  pt[1] + h - 1
+
+			#create random coords within the coords of the found template
+			rx = random.randint(pt[0],btmX)
+			ry = random.randint(pt[1],btmY)
+
+	XXXXX		#clicks on given random x,y coords
+			print("RC @", rx,ry)
+			Mouse.moveClick(rx,ry, 1)
+			break
+		
+		break
 	 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -117,74 +190,43 @@ def moveToFletchingOptions():
         autopy.key.toggle(autopy.key.K_RETURN, False)
         break
 
-def deposit_bow():
-    print("depositing bow")
-    rsx,rsy=RS.position()
-    cwd = os.getcwd()
-    rs_bag = RS.get_bag()
-    loc, w, h = Match.this(rs_bag,cwd+'/imgs/mapleLongBow.png')
-    for pt in zip(*loc[::-1]):
-        x,y= pt
-        x += rsx+557
-        y ++ rsy+229
-
-        x2 = x+173
-        y2 = y+253
-        x = random.randint(x,x2)
-        y = random.randint(y,y2)
-
-        #screenshot taken of menu @ 1st bow in bag
-        menu_x, menu_y, menu =RS.getOptionsMenu(x,y)
-        RS.findOptionClick(x,y,menu_x,menu_y, menu,'withdrawAll')
-        print("breaking")
-        break
-    print("not found")
-
-def withdraw_bow():
-    pass
-
 def checkBank():
-    rsx,rsy = RS.position()
-    cwd= os.getcwd()
-    #position of bank X button relative to rs.position
-    x1= rsx+475
-    y1= rsy+33
-    x2= rsx+496
-    y2= rsy+52
-    timer = 0 
-    while timer < 5:
-        #fletch 
-        find_template('knife.png','click')
-        find_template('mapleLog.png','click')
-        moveToFletchingOptions()
-        #wait for flethcing to be done
-        time.sleep(5)#50 for full inv
-        #check for 5 seconds if bank is open, if not then done
-        while timer < 5:
-            print(timer)
-            bankXbutton = Screenshot.shoot(x1,y1,x2,y2)
-            loc, w, h = Match.this(bankXbutton,cwd+'/imgs/bankXbutton.png')
-            #if x is found then redo again
-            for pt in zip(*loc[::-1]):
-                #deposit long/short bows, take out logs
-                deposit_bow()
-                checkBank()
-                withdraw_bow()
-            time.sleep(1)
-            timer += 1
-    
+	rsx,rsy = RS.position()
+	cwd= os.getcwd()
+	#position of bank X button relative to rs.position
+	x1= rsx+470
+	y1= rsy+10
+	x2= rsx+500
+	y2= rsy+55
+	timer = 1 
+	while timer < 11:
+		#fletch 
+		find_template('knife.png','click')
+		find_template('mapleLog.png','click')
+		moveToFletchingOptions()
+		#wait for flethcing to be done
+		time.sleep(5)#50 for full inv
+		#check for 5 seconds if bank is open, if not then done
+		while timer < 11:
+			print(timer)
+			bankXButton = Screenshot.shoot(x1,y1,x2,y2)
+			#cv2.imwrite('bankXbutton_debug.png', bankXButton)
+			loc, w, h = Match.this(bankXButton,cwd+'/imgs/bankXbutton.png')
+			#Only runs if bank is open
+			for pt in zip(*loc[::-1]):
+				#deposit long/short bows, take out logs
+				find_template('mapleLongBow.png','depositAll')
+				withdraw_from_bank('mapleLog.png','withdrawAll')
+				checkBank()
+				break
+			time.sleep(1)
+			timer += 1
     
 
-
-    
-    
-    
-    
-    
 if __name__ == '__main__':
-    #checkBank()
-    find_template('knife.png','click')
-    find_template('mapleLog.png','click')
-    moveToFletchingOptions()
+    checkBank()
+    #find_template('knife.png','click')
+    #find_template('mapleLog.png','click')
+    #moveToFletchingOptions()
     #print("Time taken:",timer)
 

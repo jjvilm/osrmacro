@@ -41,61 +41,60 @@ def setWindowSize(w=767,h=564):
 
     
 def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
-    """Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
-    #Top-Left coords of where RS window is
-    rs_x, rs_y = position()
-    
-    #Adding Rs coords to the options menu to get its location relevant to the window
-    #24 here goes up on Y since sometimes screenshot needs to get more of the 
-    #top Y to find the right option in the options menu.  
-    menu_x = rs_x + x
-    menu_y = rs_y + y - 24   
-    menu_x -= 90#55 default moves x location 70px to top-left of options menu
+	"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
+	#Top-Left coords of where RS window is
+	rs_x, rs_y = position()
 
-    menu_x2 = menu_x + 120 #Plus width
-    menu_y2 = menu_y + 120 #Plus height 
-    
-    #takes screenshot here
-    menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
+	#Adding Rs coords to the options menu to get its location relevant to the window
+	#24 here goes up on Y since sometimes screenshot needs to get more of the 
+	#top Y to find the right option in the options menu.  
+	menu_x = rs_x + x - 10  #moves screenshot to left 
+	menu_y = rs_y + y - 40  #moves screenshot up 
+	menu_x -= 120#55 default moves x location 70px to top-left of options menu
 
-    #added for debug purposes
-    #cv2.imwrite('img_debug.png', menu)
+	menu_x2 = menu_x + 220 #Plus width
+	menu_y2 = menu_y + 160 #Plus height 
 
-    #menu is the image, menuy/menux is the top-left coord of the image 
-    return menu_x, menu_y, menu
+	#takes screenshot here
+	menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
+
+	#added for debug purposes
+	cv2.imwrite('getOptionsMenu_debug.png', menu)
+
+	#menu is the image, menuy/menux is the top-left coord of the image 
+	return menu_x, menu_y, menu
     
 def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
-    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
-    #get base directory osrmacro
-    cur_dir = os.getcwd()
-    if 'modules' in cur_dir: 
-        occurance = cur_dir.rfind("/") #finds the last "/", returns its index
-        cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
-    
-    img_gray = menu #screenshot of menu
-    
-    #added for debug purposes
-    cv2.imwrite('test.png', img_gray)
-    
-    #template
-    template = cv2.imread(cur_dir+'/imgs/'+option+'.png',0)#0 here means turned gray
-    
-    w, h = template.shape[::-1]#Width, height of template image
-    res = cv2.matchTemplate(img_gray,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 
-    loc = np.where( res >= threshold)
-    
-    for pt in zip(*loc[::-1]):#goes through each found image
-        pt_x, pt_y = pt #point of drop found inside the option menu screenshot
-        
-        x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
-        y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
-        
-        Mouse.moveTo(x,y)
-        
-        #autopy.mouse.click()#taking out since it does not delay the click
-        Mouse.click(1)
-        RandTime.randTime(0,0,0,0,0,9)
+	"""Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
+	"""USE ONLY FOR BAG INVENTORY, otherwise it might not work"""
+	#get base directory osrmacro
+	cur_dir = os.getcwd()
+	if 'modules' in cur_dir: 
+		occurance = cur_dir.rfind("/") #finds the last "/", returns its index
+		cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
+
+	#added for debug purposes
+	#cv2.imwrite('FindOptionClick_debug.png', menu)
+
+	#template
+	template = cv2.imread(cur_dir+'/imgs/'+option+'.png',0)#0 here means turned gray
+
+	w, h = template.shape[::-1]#Width, height of template image
+	res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
+	threshold = .8 
+	loc = np.where( res >= threshold)
+
+	for pt in zip(*loc[::-1]):#goes through each found image
+		pt_x, pt_y = pt #point of drop found inside the option menu screenshot
+		
+		x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
+		y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
+		
+		Mouse.moveTo(x,y)
+		
+		#autopy.mouse.click()#taking out since it does not delay the click
+		Mouse.click(1)
+		RandTime.randTime(0,0,0,0,0,9)
         
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
@@ -113,12 +112,13 @@ def get_bag():
     x1, y1 = position() #Get runescapes top-left coords
 
     x1 += 557    #make The Bag's top-left, and btm-right coords
-    y1 += 229    #x2,y2 == btm-right coord, width and height
+	#y1=229 default for archlinux 
+    y1 += 200    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
-    y2 = y1 + 253
+    y2 = y1 + 260#253default for arch
      
     rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-    cv2.imwrite('rs_bag.png',rs_bag)
+    #cv2.imwrite('rs_bag_debug.png',rs_bag)
 
     return rs_bag
 
