@@ -1,0 +1,6 @@
+*give more time after right-cliking to make longbow for the screenshot of the options to be taken.  otherwise it wont be found
+*when rightclicking unstrung longbow, it clicks too far to the right
+*when withdrawing logs, 'withdraw all' is not found becuase screenshot needs to be moved more to the left
+*right-clicks too far up on Y axis on unstrung bow to deposit
+*when clicking the knife, it misclicks.  broken.  worked before right
+*when withdrawing logs from bank.  it right clicks too far down.  fix coords to be closer to the template

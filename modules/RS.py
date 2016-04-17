@@ -48,7 +48,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	#Adding Rs coords to the options menu to get its location relevant to the window
 	#24 here goes up on Y since sometimes screenshot needs to get more of the 
 	#top Y to find the right option in the options menu.  
-	menu_x = rs_x + x - 10  #moves screenshot to left 
+	menu_x = rs_x + x - 40  #higher number moves screenshot to left 
 	menu_y = rs_y + y - 40  #moves screenshot up 
 	menu_x -= 120#55 default moves x location 70px to top-left of options menu
 
@@ -59,7 +59,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
 
 	#added for debug purposes
-	cv2.imwrite('getOptionsMenu_debug.png', menu)
+	#cv2.imwrite('getOptionsMenu_debug.png', menu)
 
 	#menu is the image, menuy/menux is the top-left coord of the image 
 	return menu_x, menu_y, menu
