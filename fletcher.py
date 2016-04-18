@@ -113,7 +113,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
         #runs though the imgae to find 'withdraw all' option and click it
         for pt in zip(*loc[::-1]):
             #moves pt x to left *2 the w of it.  
-            pt = (menu_x+pt[0]-(w*2), menu_y+pt[1]+3)
+            pt = (menu_x+pt[0]-(w), menu_y+pt[1]+3)
             
 
             #Bottom-Right coords of found template
@@ -252,7 +252,7 @@ def start_fletching():
     x2= rsx+500
     y2= rsy+55
     
-    timer = 10 
+    timer = 20 
     #Loop starts here
     while True:
         #checks to see if there are logs
@@ -267,7 +267,7 @@ def start_fletching():
             break
         else:
             #resets timer
-            timer = 10
+            timer = 20
         ####Starts fletching### 
         #Finds knife, cliks it
         find_template('knife.png','click')
