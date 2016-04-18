@@ -115,7 +115,7 @@ def get_bag():
 	#y1=229 default for archlinux 
     y1 += 200    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
-    y2 = y1 + 260#253default for arch
+    y2 = y1 + 285#253default for arch
      
     rs_bag = Screenshot.shoot(x1,y1,x2,y2)
     #cv2.imwrite('rs_bag_debug.png',rs_bag)
