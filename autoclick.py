@@ -11,10 +11,10 @@ from modules import RS
 def keep_clicking():
     time.sleep(3)
     cx, cy  = autopy.mouse.get_pos()
-    x1 = cx - 15
-    y1 = cy - 15
-    x2 = cx + 15
-    y2 = cy + 15
+    x1 = cx - 5
+    y1 = cy - 5
+    x2 = cx + 5
+    y2 = cy + 5
     timer = 0
     while timer < 30:
         if count_logs('/home/jj/github/osrmacro/imgs/mapleLog.png') == 0:
@@ -33,5 +33,6 @@ def count_logs(template_file):
     count = 0
     for pt in zip(*loc[::-1]):
         count +=1
+        break
     return count
 keep_clicking()

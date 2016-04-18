@@ -187,7 +187,7 @@ def moveToFletchingOptions():
         #clicks on 'Make X'
         Mouse.click(1)
 
-        time.sleep(.9)
+        time.sleep(1.1)
         RandTime.randTime(0,0,0,0,9,9)
 
         Keyboard.type_this("99")
@@ -271,6 +271,7 @@ def start_fletching():
         ####Starts fletching### 
         #Finds knife, cliks it
         find_template('knife.png','click')
+        RandTime.randTime(0,0,1,0,9,9)
         #Finds First maple log, clicks it
         find_template('mapleLog.png','click')
         #Moves to fletch short/long/stock
