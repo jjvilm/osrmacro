@@ -250,7 +250,7 @@ def start_fletching():
     x2= rsx+500
     y2= rsy+55
     
-    timer = 20 
+    timer = 30 
     #Loop starts here
     while True:
         #checks to see if there are logs
@@ -265,7 +265,7 @@ def start_fletching():
             break
         else:
             #resets timer
-            timer = 20
+            timer = 30
         ####Starts fletching### 
         #Finds knife, cliks it
         find_template('knife.png','click')

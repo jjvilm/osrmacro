@@ -1,3 +1,4 @@
+#messes up terminal after using, but works, but not ideal
 import tty, sys
 
 def checking():

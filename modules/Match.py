@@ -5,20 +5,19 @@ import os
 
 
 
-def this(pattern_a, template_b):
+def this(pattern_, template_):
     """pass pattern_ as a cv2 image format, template_ as a file
     Passed Function to do w/e after finding template"""
-    #cur_dir = os.getcwd()
-    #checks to see wheater to add cur dir or not
-    #if "/" not in template_b:
-    #    template_b = cur_dir+"/imgs/"+template_b
-    #    print("cwd in modules:",cur_dir)
-    #print(template_b)
-        
+    cwd  = os.getcwd()
+    if cwd not in template_:
+        template_ = cwd+template_
+    if '.png' not in template_:
+        template_ = cwd+template_+'.png'
+
     #template
-    template = cv2.imread(template_b,0)
+    template = cv2.imread(template_,0)
     w, h = template.shape[::-1]
-    res = cv2.matchTemplate(pattern_a,template,cv2.TM_CCOEFF_NORMED)
+    res = cv2.matchTemplate(pattern_,template,cv2.TM_CCOEFF_NORMED)
     threshold = .8 #default is 8 
     loc = np.where( res >= threshold)
     
@@ -28,3 +27,6 @@ def this(pattern_a, template_b):
     #return loc to be iterable outisde the function
     #also sometimes width and height of image is needed
     return loc, w, h 
+
+if __name__ == "__main__":
+    pass

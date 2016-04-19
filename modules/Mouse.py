@@ -101,8 +101,8 @@ def moveTo(x,y):
             if random.randint(0,4) == 0:
                 RandTime.randTime(0,0,0,0,0,2)
 
-        #autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
-        autopy.mouse.move(cur_x, cur_y)
+        autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        #autopy.mouse.move(cur_x, cur_y)
 
 def click(button):
     #autopy.mouse.click()

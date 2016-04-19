@@ -24,7 +24,7 @@ def keep_clicking():
             timer += 1
             time.sleep(9)
             RandTime.randTime(0,0,1,0,9,9)
-        time.sleep(9)
+        time.sleep(20)
         RandTime.randTime(0,0,1,0,9,9)
 
 def count_logs(template_file):
@@ -35,4 +35,22 @@ def count_logs(template_file):
         count +=1
         break
     return count
-keep_clicking()
+def clicker():
+    time.sleep(3)
+    cx, cy  = autopy.mouse.get_pos()
+    x1 = cx - 5
+    y1 = cy - 5
+    x2 = cx + 5
+    y2 = cy + 5
+    timer = 0
+    while timer < 30:
+        x = random.randint(x1,x2)
+        y = random.randint(y1,y2)
+        Mouse.moveClick(x,y,1)
+        timer +=1
+        time.sleep(37)
+        RandTime.randTime(0,0,1,0,0,9)
+
+#keep_clicking()#for fletching
+clicker()
+

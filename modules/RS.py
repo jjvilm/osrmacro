@@ -49,9 +49,8 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	#Adding Rs coords to the options menu to get its location relevant to the window
 	#24 here goes up on Y since sometimes screenshot needs to get more of the 
 	#top Y to find the right option in the options menu.  
-	menu_x = rs_x + x - 40  #higher number moves screenshot to left 
+	menu_x = rs_x + x - 160  #higher number moves screenshot to left 
 	menu_y = rs_y + y - 40  #moves screenshot up 
-	menu_x -= 120#55 default moves x location 70px to top-left of options menu
 
 	menu_x2 = menu_x + 220 #Plus width
 	menu_y2 = menu_y + 160 #Plus height 
@@ -65,37 +64,44 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	#menu is the image, menuy/menux is the top-left coord of the image 
 	return menu_x, menu_y, menu
     
-def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
-	"""Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
-	"""USE ONLY FOR BAG INVENTORY, otherwise it might not work"""
-	#get base directory osrmacro
-	cwd = os.getcwd()
-	if 'modules' in cwd: 
-		occurance = cwd.rfind("/") #finds the last "/", returns its index
-		cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
+#def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
+def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
+    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
+    """USE ONLY FOR BAG INVENTORY, otherwise it might not work"""
+    menu_x, menu_y, menu = getOptionsMenu(x,y)
+    #get base directory osrmacro
+    cwd = os.getcwd()
+    if 'modules' in cwd: 
+            occurance = cwd.rfind("/") #finds the last "/", returns its index
+            cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
 
-	#added for debug purposes
-	#cv2.imwrite('FindOptionClick_debug.png', menu)
+    #added for debug purposes
+    #cv2.imwrite('debug_FindOptionClick.png', menu)
 
-	#template
-	template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
+    #template
+    template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
 
-	w, h = template.shape[::-1]#Width, height of template image
-	res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
-	threshold = .8 
-	loc = np.where( res >= threshold)
+    w, h = template.shape[::-1]#Width, height of template image
+    res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
+    threshold = .8 
+    loc = np.where( res >= threshold)
 
-	for pt in zip(*loc[::-1]):#goes through each found image
-		pt_x, pt_y = pt #point of drop found inside the option menu screenshot
-		
-		x = menu_x + pt_x + (random.randint(5,(w*3))) #generates random x range fr
-		y = menu_y + pt_y + (random.randint(5,h-3)) #generats random Y for drop selection
-		
-		Mouse.moveTo(x,y)
-		
-		#autopy.mouse.click()#taking out since it does not delay the click
-		Mouse.click(1)
-		RandTime.randTime(0,0,0,0,0,9)
+    for pt in zip(*loc[::-1]):#goes through each found image
+        pt_x, pt_y = pt #point of drop found inside the option menu screenshot
+        #making btm coords
+        btx = menu_x + pt_x + w
+        bty = menu_y + pt_y + h
+        #gen random coords
+        pt_x = random.randint(menu_x+pt_x,btx)
+        pt_y = random.randint(menu_y+pt_y,bty)
+
+        #x = menu_x + pt_x + (random.randint(5,(w*2))) #generates random x range fr
+        #y = menu_y + pt_y + (random.randint(5,h-1)) #generats random Y for drop selection
+        
+        Mouse.moveClick(pt_x,pt_y, 1)
+        
+        #autopy.mouse.click()#taking out since it does not delay the click
+        RandTime.randTime(0,0,0,0,0,9)
         
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
@@ -121,7 +127,9 @@ def get_bag():
     rs_bag = Screenshot.shoot(x1,y1,x2,y2)
     #cv2.imwrite('rs_bag_debug.png',rs_bag)
 
-    return rs_bag
+    #returns image object, and top-left point of bag
+    return rs_bag, x1, y1
+
 def getBankWindow():
     rsx, rsy = position() #Get runescapes top-left coords
     #creates bank window boundaries
@@ -133,9 +141,10 @@ def getBankWindow():
     bankWindow = Screenshot.shoot(x1,y1,x2,y2)
     #save for debug
     #cv2.imwrite('debug_bankWindow.png', bankWindow)
-    return bankWindow
+    return bankWindow, x1, y1
 
 def isBankOpen():
+    """checks to see if bank is open, returns True, else False"""
     #get base directory osrmacro
     cwd = os.getcwd()
     if 'modules' in cwd: 
@@ -158,16 +167,37 @@ def isBankOpen():
     return False
 
 def closeBank():
-    WORKING HERE
+    cwd = os.getcwd()
+    rsx, rsy = position()
     x1 = rsx+470
     y1 = rsy+10
     x2 = rsx+500
-    y2 = rsy+55
+    y2 = rsy+80
 
     closeButton = Screenshot.shoot(x1,y1,x2,y2)
     #SAVE FOR DEBUG
     #cv2.imwrite('debug_closeButton.png',closeButton)
     loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
     
+    for pt in zip(*loc[::-1]):
+        #making pt relative to the RS window
+        pt = (pt[0] + x1, pt[1] + y1) 
+        #make Btm-Right pt
+        btx = pt[0] + w 
+        bty = pt[1] + h 
+        #gen random coords
+        rx = random.randint(pt[0], btx)
+        ry = random.randint(pt[1], bty)
+        #Move to and Click the X to close bank
+        Mouse.moveClick(rx,ry,1)
+        break
 
 
+def depositAll():
+    rsx, rsy = position()
+
+    x = rsx + random.randint(432,457)
+    y = rsy + random.randint(320,348)
+
+    Mouse.moveClick(x,y,1)
+    RandTime.randTime(0,0,1,0,0,5)
