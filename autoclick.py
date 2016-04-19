@@ -48,7 +48,7 @@ def clicker():
         y = random.randint(y1,y2)
         Mouse.moveClick(x,y,1)
         timer +=1
-        time.sleep(37)
+        time.sleep(34)
         RandTime.randTime(0,0,1,0,0,9)
 
 #keep_clicking()#for fletching
