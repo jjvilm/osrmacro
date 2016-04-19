@@ -156,11 +156,12 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
 def moveToFletchingOptions():
     cwd = os.getcwd()
     rsx, rsy = RS.position() #gets position of RS window
+
     #x = rsx + random.randint(23,167)#x coord range of short bow
     #y = rsy + random.randint(397,469) #y respectivaly
 
-    x = rsx + random.randint(209,299)#x coord range of long bow
-    y = rsy + random.randint(395,456) #BR-coord of longbow
+    x = rsx + random.randint(215,280)#x coord range of long bow. Defautl 209,299
+    y = rsy + random.randint(405,446) #BR-coord of longbow. Default: 395,456
 
     Mouse.moveClick(x,y,3) #right-clicks on short bow
     #taking away rs position since getoptionsmenu func adds them back in
