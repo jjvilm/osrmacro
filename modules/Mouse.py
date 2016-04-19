@@ -23,7 +23,7 @@ def moveTo(x,y):
 
         overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
-        if (len_x) <= 3 and  (len_y) <= 3:
+        if (len_x) <= 2 and  (len_y) <= 2:
             break
         #checks if current X is higher or lower than target X
         if cur_x > x:#Higher X
@@ -31,7 +31,7 @@ def moveTo(x,y):
                 cur_x -= random.randint(51,99)
             elif len_x <= 5:
                 cur_x -= random.randint(1,3)
-                if overshoot == 7:
+                if overshoot == 5:
                     cur_x -= random.randint(1,9)
             elif len_x <= 11:
                 cur_x -= random.randint(1,5)
@@ -101,8 +101,8 @@ def moveTo(x,y):
             if random.randint(0,4) == 0:
                 RandTime.randTime(0,0,0,0,0,2)
 
-        autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
-        #autopy.mouse.move(cur_x, cur_y)
+        #autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        autopy.mouse.move(cur_x, cur_y)
 
 def click(button):
     #autopy.mouse.click()

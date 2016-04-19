@@ -11,6 +11,7 @@ import random
 import Screenshot
 import Mouse
 import RandTime
+import Match
 
 
 
@@ -68,16 +69,16 @@ def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it cli
 	"""Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
 	"""USE ONLY FOR BAG INVENTORY, otherwise it might not work"""
 	#get base directory osrmacro
-	cur_dir = os.getcwd()
-	if 'modules' in cur_dir: 
-		occurance = cur_dir.rfind("/") #finds the last "/", returns its index
-		cur_dir = cur_dir[:occurance+1] #'/home/user/osrmacro/'
+	cwd = os.getcwd()
+	if 'modules' in cwd: 
+		occurance = cwd.rfind("/") #finds the last "/", returns its index
+		cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
 
 	#added for debug purposes
 	#cv2.imwrite('FindOptionClick_debug.png', menu)
 
 	#template
-	template = cv2.imread(cur_dir+'/imgs/'+option+'.png',0)#0 here means turned gray
+	template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
 
 	w, h = template.shape[::-1]#Width, height of template image
 	res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
@@ -121,4 +122,52 @@ def get_bag():
     #cv2.imwrite('rs_bag_debug.png',rs_bag)
 
     return rs_bag
+def getBankWindow():
+    rsx, rsy = position() #Get runescapes top-left coords
+    #creates bank window boundaries
+    x1 = rsx + 21
+    y1 = rsy + 23
+    x2 = rsx + 486
+    y2 = rsy + 335
+    #gets screenshot object
+    bankWindow = Screenshot.shoot(x1,y1,x2,y2)
+    #save for debug
+    #cv2.imwrite('debug_bankWindow.png', bankWindow)
+    return bankWindow
+
+def isBankOpen():
+    #get base directory osrmacro
+    cwd = os.getcwd()
+    if 'modules' in cwd: 
+        occurance = cwd.rfind("/") #finds the last "/", returns its index
+        cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
+    rsx,rsy = position()
+    #position bank's close button, relative to RS window
+    x1 = rsx+470
+    y1 = rsy+10
+    x2 = rsx+500
+    y2 = rsy+55
+
+    closeButton = Screenshot.shoot(x1,y1,x2,y2)
+    #SAVE FOR DEBUG
+    #cv2.imwrite('debug_closeButton.png',closeButton)
+    loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
+    #only runs if bank open
+    for pt in zip(*loc[::-1]):
+        return True
+    return False
+
+def closeBank():
+    WORKING HERE
+    x1 = rsx+470
+    y1 = rsy+10
+    x2 = rsx+500
+    y2 = rsy+55
+
+    closeButton = Screenshot.shoot(x1,y1,x2,y2)
+    #SAVE FOR DEBUG
+    #cv2.imwrite('debug_closeButton.png',closeButton)
+    loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
+    
+
 
