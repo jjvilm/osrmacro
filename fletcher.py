@@ -71,10 +71,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
     bankWindow = Screenshot.shoot(x1,y1,x2,y2)
     #SAVE for DEBUG
     #cv2.imwrite('debug_inBankLog.png',bankWindow)
-
-    #saves bankWindow image object for debug purposes
-    #cv2.imwrite('bankWindow_debug.png',bankWindow)
-
+    
     #loc == coordinates found in match
     loc, w, h = Match.this(bankWindow, template_file)
     for pt in zip(*loc[::-1]):#goes through each found image

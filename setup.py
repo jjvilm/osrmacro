@@ -16,5 +16,6 @@ def centering():
 
 
 centering()
+os.system('xdotool search Old windowsize 767 564')
 
 
