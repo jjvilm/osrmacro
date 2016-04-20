@@ -115,7 +115,7 @@ def center_window():
     os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
     #os.system('xdotool search old windowmove 0 0')
 
-def get_bag():
+def get_bag(bagornot):
     x1, y1 = position() #Get runescapes top-left coords
 
     x1 += 557    #make The Bag's top-left, and btm-right coords
@@ -128,7 +128,11 @@ def get_bag():
     #cv2.imwrite('rs_bag_debug.png',rs_bag)
 
     #returns image object, and top-left point of bag
-    return rs_bag, x1, y1
+    #returns image only if stringed passed
+    if bagornot == 'only':
+        return rs_bag
+    else:
+        return rs_bag, x1, y1
 
 def getBankWindow():
     rsx, rsy = position() #Get runescapes top-left coords

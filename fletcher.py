@@ -19,15 +19,15 @@ from modules import Keyboard
 from modules import Screenshot
 
 bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
-cur_dir = os.getcwd()
+cwd = os.getcwd()
 
 def find_template(template_file, option=None):#pass template to function
 #option == to option in menu when righ-clicked on item
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
-        template_file = cur_dir+"/imgs/"+template_file
+        template_file = cwd+"/imgs/"+template_file
         
-    rs_bag = RS.get_bag() #Screenshot taken here, 
+    rs_bag = RS.get_bag('only') #Screenshot taken here, 
 
     #loc == coordinates found in match
     loc, w, h = Match.this(rs_bag, template_file)
@@ -47,10 +47,11 @@ def find_template(template_file, option=None):#pass template to function
             moveClick(x,y, 1)#left clicks on given x,y coords
         else:
             moveClick(x,y, 3)#right clicks on given x,y coords
-            menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
+            #menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
             RandTime.randTime(0,0,0,0,0,1)
             
-            RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
+            #RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
+            RS.findOptionClick(x,y,option)
         break
         
 def withdraw_from_bank(template_file, option):#pass template to function
@@ -63,12 +64,8 @@ def withdraw_from_bank(template_file, option):#pass template to function
 
     #creating bank window coords
     rsx,rsy = RS.position()
-    x1 = rsx + 21
-    y1 = rsy + 23
-    x2 = rsx + 486
-    y2 = rsy + 335
     #creates  sceenshot object of bankwindow, 	
-    bankWindow = Screenshot.shoot(x1,y1,x2,y2)
+    bankWindow, x1, y1 = RS.getBankWindow()
     #SAVE for DEBUG
     #cv2.imwrite('debug_inBankLog.png',bankWindow)
     
@@ -294,8 +291,8 @@ def start_fletching():
 def count_logs(template_file):
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
-        template_file = cur_dir+"/imgs/"+template_file
-    rs_bag = RS.get_bag() #Screenshot taken here, 
+        template_file = cwd+"/imgs/"+template_file
+    rs_bag = RS.get_bag('only') #Screenshot taken here, 
     #saves image for DEBUG 
     #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
     #loc == coordinates found in match

@@ -11,10 +11,10 @@ from modules import RS
 def keep_clicking():
     time.sleep(3)
     cx, cy  = autopy.mouse.get_pos()
-    x1 = cx - 5
-    y1 = cy - 5
-    x2 = cx + 5
-    y2 = cy + 5
+    x1 = cx - 3
+    y1 = cy - 3
+    x2 = cx + 3
+    y2 = cy + 3
     timer = 0
     while timer < 30:
         if count_logs('/home/jj/github/osrmacro/imgs/mapleLog.png') == 0:
@@ -28,7 +28,7 @@ def keep_clicking():
         RandTime.randTime(0,0,1,0,9,9)
 
 def count_logs(template_file):
-    rs_bag = RS.get_bag()
+    rs_bag = RS.get_bag('only')
     loc, w, h = Match.this(rs_bag, template_file)
     count = 0
     for pt in zip(*loc[::-1]):
@@ -48,9 +48,9 @@ def clicker():
         y = random.randint(y1,y2)
         Mouse.moveClick(x,y,1)
         timer +=1
-        time.sleep(34)
+        time.sleep(38)
         RandTime.randTime(0,0,1,0,0,9)
 
-#keep_clicking()#for fletching
-clicker()
+keep_clicking()#for fletching
+#clicker()#for stringing#for stringing
 

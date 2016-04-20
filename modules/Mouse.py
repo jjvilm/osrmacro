@@ -21,115 +21,115 @@ def moveTo(x,y):
         len_x = max_x - min_x
         len_y = max_y - min_y
 
-        #overshoot = random.randint(0,40)
+        overshoot = random.randint(0,40)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 2 and  (len_y) <= 2:
             break
-        ############################################ DEBUG ###################################
-        if random.randint(0,4)==0:
-            if cur_x > x:#Higher X
-                cur_x -= random.randint(0,2)
-            else:#Lower x
-                cur_x += random.randint(0,2)
-            #checks if current Y is higher or lower than target Y
-            if cur_y > y: # Higher Y
-                cur_y -= random.randint(0,2)
-            else: #Lower Y
-                cur_y += random.randint(0,2)
-        else:
-
-            if cur_x > x:#Higher X
-                cur_x -= random.randint(0,7)
-            else:#Lower x
-                cur_x += random.randint(0,7)
-            #checks if current Y is higher or lower than target Y
-            if cur_y > y: # Higher Y
-                cur_y -= random.randint(0,7)
-            else: #Lower Y
-                cur_y += random.randint(0,7)
-        if random.randint(0,4) == 0:
-            RandTime.randTime(0,0,1,0,0,1)
-            
-        #####################################################################################
+#        ############################################ DEBUG ###################################
+#        if random.randint(0,4)==0:
+#            if cur_x > x:#Higher X
+#                cur_x -= random.randint(0,2)
+#            else:#Lower x
+#                cur_x += random.randint(0,2)
+#            #checks if current Y is higher or lower than target Y
+#            if cur_y > y: # Higher Y
+#                cur_y -= random.randint(0,2)
+#            else: #Lower Y
+#                cur_y += random.randint(0,2)
+#        else:
+#
+#            if cur_x > x:#Higher X
+#                cur_x -= random.randint(0,7)
+#            else:#Lower x
+#                cur_x += random.randint(0,7)
+#            #checks if current Y is higher or lower than target Y
+#            if cur_y > y: # Higher Y
+#                cur_y -= random.randint(0,7)
+#            else: #Lower Y
+#                cur_y += random.randint(0,7)
+#        if random.randint(0,4) == 0:
+#            RandTime.randTime(0,0,1,0,0,1)
+#            
+#        #####################################################################################
         ##checks if current X is higher or lower than target X
-        #if cur_x > x:#Higher X
-        #    if len_x > 100:
-        #        cur_x -= random.randint(51,99)
-        #    elif len_x <= 5:
-        #        cur_x -= random.randint(1,3)
-        #        if overshoot == 5:
-        #            cur_x -= random.randint(1,9)
-        #    elif len_x <= 11:
-        #        cur_x -= random.randint(1,5)
-        #    elif len_x <= 19:
-        #        cur_x -= random.randint(1,9)
-        #    elif len_x <= 50:
-        #        cur_x -= random.randint(5,24)
-        #    elif len_x <= 100:
-        #        cur_x -= random.randint(25,55)
+        if cur_x > x:#Higher X
+            if len_x > 100:
+                cur_x -= random.randint(51,99)
+            elif len_x <= 5:
+                cur_x -= random.randint(1,3)
+                if overshoot == 5:
+                    cur_x -= random.randint(1,9)
+            elif len_x <= 11:
+                cur_x -= random.randint(1,5)
+            elif len_x <= 19:
+                cur_x -= random.randint(1,9)
+            elif len_x <= 50:
+                cur_x -= random.randint(5,24)
+            elif len_x <= 100:
+                cur_x -= random.randint(25,55)
 
-        #else:#Lower x
-        #    if len_x > 100:
-        #        cur_x += random.randint(51,99)
-        #    elif len_x <= 5:
-        #        cur_x += random.randint(1,3)
-        #        if overshoot == 7:
-        #            cur_x += random.randint(1,9)
-        #    elif len_x <= 11:
-        #        cur_x += random.randint(1,5)
-        #    elif len_x <= 19:
-        #        cur_x += random.randint(1,9)
-        #    elif len_x <= 50:
-        #        cur_x += random.randint(5,24)
-        #    elif len_x <= 100:
-        #        cur_x += random.randint(25,55)
+        else:#Lower x
+            if len_x > 100:
+                cur_x += random.randint(51,99)
+            elif len_x <= 5:
+                cur_x += random.randint(1,3)
+                if overshoot == 7:
+                    cur_x += random.randint(1,9)
+            elif len_x <= 11:
+                cur_x += random.randint(1,5)
+            elif len_x <= 19:
+                cur_x += random.randint(1,9)
+            elif len_x <= 50:
+                cur_x += random.randint(5,24)
+            elif len_x <= 100:
+                cur_x += random.randint(25,55)
 
-        ##checks if current Y is higher or lower than target Y
-        #if cur_y > y: # Higher Y
-        #    if len_y > 100:
-        #        cur_y -= random.randint(51,99)
-        #    elif len_y <= 5:
-        #        cur_y -= random.randint(1,3)
-        #        if overshoot == 7:
-        #            cur_x -= random.randint(1,9)
-        #    elif len_y <= 11:
-        #        cur_y -= random.randint(1,5)
-        #    elif len_y <= 19:
-        #        cur_y -= random.randint(1,9)
-        #    elif len_y <= 50:
-        #        cur_y -= random.randint(5,24)
-        #    elif len_y <= 100:
-        #        cur_y -= random.randint(25,55)
-        #else: #Lower Y
-        #    if len_y > 100:
-        #        cur_y += random.randint(51,99)
-        #    elif len_y <= 5:
-        #        cur_y += random.randint(1,3)
-        #        if overshoot == 7:
-        #            cur_x += random.randint(1,9)
-        #    elif len_y <= 11:
-        #        cur_y += random.randint(1,5)
-        #    elif len_y <= 19:
-        #        cur_y += random.randint(1,9)
-        #    elif len_y <= 50:
-        #        cur_y += random.randint(5,25)
-        #    elif len_y <= 100:
-        #        cur_y += random.randint(25,55)
-        #
-        ##print("Moving to {0} {1}".format(cur_x, cur_y))
-        #if overshoot == 7:
-        #    RandTime.randTime(0,0,1,0,9,9)
+        #checks if current Y is higher or lower than target Y
+        if cur_y > y: # Higher Y
+            if len_y > 100:
+                cur_y -= random.randint(51,99)
+            elif len_y <= 5:
+                cur_y -= random.randint(1,3)
+                if overshoot == 7:
+                    cur_x -= random.randint(1,9)
+            elif len_y <= 11:
+                cur_y -= random.randint(1,5)
+            elif len_y <= 19:
+                cur_y -= random.randint(1,9)
+            elif len_y <= 50:
+                cur_y -= random.randint(5,24)
+            elif len_y <= 100:
+                cur_y -= random.randint(25,55)
+        else: #Lower Y
+            if len_y > 100:
+                cur_y += random.randint(51,99)
+            elif len_y <= 5:
+                cur_y += random.randint(1,3)
+                if overshoot == 7:
+                    cur_x += random.randint(1,9)
+            elif len_y <= 11:
+                cur_y += random.randint(1,5)
+            elif len_y <= 19:
+                cur_y += random.randint(1,9)
+            elif len_y <= 50:
+                cur_y += random.randint(5,25)
+            elif len_y <= 100:
+                cur_y += random.randint(25,55)
+        
+        #print("Moving to {0} {1}".format(cur_x, cur_y))
+        if overshoot == 7:
+            RandTime.randTime(0,0,1,0,9,9)
 
-        ##slows down if closer to target coord
-        #if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-        #    RandTime.randTime(0,0,0,0,0,9)
-        #else:
-        #    if random.randint(0,4) == 0:
-        #        RandTime.randTime(0,0,0,0,0,2)
+        #slows down if closer to target coord
+        if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
+            RandTime.randTime(0,0,0,0,0,9)
+        else:
+            if random.randint(0,4) == 0:
+                RandTime.randTime(0,0,0,0,0,2)
 
-        #autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
 
-        autopy.mouse.move(cur_x, cur_y)
+        #autopy.mouse.move(cur_x, cur_y)
 
 def click(button):
     #autopy.mouse.click()

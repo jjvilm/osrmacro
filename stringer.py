@@ -9,7 +9,7 @@ import time
 cwd = os.getcwd()
 
 def checkInv(template):
-    rs_bag, bgx, bgy = RS.get_bag()
+    rs_bag, bgx, bgy = RS.get_bag('bag and other variables')
     loc, w, h = Match.this(rs_bag,template )
     for pt in zip(*loc[::-1]):
         #assigns random values to pt 

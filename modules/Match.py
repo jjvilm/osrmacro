@@ -13,9 +13,12 @@ def this(pattern_, template_):
         template_ = cwd+template_
     if '.png' not in template_:
         template_ = cwd+template_+'.png'
-
+    #print for DEBUG
+    #print(template_)
     #template
     template = cv2.imread(template_,0)
+    #save for DEBUG
+    #cv2.imwrite('debug_template_file', template_)
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(pattern_,template,cv2.TM_CCOEFF_NORMED)
     threshold = .8 #default is 8 
