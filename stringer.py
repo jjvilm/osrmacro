@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+#stringer.py
 from modules import RS
 import os
 from modules import Mouse
@@ -41,10 +43,22 @@ def makeBow():
 
 def run():    
     if RS.isBankOpen():
-        RS.depositAll()
+        #checks to see if inv is empty
+        if not RS.isInvEmpty():
+            #deposits all if inventory is not empty
+            RS.depositAll()
         withdrawFromBank('/imgs/bowString.png')
         withdrawFromBank('/imgs/yewLongbowU.png')
         RS.closeBank()
+    else: 
+        if RS.isInvEmpty():
+            return 0
+        else:
+            if RS.countItemInInv('bowString.png', 1)==1 and RS.countItemInInv('yewLongbowU.png',1)==1:
+                pass
+            else:
+                return 0
+
     while True:
         checkInv(cwd+"/imgs/bowString.png")
         checkInv(cwd+"/imgs/yewLongbowU.png")

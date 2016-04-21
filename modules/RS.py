@@ -226,3 +226,13 @@ def countItemInInv(template_file,*args):
         count += 1
     #print(count)
     return count
+
+def isInvEmpty():
+    cwd = os.getcwd()
+    bag = get_bag('only') 
+    loc, w, h = Match.this(bag, cwd+'/imgs/emptySlot.png')
+    
+    for pt in zip(*loc[::-1]):
+        #returns True if there is no itme in the first slot
+        return True
+    return False
