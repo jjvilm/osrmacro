@@ -22,34 +22,36 @@ bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
 cwd = os.getcwd()
 
 def find_template(template_file, option=None):#pass template to function
-#option == to option in menu when righ-clicked on item
+    #option == to option in menu when righ-clicked on item
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
         template_file = cwd+"/imgs/"+template_file
-        
-    rs_bag = RS.get_bag('only') #Screenshot taken here, 
 
-    #loc == coordinates found in match
+    rs_bag, bagx,bagy = RS.get_bag("bag, and it's coords") #Screenshot taken here, 
+    #loc is where the templates found are in 
     loc, w, h = Match.this(rs_bag, template_file)
+    #for loops iterates through every found template
     for pt in zip(*loc[::-1]):#goes through each found image
+        #pt = ((pt[0]+bagx),(pt[1]+bagy))
         #pt is the Top-left coord of the found template
-        
+
 
         #create Bott-Right coord of found template
         btmX = pt[0] + w  
         btmY = pt[1] + h 
         #moving the pt coord of the template a bit to the right, so options menu get brought up
         #pt = (pt[0], pt[1])
-        
+
         #gencoord adds RS position
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
-        if option == 'click':
+        #x, y = Mouse.randCoord(pt, w, h)
+        if option == 'click' or option == 1:
             moveClick(x,y, 1)#left clicks on given x,y coords
         else:
             moveClick(x,y, 3)#right clicks on given x,y coords
             #menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
             RandTime.randTime(0,0,0,0,0,1)
-            
+
             #RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
             RS.findOptionClick(x,y,option)
         break
@@ -63,7 +65,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
     #	print(template_file, "file in withraw_from_bank()")
 
     #creating bank window coords
-    rsx,rsy = RS.position()
+    #rsx,rsy = RS.position()
     #creates  sceenshot object of bankwindow, 	
     bankWindow, x1, y1 = RS.getBankWindow()
     #SAVE for DEBUG
@@ -191,48 +193,6 @@ def moveToFletchingOptions():
         RandTime.randTime(0,0,0,0,0,0)
         autopy.key.toggle(autopy.key.K_RETURN, False)
         break
-def closeBank():
-    rsx,rsy = RS.position()
-    cwd= os.getcwd()
-    #position of bank X button relative to rs.position
-    x1= rsx+470
-    y1= rsy+10
-    x2= rsx+500
-    y2= rsy+55
-    timer = 1 
-    
-    bankXButton = Screenshot.shoot(x1,y1,x2,y2)
-    #cv2.imwrite('bankXbutton_debug.png', bankXButton)
-    loc, w, h = Match.this(bankXButton,cwd+'/imgs/bankXbutton.png')
-    #Only runs if bank is open
-    for pt in zip(*loc[::-1]):
-        #making pt relative to the RS window
-        pt = (pt[0] + x1, pt[1] + y1)
-        #make Btm-Right pt
-        btx = pt[0] + w 
-        bty = pt[1] + h
-        #gen random coords
-        rx = random.randint(pt[0], btx)
-        ry = random.randint(pt[1], bty)
-        #Move to and Click the X to close bank
-        Mouse.moveClick(rx,ry,1)
-        break
-def isBankOpen():
-    rsx,rsy = RS.position()
-    cwd= os.getcwd()
-    #position of bank X button relative to rs.position
-    x1= rsx+470
-    y1= rsy+10
-    x2= rsx+500
-    y2= rsy+55
-    timer = 1 
-    bankXButton = Screenshot.shoot(x1,y1,x2,y2)
-    #cv2.imwrite('bankXbutton_debug.png', bankXButton)
-    loc, w, h = Match.this(bankXButton,cwd+'/imgs/bankXbutton.png')
-    #Only runs if bank is open
-    for pt in zip(*loc[::-1]):
-        return True
-    return False
 
 def start_fletching():
     nlogs = count_logs('mapleLog.png') 
@@ -241,13 +201,13 @@ def start_fletching():
         return 0
     rsx,rsy = RS.position()
     cwd= os.getcwd()
-    #position of bank X button relative to rs.position
-    x1= rsx+470
-    y1= rsy+10
-    x2= rsx+500
-    y2= rsy+55
+    ##position of bank X button relative to rs.position
+    #x1= rsx+470
+    #y1= rsy+10
+    #x2= rsx+500
+    #y2= rsy+55
     
-    timer = 30 
+    timer = 60 
     #Loop starts here
     while True:
         #checks to see if there are logs
@@ -262,7 +222,7 @@ def start_fletching():
             break
         else:
             #resets timer
-            timer = 30
+            timer = 60
         ####Starts fletching### 
         #Finds knife, cliks it
         find_template('knife.png','click')
@@ -281,13 +241,14 @@ def start_fletching():
         while timer != 0:
             print(timer)
             #runs only if bank is open
-            if isBankOpen():
+            if RS.isBankOpen():
                 find_template('mapleLongBow.png','depositAll')
                 withdraw_from_bank('mapleLog.png','withdrawAll')
-                closeBank()
+                RS.closeBank()
                 break
             timer -= 1
             time.sleep(1)
+
 def count_logs(template_file):
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:

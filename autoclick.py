@@ -35,7 +35,7 @@ def count_logs(template_file):
         count +=1
         break
     return count
-def clicker():
+def clicker(item):
     time.sleep(3)
     cx, cy  = autopy.mouse.get_pos()
     x1 = cx - 5
@@ -43,14 +43,24 @@ def clicker():
     x2 = cx + 5
     y2 = cy + 5
     timer = 0
-    while timer < 30:
-        x = random.randint(x1,x2)
-        y = random.randint(y1,y2)
-        Mouse.moveClick(x,y,1)
-        timer +=1
-        time.sleep(38)
-        RandTime.randTime(0,0,1,0,0,9)
+    if item == 'stringer':
+        while timer < 30:
+            x = random.randint(x1,x2)
+            y = random.randint(y1,y2)
+            Mouse.moveClick(x,y,1)
+            timer +=1
+            time.sleep(38)
+            RandTime.randTime(0,0,1,0,0,9)
+    else:
+        while timer < 30:
+            x = random.randint(x1,x2)
+            y = random.randint(y1,y2)
+            Mouse.moveClick(x,y,1)
+            timer +=1
+            RandTime.randTime(0,0,1,0,0,9)
+            time.sleep(72)
 
-keep_clicking()#for fletching
-#clicker()#for stringing#for stringing
+
+#keep_clicking()#for fletching
+clicker('stringer')#for stringer#for stringing
 

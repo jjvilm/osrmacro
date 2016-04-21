@@ -149,3 +149,14 @@ def moveClick(x,y, button=0):#moves to random X,Y of found match of template
         RandTime.randTime(0,0,0,0,0,1)
         RandTime.randTime(0,0,0,0,0,0)
         autopy.mouse.toggle(False,button)
+def randCoord(pt,w,h ):
+    """Takes a top-left point as pt, and width and height of template
+        returns a pair of coordinates within the the size of the template, to be used with inventory bag items only"""
+    w = pt[0]+w
+    h = pt[1]+h
+    print(w)
+    print(h)
+
+    x = random.randint(pt[0]+3,(w-3))
+    y = random.randint(pt[1]+3,(h-3))
+    return x,y
