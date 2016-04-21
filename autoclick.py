@@ -61,6 +61,6 @@ def clicker(item):
             time.sleep(72)
 
 
-#keep_clicking()#for fletching
-clicker('stringer')#for stringer#for stringing
+keep_clicking()#for fletching
+#clicker('stringer')#for stringer#for stringing
 

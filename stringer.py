@@ -34,7 +34,11 @@ def makeBow():
     y = random.randint(rsy+408, rsy+467)
     Mouse.moveClick(x,y, 3)
 
+    #Remvoing RS coords 
+    x -= rsx
+    y -= rsy
     RS.findOptionClick(x,y,'makeAll')
+
 def run():    
     if RS.isBankOpen():
         RS.depositAll()
@@ -45,7 +49,7 @@ def run():
         checkInv(cwd+"/imgs/bowString.png")
         checkInv(cwd+"/imgs/yewLongbowU.png")
         makeBow()
-        time.sleep(20)
+        time.sleep(17)
         while True:
             if RS.isBankOpen():
                 RS.depositAll()
@@ -59,10 +63,17 @@ def withdrawFromBank(template_):
     bankWindow, x1, y1 = RS.getBankWindow()
     loc, w, h = Match.this(bankWindow,template_)
     for pt in zip(*loc[::-1]):
+        #unpackaged pt
         x, y = pt
-        x = rsx+x+x1
-        y = rsy+y+y1
+        #add bankwindow+RS coords to pt
+        x += x1
+        y += y1
+
+     
         Mouse.moveClick(x, y, 3 )
+        #removing RS coords since they are added findOptionClick
+        x -= rsx
+        y -= rsy
         RS.findOptionClick(x,y,'withdraw14')
         break
 run()
