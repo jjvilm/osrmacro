@@ -22,9 +22,9 @@ def keep_clicking():
             y = random.randint(y1,y2)
             Mouse.moveClick(x,y,1)
             timer += 1
-            time.sleep(9)
             RandTime.randTime(0,0,1,0,9,9)
-        time.sleep(20)
+            time.sleep(7)
+        time.sleep(10)
         RandTime.randTime(0,0,1,0,9,9)
 
 def count_logs(template_file):
@@ -49,7 +49,7 @@ def clicker(item):
             y = random.randint(y1,y2)
             Mouse.moveClick(x,y,1)
             timer +=1
-            time.sleep(38)
+            time.sleep(33)
             RandTime.randTime(0,0,1,0,0,9)
     else:
         while timer < 30:
@@ -60,7 +60,29 @@ def clicker(item):
             RandTime.randTime(0,0,1,0,0,9)
             time.sleep(72)
 
+def splasher():
+    time.sleep(3)
+    print('starting')
+    cx, cy = autopy.mouse.get_pos()
+    print('grabbed position')
+    x1 = cx - 5
+    y1 = cy - 5
+    x2 = cx + 5
+    y2 = cy + 5
+    while True:
+        x = random.randint(x1, x2)
+        y = random.randint(y1, y2)
+        Mouse.moveClick(x,y,1)
+        multiplier = random.randint(1,5)
+        print("waiting for {}".format((60*multiplier)//60))
+        time.sleep(60*multiplier)
+        RandTime.randTime(0,0,0,0,0,9)
 
-keep_clicking()#for fletching
+
+
+
+
+#keep_clicking()#for fletching
 #clicker('stringer')#for stringer#for stringing
+splasher()
 

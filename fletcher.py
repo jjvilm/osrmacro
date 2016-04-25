@@ -37,10 +37,10 @@ def find_template(template_file, option=None):#pass template to function
 
 
         #create Bott-Right coord of found template
-        btmX = pt[0] + w  
-        btmY = pt[1] + h 
+        btmX = pt[0] + w - 5 
+        btmY = pt[1] + h - 5
         #moving the pt coord of the template a bit to the right, so options menu get brought up
-        #pt = (pt[0], pt[1])
+        pt = (pt[0]+5, pt[1]+5)
 
         #gencoord adds RS position
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
@@ -75,10 +75,10 @@ def withdraw_from_bank(template_file, option):#pass template to function
     loc, w, h = Match.this(bankWindow, template_file)
     for pt in zip(*loc[::-1]):#goes through each found image
         #adds x1,y1 coords to pt to be relative to the window
-        pt = (x1+pt[0]+3, y1+pt[1]+3)#
+        pt = (x1+pt[0]+5, y1+pt[1]+5)#
         #Bottom-Right coords of found template
-        btmX =  pt[0] + w - 3
-        btmY =  pt[1] + h - 3
+        btmX =  pt[0] + w - 5
+        btmY =  pt[1] + h - 5
 
 
         #create random coords within the coords of the found template

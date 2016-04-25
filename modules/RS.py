@@ -59,7 +59,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
 
 	#added for debug purposes
-	#cv2.imwrite('getOptionsMenu_debug.png', menu)
+	cv2.imwrite('getOptionsMenu_debug.png', menu)
 
 	#menu is the image, menuy/menux is the top-left coord of the image 
 	return menu_x, menu_y, menu
@@ -76,7 +76,7 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
             cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
 
     #added for debug purposes
-    #cv2.imwrite('debug_FindOptionClick.png', menu)
+    cv2.imwrite('debug_FindOptionClick.png', menu)
 
     #template
     template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray

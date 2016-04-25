@@ -20,7 +20,7 @@ def checkInv(template):
         y = random.randint(pt[1], pt[1]+h)
         pt = (x,y)
         dobowstring(pt, w, h, bgx, bgy)
-        break
+        return True
         
        
 def dobowstring(pt, w, h, bgx, bgy):
@@ -60,9 +60,8 @@ def run():
                 return 0
 
     while True:
-        checkInv(cwd+"/imgs/bowString.png")
-        checkInv(cwd+"/imgs/yewLongbowU.png")
-        makeBow()
+        if checkInv(cwd+"/imgs/bowString.png") and checkInv(cwd+"/imgs/yewLongbowU.png"):
+            makeBow()
         time.sleep(17)
         while True:
             if RS.isBankOpen():
@@ -79,9 +78,16 @@ def withdrawFromBank(template_):
     for pt in zip(*loc[::-1]):
         #unpackaged pt
         x, y = pt
+        #make btm coords
+        btmx = x + x1 + w - 5
+        btmy = y + y1 + h - 5
+
         #add bankwindow+RS coords to pt
-        x += x1
-        y += y1
+        x += x1 + 5
+        y += y1 + 5
+        #gen random coords
+        x = random.randint(x,btmx)
+        y = random.randint(y,btmy)
 
      
         Mouse.moveClick(x, y, 3 )
