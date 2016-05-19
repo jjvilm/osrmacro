@@ -59,7 +59,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 	menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
 
 	#added for debug purposes
-	#cv2.imwrite('getOptionsMenu_debug.png', menu)
+        #cv2.imwrite('getOptionsMenu_debug.png', menu)
 
 	#menu is the image, menuy/menux is the top-left coord of the image 
 	return menu_x, menu_y, menu
@@ -205,3 +205,34 @@ def depositAll():
 
     Mouse.moveClick(x,y,1)
     RandTime.randTime(0,0,1,0,0,5)
+
+def countItemInInv(template_file,*args):
+    """Counts the N of items in INVENTORY
+    if a number is passed it will count up to that"""
+    #checks to see wheater to add cur dir or not
+    if "/" not in template_file:
+        template_file = os.getcwd()+"/imgs/"+template_file
+    rs_bag = get_bag('only') #Screenshot taken here, 
+    #saves image for DEBUG 
+    #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
+    #loc == coordinates found in match
+    loc, w, h = Match.this(rs_bag, template_file)
+    #starts fount
+    count = 0 
+    for pt in zip(*loc[::-1]):#goes through each found image
+        if args != ():
+            if args[0] == 1:
+                return 1
+        count += 1
+    #print(count)
+    return count
+
+def isInvEmpty():
+    cwd = os.getcwd()
+    bag = get_bag('only') 
+    loc, w, h = Match.this(bag, cwd+'/imgs/emptySlot.png')
+    
+    for pt in zip(*loc[::-1]):
+        #returns True if there is no itme in the first slot
+        return True
+    return False

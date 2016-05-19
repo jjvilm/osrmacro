@@ -53,7 +53,7 @@ def find_template(template_file):#pass template to function
         menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
         RandTime.randTime(0,0,0,0,0,1)
         
-        RS.findOptionClick(x,y, menu_x, menu_y, menu,'drop')
+        RS.findOptionClick(x,y,'drop')
         
     RandTime.randTime(2,0,0,2,9,9)
  
