@@ -65,7 +65,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
     #	print(template_file, "file in withraw_from_bank()")
 
     #creating bank window coords
-    #rsx,rsy = RS.position()
+    rsx,rsy = RS.position()
     #creates  sceenshot object of bankwindow, 	
     bankWindow, x1, y1 = RS.getBankWindow()
     #SAVE for DEBUG
