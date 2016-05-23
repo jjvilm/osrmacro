@@ -21,7 +21,7 @@ def moveTo(x,y):
         len_x = max_x - min_x
         len_y = max_y - min_y
 
-        overshoot = random.randint(0,40)
+        overshoot = random.randint(0,99)
         #breaks once it's around +-2 pixels around the target area
         if (len_x) <= 2 and  (len_y) <= 2:
             break
@@ -124,7 +124,7 @@ def moveTo(x,y):
         if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
             RandTime.randTime(0,0,0,0,0,9)
         else:
-            if random.randint(0,4) == 0:
+            if overshoot == 0:
                 RandTime.randTime(0,0,0,0,0,2)
 
         autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
