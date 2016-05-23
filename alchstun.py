@@ -62,7 +62,7 @@ def spell(*args, **kwargs):
             x, y = genCoords(700+rsx,353+rsy,714+rsx,364+rsy)
             Mouse.moveClick(x,y, 1)
         elif s == 'enfeeble':
-            x, y = genCoords(687+rsx,416+rsy,695+rsx,425+rsy)
+            x, y = genCoords(686+rsx,416+rsy,696+rsx,426+rsy)
             Mouse.moveClick(x,y,1)
 
 
