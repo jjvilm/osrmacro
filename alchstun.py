@@ -16,7 +16,6 @@ def findMonk():
     x2 = rsx + 500
     y2 = rsy + 352
 
-
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
     #finds red shades
     lower_red = np.array([110,90,60])
@@ -38,13 +37,11 @@ def findMonk():
     # Draws rectangle around it
     #img = cv2.rectangle(mask, (x,y), (x+w, y+h), (0,0,0), 2)
 
+    #makes x & y relative to RS window
     x += x1
     y += y1
 
-    #gen random coords within bound
-    #cv2.imshow('Clicking inside box', img)
-    #cv2.waitKey(1)
-    #cv2.destroyAllWindows()
+    # returns half a square in the found contour
     return x,y,x+w, y+h
 
 def genCoords(x1,y1,x2,y2):
@@ -64,8 +61,6 @@ def spell(*args, **kwargs):
         elif s == 'enfeeble':
             x, y = genCoords(686+rsx,416+rsy,696+rsx,426+rsy)
             Mouse.moveClick(x,y,1)
-
-
 
 counter = 0
 nats = int(raw_input("Alchabels??\n> "))

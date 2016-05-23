@@ -1,4 +1,6 @@
 #!/usr/bin/python2
+"""NOT DONE WITH IT YET!!
+WHEN DONE IT SHOULD BE ABLE TO REACH HEALTH NUMBER"""
 from modules import RS
 from modules import Screenshot
 from modules import Match
