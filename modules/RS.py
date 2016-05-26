@@ -295,9 +295,45 @@ def open_cw_bank():
         
     except:
         print("Bank NOT found!\nMove camera around!")
-
-
-
     
+def antiban(skill):
+    if random.randint(0,99) == 0:
+        rsx,rsy = position()
+        # Tuples of locations
+        #if random.randint(0,100) == 1:
+        stats_btn = Mouse.genCoords(567,194,589,215)
+        #                              x1  y1  x2  y2
+        stats_window = Mouse.genCoords(557,234,729,470)
+        
+        #Clicks the skills button
+        Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
+        ## Randomly hovers over a random skill
+        #Mouse.moveClick(stats_window[0]+rsx,stats_window[1]+rsy)
 
-    
+        #hovers over a certain skill
+        skillHover(skill)
+
+def skillHover(skill):
+    skills = {
+            'attack':0, 'hitpoints':0,'mining':0,
+
+            'strength':0,'agility':0,'smithing':0,
+
+            'defence':0,'herblore':(620,295,662,311),'fishing':0,
+
+            'ranged':0,'thieving':0,'cooking':0,
+
+            'prayer':0,'crafting':0,'firemaking':0,
+
+            'magic':0,'fletching':(620,389,666,406),'woodcutting':0,
+
+            'runecraft':0,'slayer':0,'farming':0,
+            
+            'construction':0,'hunter':0
+            }
+
+    x1,y1,x2,y2 =skills[skill]
+    x,y = Mouse.genCoords(x1,y1,x2,y2)
+    Mouse.moveTo(x,y)
+    RandTime.randTime(1,0,0,3,9,9)
+

@@ -14,9 +14,13 @@ def shoot(x1,y1,x2,y2, *args, **kwargs):
     
 
     cv_img = im.astype(np.uint8)
-    if args[0] == 'hsv':
-        hsv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2HSV)
-        return hsv_img
+    try:
+        if args[0] == 'hsv':
+            hsv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2HSV)
+            return hsv_img
+    except:
+        pass
+        
     
     cv_gray = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)
 

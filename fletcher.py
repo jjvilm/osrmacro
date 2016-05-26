@@ -254,6 +254,7 @@ def start_fletching():
 
 if __name__ == '__main__':
     start_fletching()
+    os.system('./stringer.py')
     #find_template('knife.png','click')
     #find_template('mapleLog.png','click')
     #moveToFletchingOptions()

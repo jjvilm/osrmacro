@@ -165,7 +165,7 @@ def randCoord(pt,w,h ):
 def genCoords(x1,y1,x2,y2):
     """Returns random coords of passed coordinates, not relative to RS window"""
     x = random.randint(x1,x2)
-    y = random.randint(y1,x2)
+    y = random.randint(y1,y2)
     return x, y
 
 

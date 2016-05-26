@@ -4,6 +4,7 @@ from modules import RS
 import os
 from modules import Mouse
 from modules import Match
+from modules import RandTime
 import random
 #import autopy
 import time
@@ -42,6 +43,7 @@ def makeBow():
     RS.findOptionClick(x,y,'makeAll')
 
 def run():    
+    RSX,RSY = RS.position()
     RS.open_cw_bank()
     if RS.isBankOpen():
         #checks to see if inv is empty
@@ -60,10 +62,20 @@ def run():
             else:
                 return 0
 
+    # Main stringer loop
     while True:
-        if checkInv(cwd+"/imgs/bowString.png") and checkInv(cwd+"/imgs/yewLongbowU.png"):
-            makeBow()
-        time.sleep(17)
+        #opens bag if not already opened
+        while True:
+            if checkInv(cwd+"/imgs/bowString.png") and checkInv(cwd+"/imgs/yewLongbowU.png"):
+                makeBow()
+                RS.antiban('fletching')
+                break
+            else:
+                bagx,bagy = Mouse.genCoords(634,195,652,215)
+                Mouse.moveClick(bagx+RSX,bagy+RSY)
+                break
+        RS.antiban('fletching')
+        RandTime.randTime(16,0,0,17,9,9)
         while True:
             RS.open_cw_bank()
             if RS.isBankOpen():
@@ -99,3 +111,4 @@ def withdrawFromBank(template_):
         RS.findOptionClick(x,y,'withdraw14')
         break
 run()
+
