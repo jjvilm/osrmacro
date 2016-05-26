@@ -240,6 +240,7 @@ def start_fletching():
         #check for 5 seconds if bank is open, if not then done
         while timer != 0:
             print(timer)
+            RS.open_cw_bank()
             #runs only if bank is open
             if RS.isBankOpen():
                 #find_template('mapleLongBow.png','depositAll')

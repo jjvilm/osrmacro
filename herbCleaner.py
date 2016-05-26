@@ -10,8 +10,10 @@ from modules import Mouse
 from modules import Screenshot
 from modules import RS
 
+
 #Finds an image from the given template.  
 cur_dir = os.getcwd()
+RSX,RSY = RS.position()
 
 def find_template(template_file):#pass template to function
     rs_bag, bagx, bagy = RS.get_bag('bag and its coords')
@@ -63,8 +65,53 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
     time.sleep(milisecs)
 
 if __name__ == '__main__':
-    find_template(cur_dir+'/imgs/grimmyIrit.png')
-    #find_template(cur_dir+'/imgs/grimmyGuam.png')
+    while not False:
+        #open bank
+        RS.open_cw_bank()
+
+        #give time for window to open up
+        time.sleep(1.2)
+
+        #check if bank is open, if not end
+        if not RS.isBankOpen():
+            break
+
+        #deposit all
+        #if herb in inventory
+        #if RS.countItemInInv('grimmyGuam.png', 1):
+        if not RS.isInvEmpty():
+            RS.depositAll()
+
+        
+        #loop makes sure herbs are withdrawn!
+        while True:
+            #take out all grimmy herbs
+            #grimmy guam in bank loc
+            grimx, grimy = Mouse.genCoords(273,255,288,271)
+            grimx += RSX
+            grimy += RSY
+            Mouse.moveClick(grimx,grimy,3)
+
+            grimx -= RSX
+            grimy -= RSY
+            RS.findOptionClick(grimx,grimy,'withdrawAll')
+
+            time.sleep(.9)
+            randTime(0,0,0,0,0,9)
+            if not RS.isInvEmpty():
+                break
+            else:
+                x,y = Mouse.genCoords(RSX+13,RSY+60,RSX+500,RSY+352)
+                Mouse.moveTo(x,y)
+
+        #close bank
+        RS.closeBank()
+        #clean herbs
+        find_template(cur_dir+'/imgs/grimmyGuam.png')
+
+
+
+    #find_template(cur_dir+'/imgs/grimmyIrit.png')
     #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
     #find_template(cur_dir+'/imgs/grimmyTarromin.png')
     #print("Time taken:",timer)

@@ -6,6 +6,7 @@ import autopy
 import subprocess
 import os
 import random
+import time
 
 #### My Modules 
 import Screenshot
@@ -67,7 +68,7 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 #def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
 def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
     """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
-    """USE ONLY FOR BAG INVENTORY, otherwise it might not work"""
+    """DOES NOT RIGHT CLICK, MUST RIGHT CLICK TO USE THIS FUNCTION"""
     menu_x, menu_y, menu = getOptionsMenu(x,y)
     #get base directory osrmacro
     cwd = os.getcwd()
@@ -77,6 +78,7 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
 
     #added for debug purposes
     #cv2.imwrite('debug_FindOptionClick.png', menu)
+    #cv2.imshow('Dbug_FindOptionClick',menu)
 
     #template
     template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
@@ -236,3 +238,66 @@ def isInvEmpty():
         #returns True if there is no itme in the first slot
         return True
     return False
+
+def open_cw_bank():
+    """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
+    
+    # gets RS window's position
+    rsx,rsy = position()
+    # creates coords to take a screenshot of play window
+    x1 = rsx + 13
+    y1 = rsy + 60
+    x2 = rsx + 500
+    y2 = rsy + 352
+
+    # Takes screenshot, as Hue-saturated-value image
+    play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+
+    # Defines the hue to look for
+    lower_gray = np.array([50,0,50])
+    upper_gray = np.array([150,30,150])
+
+    # Makes a black/white mask
+    mask = cv2.inRange(play_window, lower_gray, upper_gray)
+    res = cv2.bitwise_and(play_window, play_window, mask=mask)
+
+    # Finds contours 
+    image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    #collects the biggest contours
+    possible_cnt = {}
+    for cnt in contours:
+        # Finds contours with 4 sides
+        approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt,True),True)
+        if len(approx)==4 and len(cnt) >4:
+            possible_cnt[len(cnt)] = cnt
+
+    # Will try to click in bank if all goes right
+    try:
+        biggest_cnt = max(possible_cnt.keys())
+
+        #builds boundingrect 
+        x,y,w,h = cv2.boundingRect(possible_cnt[biggest_cnt])
+        
+        #adds RS coords to the bounding box
+        x += x1
+        y += y1
+        x2 = x + w
+        y2 = y + h
+
+        # generate random coords
+        x = random.randint(x,x2)
+        y = random.randint(y,y2)
+
+        #move click chest
+        Mouse.moveClick(x,y,1)
+        time.sleep(1)
+        
+    except:
+        print("Bank NOT found!\nMove camera around!")
+
+
+
+    
+
+    

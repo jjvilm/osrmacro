@@ -42,6 +42,7 @@ def makeBow():
     RS.findOptionClick(x,y,'makeAll')
 
 def run():    
+    RS.open_cw_bank()
     if RS.isBankOpen():
         #checks to see if inv is empty
         if not RS.isInvEmpty():
@@ -64,6 +65,7 @@ def run():
             makeBow()
         time.sleep(17)
         while True:
+            RS.open_cw_bank()
             if RS.isBankOpen():
                 RS.depositAll()
                 withdrawFromBank('/imgs/bowString.png')

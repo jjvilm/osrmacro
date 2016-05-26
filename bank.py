@@ -1,3 +1,4 @@
+"""This is a func part of RS module"""
 import random
 import os
 import cv2
@@ -5,9 +6,10 @@ import numpy as np
 
 from modules import Screenshot
 from modules import  RS
+from modules import Mouse
 
 rsx, rsy = RS.position()
-def TakeScr():
+def castle_wars_bank():
     global rsx
     global rsy
 
@@ -25,43 +27,39 @@ def TakeScr():
     upper_red = np.array([150,30,150])
 
     mask = cv2.inRange(play_window, lower_red, upper_red)
-    mask2 = cv2.inRange(play_window, lower_red, upper_red)
+    #mask2 = cv2.inRange(play_window, lower_red, upper_red)
     res = cv2.bitwise_and(play_window, play_window, mask=mask)
     #cv2.imshow('res', res)
 
     # finds contours of image
     image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+    # list to contain and get the max of all
+    pos_cont = {}
     # Finds contours with edges higher than 4 that make a square
-    for i,cnt in enumerate(contours):
+    for cnt in contours:
         # only gets the biegest contour
         approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
         if len(approx)==4 and len(cnt) > 4:
-            cv2.drawContours(play_window,[cnt], 0,(0,0,0),-1)
-            while True:
-                k = cv2.waitKey(5) & 0xFF
-                if k == 27:
-                    break
-                cv2.imshow('mask', play_window)
+            pos_cont[len(cnt)] = cnt
+            print(len(cnt))
+                
+    try:
+        biggest_cnt = max(pos_cont.keys())
+        # builds a boundingrect
+        x,y,w,h = cv2.boundingRect(pos_cont[biggest_cnt])
+        # adds RS coords to these
+        x += x1
+        y += y1
+        x2 = x + w
+        y2 = y + h
 
-    #cnt = contours[0]
-    #print(contours[1])
-    #x, y, w, h = cv2.boundingRect(cnt)
-    #w = w/2
-    #h = h/2
-    #x += w/2
-    #y += h/2
-    # Draws rectangle around it
-    #img = cv2.rectangle(mask, (x,y), (x+w, y+h), (0,0,0), 2)
-    #gen random coords within bound
-    while True:
-        k = cv2.waitKey(5) & 0xFF
-        if k == 27:
-            break
-        cv2.imshow('mask', mask2)
-        #cv2.imshow('res', res)
-        #cv2.imshow('play',play_window)
-    #cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        # gen.rand.coords
+        x = random.randint(x,x2)
+        y = random.randint(y,y2)
 
-TakeScr()
+        Mouse.moveClick(x,y,1)
+    except:
+        print("Bank NOT found!")
+    
+castle_wars_bank()

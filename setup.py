@@ -13,9 +13,12 @@ def centering():
     #moves window to center of screen
     os.system('xdotool search old windowmove {0} 0'.format(pos))
     #os.system('xdotool search old windowmove 0 0')
+def move2origin():
+    os.system('xdotool search old windowmove 0 0')
 
 
-centering()
+#centering()
+move2origin()
 os.system('xdotool search Old windowsize 767 564')
 
 

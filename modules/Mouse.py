@@ -3,6 +3,7 @@ import RandTime
 import autopy
 import random
 
+
 """Module to move mouse"""
 
 def moveTo(x,y):
@@ -160,3 +161,12 @@ def randCoord(pt,w,h ):
     x = random.randint(pt[0]+3,(w-3))
     y = random.randint(pt[1]+3,(h-3))
     return x,y
+
+def genCoords(x1,y1,x2,y2):
+    """Returns random coords of passed coordinates, not relative to RS window"""
+    x = random.randint(x1,x2)
+    y = random.randint(y1,x2)
+    return x, y
+
+
+

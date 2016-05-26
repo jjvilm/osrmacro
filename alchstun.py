@@ -29,6 +29,7 @@ def findMonk():
     image, contours, hierarchy = cv2.findContours(mask2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     cnt = contours[0]
+
     x, y, w, h = cv2.boundingRect(cnt)
     w = w/2
     h = h/2
