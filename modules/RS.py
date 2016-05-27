@@ -315,10 +315,12 @@ def antiban(skill):
         #moves back to bag
         bagx,bagy = Mouse.genCoords(634,195,652,215)
         Mouse.moveClick(bagx+rsx,bagy+rsy,1)
+        #returns true if antiban ran, to let me know if it acutally did ran
+        return True
         
 
 def skillHover(skill):
-	"""Hovers over passed skill from 1-5 secs"""
+    """Hovers over passed skill from 1-5 secs"""
     skills = {
             'attack':0, 'hitpoints':0,'mining':0,
 

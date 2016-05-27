@@ -74,16 +74,27 @@ def run():
                 bagx,bagy = Mouse.genCoords(634,195,652,215)
                 Mouse.moveClick(bagx+RSX,bagy+RSY,1)
                 break
-        RS.antiban('fletching')
+        if RS.antiban('fletching'):
+            RandTime.randTime(13,0,0,13,9,9)
         RandTime.randTime(16,0,0,17,9,9)
+
+        tries = 0
         while True:
+            if tries == 3:
+                RS.logout()
             RS.open_cw_bank()
+            RandTime.randTime(2,0,0,2,0,9)
             if RS.isBankOpen():
                 RS.depositAll()
                 withdrawFromBank('/imgs/bowString.png')
                 withdrawFromBank('/imgs/yewLongbowU.png')
                 RS.closeBank()
-                break
+
+                #checks for string and longbowsU
+                if RS.countItemInInv('bowString.png',1) and RS.countItemInInv('yewLongbowU.png',1):
+                    tries = 0
+                    break
+                tries += 1
 
 def withdrawFromBank(template_):
     rsx, rsy = RS.position()

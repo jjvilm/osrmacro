@@ -97,7 +97,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
             rx -= rsx
             ry -= rsy
 
-			RS.findOptionClick(rx,ry,'withdraw14')
+            RS.findOptionClick(rx,ry,'withdrawAll')
 #            #takes screenshot & returns Top-left pt of screenshot
 #            menu_x, menu_y, menu = RS.getOptionsMenu(rx,ry)
 #
@@ -140,15 +140,18 @@ def gen_coords(pt,btmX,btmY):
     return within_x, within_y
 
     
-def moveToFletchingOptions():
+def moveToFletchingOptions(bow):
     cwd = os.getcwd()
     rsx, rsy = RS.position() #gets position of RS window
 
     #x = rsx + random.randint(23,167)#x coord range of short bow
     #y = rsy + random.randint(397,469) #y respectivaly
 
-    x = rsx + random.randint(215,280)#x coord range of long bow. Defautl 209,299
-    y = rsy + random.randint(405,446) #BR-coord of longbow. Default: 395,456
+    if 'magic' in bow:
+        x,y = Mouse.genCoords(350,405,450,456)
+    elif 'yew' in bow or 'maple' in bow:
+        x = rsx + random.randint(215,280)#x coord range of long bow. Defautl 209,299
+        y = rsy + random.randint(405,446) #BR-coord of longbow. Default: 395,456
 
     Mouse.moveClick(x,y,3) #right-clicks on short bow
     #taking away rs position since getoptionsmenu func adds them back in
@@ -183,7 +186,7 @@ def moveToFletchingOptions():
         autopy.key.toggle(autopy.key.K_RETURN, False)
         break
 
-def start_fletching():
+def start_fletching(bow):
     rsx,rsy = RS.position()
     cwd= os.getcwd()
     
@@ -193,80 +196,71 @@ def start_fletching():
         while True:
             #runs only if bank is open
             if RS.isBankOpen():
-				# if inv is NOT empty deposit all items
-				if not RS.isInvEmpty()
-					RS.depositAll()
-				
-				# try only 3 times to take out an item
-				# otherwise starts stringing them
-				tries = 0
+    #   #   #   
+                # try only 3 times to take out an item
+                # otherwise starts stringing them
+                tries = 0
+    #   #   #
+                # goes into loop to make sure a knife is taken out
+                while True:
+                    if tries == 3:
+                        # Moves on to stringing if runs out of logs
+                        return 0
+                    # if inv is NOT empty deposit all items
+                    if not RS.isInvEmpty():
+                        RS.depositAll()
 
-				# goes into loop to make sure a knife is taken out
-				while True:
-					if tries == 3:
-						# stops the loop if 3 tries is given
-						# and no item was found/taken out
-						break
-					if not RS.countItemInInv('knife.png',1):
-						withdraw_from_bank('knife.png','click') 
-					else:
-						tries = 0
-						break
-					tries += 1
+                    withdraw_from_bank('knife.png','click') 
+                # goes into loop to make sure logs are taken out
+                                        # works w/ yewLogs too
+                    #withdraw_from_bank('mapleLog.png','withdrawAll') 
+                    withdraw_from_bank(bow,'withdrawAll') 
+                    RandTime.randTime(0,7,9,0,7,9)
 
-				# goes into loop to make sure logs are taken out
-				while True:
-					if tries == 3:
-						# Moves on to stringing if runs out of logs
-						return 0
-					if not RS.countItemInInv('mapleLog.png',1):
-						withdraw_from_bank('mapleLog.png','withdrawAll') 
-					
-					else:
-						RS.closeBank()
-						tries = 0
-						break
-					tries += 1
 
-				#breaks out of the loop that makes sure items are deposited and withdrawn
-				break
-
-			#Opens bank if it's not already opened
-			else:
-				RS.open_cw_bank()
-				#gives time for bank detection to start
-				RandTime.randTime(1,0,0,1,9,9)
-
-		########### Starts cutting logs ############
-		# goes into a loop to make sure 
-		# logs are being cut
-		while True:
-			#Finds knife, cliks it
-			find_template('knife.png','click')
-			RandTime.randTime(0,0,1,0,9,9)
-
-			#Finds First maple log, clicks it
-			find_template('mapleLog.png','click')
-
-			#Moves to fletch short/long/stock
-			#right cliks, make X, type 99
-			moveToFletchingOptions()
-			RandTime.randTime(2,0,0,2,9,9)
-
-			if RS.countItemInInv('yewLongbowU.png',1):
-				break
-        
+                    if RS.countItemInInv('knife.png',1):
+                        n_logs = RS.countItemInInv(bow)
+                        if n_logs:
+                            RS.closeBank()
+                            break
+                    tries += 1
+    #   #   #
+                #breaks out of the loop that makes sure items are deposited and withdrawn
+                break
+    #   #   #
+                #Opens bank if it's not already opened
+            else:
+                RS.open_cw_bank()
+                #gives time for bank detection to start
+                RandTime.randTime(1,0,0,1,0,9)
+    #   #   #  
+        ########### Starts cutting logs ############
+        # goes into a loop to make sure 
+        # logs are being cut
+        while True:
+            #Finds knife, cliks it
+            find_template('knife.png','click')
+            RandTime.randTime(0,0,1,0,9,9)
+    #   #   #
+            #Finds First maple log, clicks it
+            find_template(bow,'click')
+    #   #   #
+            #Moves to fletch short/long/stock
+            #right cliks, make X, type 99
+            moveToFletchingOptions(bow)
+            RandTime.randTime(2,0,0,2,9,9)
+    #   #   #
+            if RS.countItemInInv('yewLongbowU.png',1):
+                break
+    #   #   # 
         #waits 2 secs/log 
-        nlogs =RS.countItemInInv('mapleLog.png') * 2 
-		RandTime.randTime(nlogs,0,0,nlogs,9,9)
-
-		#repeats after this
+        n_logs = (n_logs*2) - 7
+        if RS.antiban('fletching'):
+            n_logs -= 3
+        RandTime.randTime(n_logs,0,0,n_logs,9,9)
+    #   #   #
 
 if __name__ == '__main__':
-    start_fletching()
+    start_fletching('magicLogs.png')
     os.system('./stringer.py')
-    #find_template('knife.png','click')
-    #find_template('mapleLog.png','click')
-    #moveToFletchingOptions()
-    #withdraw_from_bank('knife.png', 'click')
 
