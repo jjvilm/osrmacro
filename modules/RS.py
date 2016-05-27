@@ -318,6 +318,7 @@ def antiban(skill):
         
 
 def skillHover(skill):
+	"""Hovers over passed skill from 1-5 secs"""
     skills = {
             'attack':0, 'hitpoints':0,'mining':0,
 
