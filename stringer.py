@@ -72,7 +72,7 @@ def run():
                 break
             else:
                 bagx,bagy = Mouse.genCoords(634,195,652,215)
-                Mouse.moveClick(bagx+RSX,bagy+RSY)
+                Mouse.moveClick(bagx+RSX,bagy+RSY,1)
                 break
         RS.antiban('fletching')
         RandTime.randTime(16,0,0,17,9,9)

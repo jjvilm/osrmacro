@@ -297,7 +297,7 @@ def open_cw_bank():
         print("Bank NOT found!\nMove camera around!")
     
 def antiban(skill):
-    if random.randint(0,99) == 0:
+    if random.randint(0,10) == 0:
         rsx,rsy = position()
         # Tuples of locations
         #if random.randint(0,100) == 1:
@@ -312,6 +312,10 @@ def antiban(skill):
 
         #hovers over a certain skill
         skillHover(skill)
+        #moves back to bag
+        bagx,bagy = Mouse.genCoords(634,195,652,215)
+        Mouse.moveClick(bagx+rsx,bagy+rsy,1)
+        
 
 def skillHover(skill):
     skills = {
@@ -335,5 +339,25 @@ def skillHover(skill):
     x1,y1,x2,y2 =skills[skill]
     x,y = Mouse.genCoords(x1,y1,x2,y2)
     Mouse.moveTo(x,y)
-    RandTime.randTime(1,0,0,3,9,9)
+    RandTime.randTime(1,0,0,4,9,9)
+
+def logout():
+    rsx,rsy = position()
+    #  Door Button
+    x,y = Mouse.genCoords(636,495,650,515)
+    x +=rsx
+    y +=rsy
+    Mouse.moveClick(x,y,1)
+
+    # Log out Button
+    x,y = Mouse.genCoords(581,428,707,450)
+    x +=rsx
+    y +=rsy
+    Mouse.moveClick(x,y,1)
+
+    
+   
+
+
+
 
