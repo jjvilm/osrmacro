@@ -75,11 +75,10 @@ def withdraw_from_bank(template_file, option):#pass template to function
     loc, w, h = Match.this(bankWindow, template_file)
     for pt in zip(*loc[::-1]):#goes through each found image
         #adds x1,y1 coords to pt to be relative to the window
-        pt = (x1+pt[0]+5, y1+pt[1]+5)#
+        pt = (x1+pt[0]+((w/2)/2), y1+pt[1]+((h/2)/2))#
         #Bottom-Right coords of found template
-        btmX =  pt[0] + w - 5
-        btmY =  pt[1] + h - 5
-
+        btmX =  pt[0] + w - ((w/2)/2)
+        btmY =  pt[1] + h - ((h/2)/2)
 
         #create random coords within the coords of the found template
         rx = random.randint(pt[0],btmX)
@@ -87,6 +86,7 @@ def withdraw_from_bank(template_file, option):#pass template to function
 
         if option == 'click':
             Mouse.moveClick(rx,ry,1)
+            break
         else:
             #right clicks on given x,y coords
             Mouse.moveClick(rx,ry, 3)
@@ -98,34 +98,9 @@ def withdraw_from_bank(template_file, option):#pass template to function
             ry -= rsy
 
             RS.findOptionClick(rx,ry,'withdrawAll')
-#            #takes screenshot & returns Top-left pt of screenshot
-#            menu_x, menu_y, menu = RS.getOptionsMenu(rx,ry)
-#
-#            #saves image for debug purposes
-#            #cv2.imwrite('debug_inBankLog_options.png',menu)
-#
-#            RandTime.randTime(0,0,0,0,0,1)
-#            #Using match to find option and click it
-#            loc, w, h = Match.this(menu, cwd+'/imgs/withdrawAll.png')
-#
-#            
-#            #runs though the imgae to find 'withdraw all' option and click it
-#            for pt in zip(*loc[::-1]):
-#                #moves pt x to left *2 the w of it.  
-#                pt = (menu_x+pt[0]-(w), menu_y+pt[1]+3)
-#                
-#
-#                #Bottom-Right coords of found template
-#                btmX =  pt[0] + w * 4
-#                btmY =  pt[1] + h #mark
-#
-#                #create random coords within the coords of the found template
-#                rx = random.randint(pt[0],btmX)
-#                ry = random.randint(pt[1],btmY)
-#
-#                #clicks on given random x,y coords
-#                Mouse.moveClick(rx,ry, 1)
-#                break
+            break
+
+
 	 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -215,7 +190,7 @@ def start_fletching(bow):
                                         # works w/ yewLogs too
                     #withdraw_from_bank('mapleLog.png','withdrawAll') 
                     withdraw_from_bank(bow,'withdrawAll') 
-                    RandTime.randTime(0,7,9,0,7,9)
+                    RandTime.randTime(0,8,0,0,9,9)
 
 
                     if RS.countItemInInv('knife.png',1):
@@ -223,6 +198,8 @@ def start_fletching(bow):
                         if n_logs:
                             RS.closeBank()
                             break
+                    else:
+                        start_fletching(bow)
                     tries += 1
     #   #   #
                 #breaks out of the loop that makes sure items are deposited and withdrawn
@@ -248,13 +225,17 @@ def start_fletching(bow):
             #Moves to fletch short/long/stock
             #right cliks, make X, type 99
             moveToFletchingOptions(bow)
-            RandTime.randTime(2,0,0,2,9,9)
+            RandTime.randTime(3,0,0,3,9,9)
     #   #   #
             if RS.countItemInInv('yewLongbowU.png',1):
                 break
     #   #   # 
         #waits 2 secs/log 
-        n_logs = (n_logs*2) - 7
+        if n_logs > 6:
+            n_logs = (n_logs*2) - 7
+        else:
+            n_logs = (n_logs*2)
+
         if RS.antiban('fletching'):
             n_logs -= 3
         RandTime.randTime(n_logs,0,0,n_logs,9,9)

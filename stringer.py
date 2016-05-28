@@ -54,13 +54,10 @@ def run():
         withdrawFromBank('/imgs/yewLongbowU.png')
         RS.closeBank()
     else: 
-        if RS.isInvEmpty():
-            return 0
+        if RS.countItemInInv('bowString.png', 1)==1 and RS.countItemInInv('yewLongbowU.png',1)==1:
+            pass
         else:
-            if RS.countItemInInv('bowString.png', 1)==1 and RS.countItemInInv('yewLongbowU.png',1)==1:
-                pass
-            else:
-                return 0
+            return 0
 
     # Main stringer loop
     while True:
@@ -76,14 +73,17 @@ def run():
                 break
         if RS.antiban('fletching'):
             RandTime.randTime(13,0,0,13,9,9)
-        RandTime.randTime(16,0,0,17,9,9)
+        else:
+            RandTime.randTime(16,0,0,17,9,9)
 
         tries = 0
         while True:
             if tries == 3:
                 RS.logout()
+                print("Maxed out tries, or nothing to string")
+                return 0
             RS.open_cw_bank()
-            RandTime.randTime(2,0,0,2,0,9)
+            RandTime.randTime(1,0,0,1,5,9)
             if RS.isBankOpen():
                 RS.depositAll()
                 withdrawFromBank('/imgs/bowString.png')
@@ -122,4 +122,5 @@ def withdrawFromBank(template_):
         RS.findOptionClick(x,y,'withdraw14')
         break
 run()
-
+#import os
+#os.system('sudo shutdown now')

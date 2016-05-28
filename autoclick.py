@@ -78,13 +78,14 @@ def alching(clicks):
         RandTime.randTime(0,0,0,0,0,1)
         autopy.mouse.toggle(False,1)
 
-        if random.randint(0,4)==0:
-            x = random.randint(x1,x2)
-            y = random.randint(y1,y2)
-            autopy.mouse.move(x,y)
-        RandTime.randTime(0,0,3,0,3,5)
-        time.sleep(2)
-        RandTime.randTime(0,0,0,0,0,9)
+        #randomly moves mouse
+        x = random.randint(x1,x2)
+        y = random.randint(y1,y2)
+        Mouse.moveTo(x,y)
+
+        RandTime.randTime(2,1,5,2,7,9)
+
+
 def click_camelot(clicks):
     time.sleep(4)
     cx, cy  = autopy.mouse.get_pos()
@@ -103,12 +104,13 @@ def click_camelot(clicks):
         autopy.mouse.toggle(False,1)
 
         if random.randint(0,4)==0:
-            autopy.mouse.move(x,y)
+            Mouse.moveTo(x,y)
         RandTime.randTime(0,0,3,0,3,5)
-        time.sleep(1.5)
+        if not RS.antiban('magic'):
+            time.sleep(1.5)
 
 #click_camelot(106)
-alching(31)
+#alching(31)
 
 
 def splasher():
@@ -135,4 +137,8 @@ def splasher():
 
 #keep_clicking()#for fletching
 #clicker('stringer')#for stringer#for stringing
-
+n = int(raw_input('Alchables??\n>>'))
+alching(n)
+#RS.logout()
+#import os
+#os.system('sudo shutdown now')

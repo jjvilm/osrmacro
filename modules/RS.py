@@ -89,10 +89,13 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
     loc = np.where( res >= threshold)
 
     for pt in zip(*loc[::-1]):#goes through each found image
-        pt_x, pt_y = pt #point of drop found inside the option menu screenshot
+        pt_x, pt_y = pt #point of pattern found inside the option menu screenshot
         #making btm coords
-        btx = menu_x + pt_x + w
-        bty = menu_y + pt_y + h
+        btx = menu_x + pt_x + w - ((w/2)/2)
+        bty = menu_y + pt_y + h - ((h/2)/2) 
+        #moving pt in by half of half of w,h
+        pt_x += ((w/2)/2)
+        pt_y += ((w/2)/2) 
         #gen random coords
         pt_x = random.randint(menu_x+pt_x,btx)
         pt_y = random.randint(menu_y+pt_y,bty)
@@ -104,6 +107,7 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
         
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
+        break
         
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
@@ -297,18 +301,14 @@ def open_cw_bank():
         print("Bank NOT found!\nMove camera around!")
     
 def antiban(skill):
-    if random.randint(0,10) == 0:
-        rsx,rsy = position()
+    rsx,rsy = position()
+    rn =random.randint(0,10)  
+    if rn == 0:
         # Tuples of locations
-        #if random.randint(0,100) == 1:
         stats_btn = Mouse.genCoords(567,194,589,215)
-        #                              x1  y1  x2  y2
-        stats_window = Mouse.genCoords(557,234,729,470)
         
         #Clicks the skills button
         Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
-        ## Randomly hovers over a random skill
-        #Mouse.moveClick(stats_window[0]+rsx,stats_window[1]+rsy)
 
         #hovers over a certain skill
         skillHover(skill)
@@ -317,10 +317,37 @@ def antiban(skill):
         Mouse.moveClick(bagx+rsx,bagy+rsy,1)
         #returns true if antiban ran, to let me know if it acutally did ran
         return True
+
+    elif rn == 1:
+        skillsHover(rsx,rsy)
+        return True
+
+def skillsHover(rsx,rsy):
+        """Hovers over n skills by n times""" 
+        # Tuples of locations
+        stats_btn = Mouse.genCoords(567,194,589,215)
+        
+        #Clicks the skills button
+        Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
+
+        n = random.randint(1,5)
+        for i in range(n):
+            #                              x1  y1  x2  y2
+            stats_window = Mouse.genCoords(557,234,729,470)
+            # Randomly hovers over a random skill
+            Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
+            RandTime.randTime(0,9,9,1,9,9)
+        #moves back to bag
+        bagx,bagy = Mouse.genCoords(634,195,652,215)
+        Mouse.moveClick(bagx+rsx,bagy+rsy,1)
+        #returns true if antiban ran, to let me know if it acutally did ran
+
+
         
 
 def skillHover(skill):
     """Hovers over passed skill from 1-5 secs"""
+    #Coordinates of skill's button
     skills = {
             'attack':0, 'hitpoints':0,'mining':0,
 
@@ -332,7 +359,7 @@ def skillHover(skill):
 
             'prayer':0,'crafting':0,'firemaking':0,
 
-            'magic':0,'fletching':(620,389,666,406),'woodcutting':0,
+            'magic':(557,388,602,402),'fletching':(620,389,666,406),'woodcutting':0,
 
             'runecraft':0,'slayer':0,'farming':0,
             
@@ -342,7 +369,7 @@ def skillHover(skill):
     x1,y1,x2,y2 =skills[skill]
     x,y = Mouse.genCoords(x1,y1,x2,y2)
     Mouse.moveTo(x,y)
-    RandTime.randTime(1,0,0,4,9,9)
+    RandTime.randTime(1,0,0,5,9,9)
 
 def logout():
     rsx,rsy = position()
@@ -358,9 +385,30 @@ def logout():
     y +=rsy
     Mouse.moveClick(x,y,1)
 
-    
+def press_button(button):
+    """Randomly presses the button on the coordinates stored in the buttons dictionary"""
+    buttons = {
+            'combat':0,
+            'stats':(570,197,586,214),
+            'quest':0,
+            'inventory':(634,196,651,213),
+            'equipment':0,
+            'prayer':(700,198,720,214),
+            'magic':(733,195,751,214),
+            'clan':0,
+            'friend':0,
+            'enemy':0,
+            'logout':0,
+            'options':0,
+            'emotes':0, 
+            'music':0,
+            'quick-prayer':0,
+            'run':0
+            }
+    #unpacks the tuple
+    x1,y1,x2,y2 = buttons[button]
+    #generates random coords 
+    x,y = Mouse.genCoords(x1,y1,x2,y2)
+    #moves to those coords
+    Mouse.moveClick(x,y,1)
    
-
-
-
-
