@@ -3,10 +3,7 @@
 import cv2
 import numpy as np
 import autopy #for smooth mouse move
-import pyscreenshot #to take screenshot of bag and options menu
-import subprocess #needed to access xdotool output
 import random #get random time
-import time #for sleep
 import os #needed to 
 
 ### Import my modules
@@ -16,7 +13,6 @@ from modules import Screenshot
 from modules import RS
 from modules import Match
 from modules import Keyboard
-from modules import Screenshot
 
 bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
 cwd = os.getcwd()
@@ -37,10 +33,10 @@ def find_template(template_file, option=None):#pass template to function
 
 
         #create Bott-Right coord of found template
-        btmX = pt[0] + w - 5 
-        btmY = pt[1] + h - 5
+        btmX = pt[0] + w - ((w/2)/2)
+        btmY = pt[1] + h - ((h/2)/2)
         #moving the pt coord of the template a bit to the right, so options menu get brought up
-        pt = (pt[0]+5, pt[1]+5)
+        pt = (pt[0]+((w/2)/2), pt[1]+((h/2)/2))
 
         #gencoord adds RS position
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
@@ -124,6 +120,8 @@ def moveToFletchingOptions(bow):
 
     if 'magic' in bow:
         x,y = Mouse.genCoords(350,405,450,456)
+        x += rsx
+        y += rsy
     elif 'yew' in bow or 'maple' in bow:
         x = rsx + random.randint(215,280)#x coord range of long bow. Defautl 209,299
         y = rsy + random.randint(405,446) #BR-coord of longbow. Default: 395,456
@@ -142,22 +140,16 @@ def moveToFletchingOptions(bow):
         x_a = menu_x + pt_x + (random.randint(1,(w*2)))
         y_a = menu_y + pt_y + (random.randint(5,h))
 
-        RandTime.randTime(0,0,0,0,0,1)
-
         #moves to 'Make X'
         Mouse.moveTo(x_a,y_a)
 
-        RandTime.randTime(0,0,0,0,0,1)
         #clicks on 'Make X'
         Mouse.click(1)
-
-        time.sleep(1.1)
-        RandTime.randTime(0,0,0,0,1,1)
+        RandTime.randTime(1,5,0,1,9,9)
 
         Keyboard.type_this("99")
         autopy.key.toggle(autopy.key.K_RETURN, True)
-        RandTime.randTime(0,0,0,0,0,1)
-        RandTime.randTime(0,0,0,0,0,0)
+        RandTime.randTime(0,0,1,0,0,1)
         autopy.key.toggle(autopy.key.K_RETURN, False)
         break
 
@@ -168,48 +160,29 @@ def start_fletching(bow):
     # Main Loop starts here
     while True:
         # Loop to withdraw knife and logs, and deposit and open bank
+        tries = 0
         while True:
+            if tries == 2:
+                print('Maybe ran out of an item, or items not found!\nMoving on to stringing')
+                return 0
             #runs only if bank is open
             if RS.isBankOpen():
-    #   #   #   
-                # try only 3 times to take out an item
-                # otherwise starts stringing them
-                tries = 0
-    #   #   #
-                # goes into loop to make sure a knife is taken out
-                while True:
-                    if tries == 3:
-                        # Moves on to stringing if runs out of logs
-                        return 0
-                    # if inv is NOT empty deposit all items
-                    if not RS.isInvEmpty():
-                        RS.depositAll()
+                RS.depositAll()
+                withdraw_from_bank('knife.png','click') 
+                withdraw_from_bank(bow,'withdrawAll') 
 
-                    withdraw_from_bank('knife.png','click') 
-                # goes into loop to make sure logs are taken out
-                                        # works w/ yewLogs too
-                    #withdraw_from_bank('mapleLog.png','withdrawAll') 
-                    withdraw_from_bank(bow,'withdrawAll') 
-                    RandTime.randTime(0,8,0,0,9,9)
-
-
-                    if RS.countItemInInv('knife.png',1):
-                        n_logs = RS.countItemInInv(bow)
-                        if n_logs:
-                            RS.closeBank()
-                            break
-                    else:
-                        start_fletching(bow)
-                    tries += 1
-    #   #   #
-                #breaks out of the loop that makes sure items are deposited and withdrawn
-                break
-    #   #   #
-                #Opens bank if it's not already opened
+                if RS.countItemInInv('knife.png',1):
+                    n_logs = RS.countItemInInv(bow)
+                    if n_logs:
+                        RS.closeBank()
+                        break
+            #Opens bank if it's not already opened
             else:
                 RS.open_cw_bank()
                 #gives time for bank detection to start
                 RandTime.randTime(1,0,0,1,0,9)
+            #after the second try it breaks
+            tries += 1
     #   #   #  
         ########### Starts cutting logs ############
         # goes into a loop to make sure 
@@ -217,7 +190,6 @@ def start_fletching(bow):
         while True:
             #Finds knife, cliks it
             find_template('knife.png','click')
-            RandTime.randTime(0,0,1,0,9,9)
     #   #   #
             #Finds First maple log, clicks it
             find_template(bow,'click')
