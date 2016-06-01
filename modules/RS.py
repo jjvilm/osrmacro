@@ -13,6 +13,7 @@ import Screenshot
 import Mouse
 import RandTime
 import Match
+import Keyboard
 
 
 
@@ -299,11 +300,12 @@ def open_cw_bank():
         
     except:
         print("Bank NOT found!\nMove camera around!")
-    
+        
 def antiban(skill):
     rsx,rsy = position()
-    rn =random.randint(0,10)  
+    rn =random.randint(0,99)  
     if rn == 0:
+        print("Starting antiban")
         # Tuples of locations
         stats_btn = Mouse.genCoords(567,194,589,215)
         
@@ -312,34 +314,83 @@ def antiban(skill):
 
         #hovers over a certain skill
         skillHover(skill)
-        #moves back to bag
-        bagx,bagy = Mouse.genCoords(634,195,652,215)
-        Mouse.moveClick(bagx+rsx,bagy+rsy,1)
-        #returns true if antiban ran, to let me know if it acutally did ran
+        moveback(skill)
         return True
 
+
+        #returns true if antiban ran, to let me know if it acutally did ran
+
     elif rn == 1:
+        print("Starting antiban")
         skillsHover(rsx,rsy)
+        moveback(skill)
         return True
+    #will ask for players skill lv
+#    elif rn == 2:
+#        greetings(skill)
+
+def moveback(skill):
+    if skill == 'magic':
+        press_button('magic')
+    else:
+        #moves back to bag
+        press_button('inventory')
+    print("Antiban end")
+
+
+def greetings(skill):
+    n = random.randint(0,10)
+    if random.randint(0,10):
+        if n == 0:
+            Keyboard.type_this("What's going on guys?")
+        elif n == 1:
+            Keyboard.type_this("whats up ppl!?")
+        elif n == 2:
+            Keyboard.type_this("what you all doing?")
+        elif n == 3:
+            Keyboard.type_this("hiiiii guys!")
+        elif n == 4:
+            Keyboard.type_this("what's your guys highest skill lv??")
+        elif n == 5:
+            Keyboard.type_this("flash1:what!?")
+        elif n == 6:
+            Keyboard.type_this("what are you talking about?")
+        elif n == 7:
+            Keyboard.type_this("i dont need to be hearing this")
+        elif n == 8:
+            Keyboard.type_this("chilling...")
+        elif n == 9:
+            Keyboard.type_this("skilling, what about you all?")
+        elif n == 10:
+            Keyboard.type_this("right now im working on {}, what about you guys??".format(skill))
+
+        Keyboard.press('enter')
+
+
+    RandTime.randTime(5,0,0,13,9,9)
+
+
+
+            
+        
+           
 
 def skillsHover(rsx,rsy):
         """Hovers over n skills by n times""" 
-        # Tuples of locations
-        stats_btn = Mouse.genCoords(567,194,589,215)
-        
-        #Clicks the skills button
-        Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
 
-        n = random.randint(1,5)
-        for i in range(n):
-            #                              x1  y1  x2  y2
-            stats_window = Mouse.genCoords(557,234,729,470)
-            # Randomly hovers over a random skill
-            Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
-            RandTime.randTime(0,9,9,1,9,9)
-        #moves back to bag
-        bagx,bagy = Mouse.genCoords(634,195,652,215)
-        Mouse.moveClick(bagx+rsx,bagy+rsy,1)
+        n = random.randint(0,2)
+        if n > 0:
+            # Tuples of locations
+            stats_btn = Mouse.genCoords(567,194,589,215)
+            
+            #Clicks the skills button
+            Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
+            for i in range(n):
+                #                              x1  y1  x2  y2
+                stats_window = Mouse.genCoords(557,234,729,470)
+                # Randomly hovers over a random skill
+                Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
+                RandTime.randTime(1,0,0,2,9,9)
         #returns true if antiban ran, to let me know if it acutally did ran
 
 
@@ -386,7 +437,7 @@ def logout():
     Mouse.moveClick(x,y,1)
 
 def press_button(button):
-    """Randomly presses the button on the coordinates stored in the buttons dictionary"""
+    """Presses button on random coordinates stored in the buttons dictionary"""
     buttons = {
             'combat':0,
             'stats':(570,197,586,214),

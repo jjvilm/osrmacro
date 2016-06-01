@@ -148,9 +148,7 @@ def moveToFletchingOptions(bow):
         RandTime.randTime(1,5,0,1,9,9)
 
         Keyboard.type_this("99")
-        autopy.key.toggle(autopy.key.K_RETURN, True)
-        RandTime.randTime(0,0,1,0,0,1)
-        autopy.key.toggle(autopy.key.K_RETURN, False)
+        Keyboard.press('enter')
         break
 
 def start_fletching(bow):
@@ -158,9 +156,11 @@ def start_fletching(bow):
     cwd= os.getcwd()
     
     # Main Loop starts here
+    tries = 0
     while True:
         # Loop to withdraw knife and logs, and deposit and open bank
-        tries = 0
+        RS.open_cw_bank()
+        RandTime.randTime(0,5,0,0,9,9)
         while True:
             if tries == 2:
                 print('Maybe ran out of an item, or items not found!\nMoving on to stringing')
@@ -170,19 +170,22 @@ def start_fletching(bow):
                 RS.depositAll()
                 withdraw_from_bank('knife.png','click') 
                 withdraw_from_bank(bow,'withdrawAll') 
+                RS.closeBank()
 
                 if RS.countItemInInv('knife.png',1):
                     n_logs = RS.countItemInInv(bow)
                     if n_logs:
-                        RS.closeBank()
+                        tries = 0
                         break
+                    else:
+                        print(tries)
+                        #after the second try it breaks
+                        tries += 1
             #Opens bank if it's not already opened
             else:
                 RS.open_cw_bank()
                 #gives time for bank detection to start
                 RandTime.randTime(1,0,0,1,0,9)
-            #after the second try it breaks
-            tries += 1
     #   #   #  
         ########### Starts cutting logs ############
         # goes into a loop to make sure 
@@ -197,7 +200,7 @@ def start_fletching(bow):
             #Moves to fletch short/long/stock
             #right cliks, make X, type 99
             moveToFletchingOptions(bow)
-            RandTime.randTime(3,0,0,3,9,9)
+            RandTime.randTime(2,0,0,2,0,9)
     #   #   #
             if RS.countItemInInv('yewLongbowU.png',1):
                 break
@@ -209,11 +212,12 @@ def start_fletching(bow):
             n_logs = (n_logs*2)
 
         if RS.antiban('fletching'):
-            n_logs -= 3
+            n_logs -= 6
         RandTime.randTime(n_logs,0,0,n_logs,9,9)
     #   #   #
 
 if __name__ == '__main__':
     start_fletching('magicLogs.png')
+    #start_fletching('mapleLogs.png')
     os.system('./stringer.py')
 

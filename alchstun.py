@@ -57,8 +57,13 @@ def spell(*args, **kwargs):
         elif s == 'alch':
             x, y = genCoords(710+rsx,346+rsy,720+rsx,356+rsy)
             Mouse.moveClick(x,y, 1)
+            RandTime.randTime(0,1,0,0,1,9)
             x, y = genCoords(700+rsx,353+rsy,714+rsx,364+rsy)
             Mouse.moveClick(x,y, 1)
+            RandTime.randTime(0,1,0,1,9,9)
+        elif s == 'stun':
+            x, y = genCoords(618+rsx,443+rsy,621+rsx,447+rsy)
+            Mouse.moveClick(x,y,1)
         elif s == 'enfeeble':
             x, y = genCoords(686+rsx,416+rsy,696+rsx,426+rsy)
             Mouse.moveClick(x,y,1)
@@ -67,21 +72,27 @@ counter = 0
 nats = int(raw_input("Alchabels??\n> "))
 souls = int(raw_input("Souls??\n> "))
 bodys = int(raw_input("Body runes??\n> "))
+RS.press_button('magic')
 while True:
-#    if counter >= nats+souls+bodys:
-#        os.system('sudo shutdown now')
-#        break
+    if counter >= nats+souls+bodys:
+        print('done!')
+        break
 #        
-    if counter < nats:
+    if nats:
         spell('alch')
+        nats -= 1
         RandTime.randTime(0,1,9,0,3,9)
-    if counter < souls:
-        spell('enfeeble')
-    if counter >= souls:
+    if souls:
+        spell('stun')
+        souls -= 1
+    if bodys and not souls:
         spell('curse')
-    if counter % 10 == 0 or counter == 0:
+        bodys -= 1
+    if (counter % 10 == 0 or counter == 0) and ((souls > 0) or (bodys > 0)):
         print(counter,'Finding Monk')
         x1,y1,x2,y2 = findMonk()
-    x, y = genCoords(x1,y1,x2, y2)
-    Mouse.moveClick(x,y,1)
+    if (souls > 0) or (bodys > 0): 
+        x, y = genCoords(x1,y1,x2, y2)
+        Mouse.moveClick(x,y,1)
     counter += 1 
+    RS.antiban('magic')

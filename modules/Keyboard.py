@@ -13,7 +13,7 @@ def type_this(strings):
 		# delay between key presses--key UP/DOWN
 		autopy.key.toggle(s, True)
 		
-		if random.randint(0,10) == 0:
+		if random.randint(0,5) == 0:
 			RandTime.randTime(0,0,0,0,2,9)
 		else:
 			RandTime.randTime(0,0,0,0,1,9)
@@ -21,4 +21,10 @@ def type_this(strings):
 		autopy.key.toggle(s, False)
 		# delay after key UP--next key 
 		RandTime.randTime(0,0,0,0,0,9) 
+
+def press(button):
+    if button == 'enter':
+        autopy.key.toggle(autopy.key.K_RETURN, True)
+        RandTime.randTime(0,0,1,0,0,1)
+        autopy.key.toggle(autopy.key.K_RETURN, False)
 

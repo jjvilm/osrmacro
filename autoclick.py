@@ -6,7 +6,8 @@ from modules import RandTime
 from modules import Screenshot
 from modules import Match
 from modules import RS
-
+RSX,RSY = RS.position()
+RSX -= 2
 
 def keep_clicking():
     time.sleep(3)
@@ -58,32 +59,37 @@ def clicker(item):
             Mouse.moveClick(x,y,1)
             timer +=1
 def alching(clicks):
-    time.sleep(4)
-    cx, cy  = autopy.mouse.get_pos()
-    x1 = cx - 2
-    y1 = cy - 2
-    x2 = cx + 2
-    y2 = cy + 2
+    RS.press_button('magic')
+
     for c in range(clicks):
 
-        RandTime.randTime(0,0,0,0,0,1)
+#        autopy.mouse.toggle(True,1)
+#        RandTime.randTime(0,0,0,0,0,1)
+#        autopy.mouse.toggle(False,1)
+#
+#        RandTime.randTime(0,0,0,0,9,9)
+#
+#        autopy.mouse.toggle(True,1)
+#        RandTime.randTime(0,0,0,0,0,1)
+#        autopy.mouse.toggle(False,1)
+#
+#        #randomly moves mouse
+#        x = random.randint(x1,x2)
+#        y = random.randint(y1,y2)
+#        print(x,y)
 
-        autopy.mouse.toggle(True,1)
-        RandTime.randTime(0,0,0,0,0,1)
-        autopy.mouse.toggle(False,1)
+        # randomly moves to alch spell
+        x,y = Mouse.genCoords(713,345,720,352)
+        Mouse.moveClick(x+RSX,y+RSY,1)
 
-        RandTime.randTime(0,0,0,0,9,9)
+        #RandTime.randTime(0,1,0,0,1,9)
+        # randomly moves to alched item
+        x,y = Mouse.genCoords(697,348,713,364)
+        Mouse.moveClick(x+RSX,y+RSY,1)
 
-        autopy.mouse.toggle(True,1)
-        RandTime.randTime(0,0,0,0,0,1)
-        autopy.mouse.toggle(False,1)
 
-        #randomly moves mouse
-        x = random.randint(x1,x2)
-        y = random.randint(y1,y2)
-        Mouse.moveTo(x,y)
-
-        RandTime.randTime(2,1,5,2,7,9)
+        RandTime.randTime(1,1,0,1,9,9)
+        RS.antiban('magic')
 
 
 def click_camelot(clicks):
