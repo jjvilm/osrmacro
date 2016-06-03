@@ -408,7 +408,7 @@ def skillHover(skill):
 
             'ranged':0,'thieving':0,'cooking':0,
 
-            'prayer':0,'crafting':0,'firemaking':0,
+            'prayer':0,'crafting':(621,358,664,373),'firemaking':0,
 
             'magic':(557,388,602,402),'fletching':(620,389,666,406),'woodcutting':0,
 
