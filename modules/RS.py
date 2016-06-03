@@ -90,21 +90,21 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
     loc = np.where( res >= threshold)
 
     for pt in zip(*loc[::-1]):#goes through each found image
-        pt_x, pt_y = pt #point of pattern found inside the option menu screenshot
+        x1, y1 = pt #point of pattern found inside the option menu screenshot
         #making btm coords
-        btx = menu_x + pt_x + w - ((w/2)/2)
-        bty = menu_y + pt_y + h - ((h/2)/2) 
+        x2 = menu_x + x1 + (w*2)
+        y2 = menu_y + y1 + h - ((h/2)/2) 
         #moving pt in by half of half of w,h
-        pt_x += ((w/2)/2)
-        pt_y += ((w/2)/2) 
+        x1 -= (w/2)
+        y1 += ((h/2)/2) 
         #gen random coords
-        pt_x = random.randint(menu_x+pt_x,btx)
-        pt_y = random.randint(menu_y+pt_y,bty)
+        x1 = random.randint(menu_x+x1,x2)
+        y1 = random.randint(menu_y+y1,y2)
 
         #x = menu_x + pt_x + (random.randint(5,(w*2))) #generates random x range fr
-        #y = menu_y + pt_y + (random.randint(5,h-1)) #generats random Y for drop selection
+        #y = menu_y + y1 + (random.randint(5,h-1)) #generats random Y for drop selection
         
-        Mouse.moveClick(pt_x,pt_y, 1)
+        Mouse.moveClick(x1,y1, 1)
         
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)

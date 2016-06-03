@@ -67,14 +67,19 @@ def withdraw_from_bank(template_file, option):#pass template to function
     #SAVE for DEBUG
     #cv2.imwrite('debug_inBankLog.png',bankWindow)
     
+    # This For loop runs through found matches and clicks or right-clicks
     #loc == coordinates found in match
     loc, w, h = Match.this(bankWindow, template_file)
     for pt in zip(*loc[::-1]):#goes through each found image
         #adds x1,y1 coords to pt to be relative to the window
-        pt = (x1+pt[0]+((w/2)/2), y1+pt[1]+((h/2)/2))#
+        #pt = (x1+pt[0]+((w/2)/2), y1+pt[1]+((h/2)/2))#
+        pt = (x1+pt[0], y1+pt[1])#
         #Bottom-Right coords of found template
         btmX =  pt[0] + w - ((w/2)/2)
         btmY =  pt[1] + h - ((h/2)/2)
+
+        # moving point inwards
+        pt = (pt[0]+((w/2)/2), pt[1]+((h/2)/2))
 
         #create random coords within the coords of the found template
         rx = random.randint(pt[0],btmX)
@@ -158,6 +163,7 @@ def start_fletching(bow):
     # Main Loop starts here
     tries = 0
     while True:
+
         # Loop to withdraw knife and logs, and deposit and open bank
         RS.open_cw_bank()
         RandTime.randTime(0,5,0,0,9,9)
@@ -200,7 +206,7 @@ def start_fletching(bow):
             #Moves to fletch short/long/stock
             #right cliks, make X, type 99
             moveToFletchingOptions(bow)
-            RandTime.randTime(2,0,0,2,0,9)
+            RandTime.randTime(3,5,0,3,9,9)
     #   #   #
             if RS.countItemInInv('yewLongbowU.png',1):
                 break
