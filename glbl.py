@@ -219,4 +219,5 @@ def blow_glass(item, tool):
 
 if __name__ == '__main__':
     blow_glass('moltenGlass.png','glassblowingPipe.png')
+    RS.logout()
 
