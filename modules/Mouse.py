@@ -168,5 +168,13 @@ def genCoords(x1,y1,x2,y2):
     y = random.randint(y1,y2)
     return x, y
 
+def randMove(x1,y1,x2,y2,button):
+    x, y = genCoords(x1,y1,x2,y2)
+    if button == 1:
+        moveClick(x,y,1)
+    elif button == 3:
+        moveClick(x,y,3)
+    else:
+        print("Button not Found in Mouse.randMove")
 
 

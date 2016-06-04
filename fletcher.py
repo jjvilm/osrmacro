@@ -28,8 +28,7 @@ def find_template(template_file, option=None):#pass template to function
     loc, w, h = Match.this(rs_bag, template_file)
     #for loops iterates through every found template
     for pt in zip(*loc[::-1]):#goes through each found image
-        #pt = ((pt[0]+bagx),(pt[1]+bagy))
-        #pt is the Top-left coord of the found template
+        # bagx,bagy not needed b/ gencoords in line 41 adds them in
 
 
         #create Bott-Right coord of found template
