@@ -244,7 +244,7 @@ def isInvEmpty():
         return True
     return False
 
-def open_cw_bank():
+def open_cw_bank(*args):
     """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
     
     # gets RS window's position
@@ -257,10 +257,13 @@ def open_cw_bank():
 
     # Takes screenshot, as Hue-saturated-value image
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
-
-    # Defines the hue to look for
-    lower_gray = np.array([50,0,50])
-    upper_gray = np.array([150,30,150])
+    if args[0] == 'banker':
+        lower_gray = np.array([107,111,119])
+        upper_gray = np.array([120,119,128])
+    else:
+        # Defines the hue to look for
+        lower_gray = np.array([50,0,50])
+        upper_gray = np.array([150,30,150])
 
     # Makes a black/white mask
     mask = cv2.inRange(play_window, lower_gray, upper_gray)

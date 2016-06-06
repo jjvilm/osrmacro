@@ -16,19 +16,19 @@ class App:
 
         self.rlbl = Label(text="Red", fg='red')
         self.rlbl.grid(row=2)
-        self.lower_r = Scale(master, label='Low',from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.lower_r = Scale(master, label='Low',from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.lower_r.grid(row=3)
 
-        self.upper_r = Scale(master,label='High', from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.upper_r = Scale(master,label='High', from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.upper_r.set(255)
         self.upper_r.grid(row=4)
 ###########################################################################################################
         self.rlbl = Label(text="Green", fg='green')
         self.rlbl.grid(row=5)
-        self.lower_g = Scale(master, from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.lower_g = Scale(master, from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.lower_g.grid(row=6)
 
-        self.upper_g = Scale(master, from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.upper_g = Scale(master, from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.upper_g.set(255)
         self.upper_g.grid(row=7)
 
@@ -36,10 +36,10 @@ class App:
 ###########################################################################################################
         self.rlbl = Label(text="Blue", fg='Blue')
         self.rlbl.grid(row=8)
-        self.lower_b = Scale(master, from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.lower_b = Scale(master, from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.lower_b.grid(row=9)
 
-        self.upper_b = Scale(master, from_=0, to=255, length=1000,orient=HORIZONTAL, command=self.show_changes)
+        self.upper_b = Scale(master, from_=0, to=255, length=500,orient=HORIZONTAL, command=self.show_changes)
         self.upper_b.set(255)
         self.upper_b.grid(row=10)
 ###########################################################################################################
