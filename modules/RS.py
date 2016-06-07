@@ -258,19 +258,21 @@ def open_cw_bank(*args):
     # Takes screenshot, as Hue-saturated-value image
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
     if args[0] == 'banker':
-        lower_gray = np.array([107,111,119])
-        upper_gray = np.array([120,119,128])
+        lower_gray = np.array([0,10,36])
+        upper_gray = np.array([1,13,43])
+        print('this ran')
     else:
         # Defines the hue to look for
-        lower_gray = np.array([50,0,50])
-        upper_gray = np.array([150,30,150])
+        # NEEDS TO BE WORKED ON VALUES HAVE CHANGED!!
+        lower_gray = np.array([0,14,87])
+        upper_gray = np.array([4,23,130])
 
     # Makes a black/white mask
     mask = cv2.inRange(play_window, lower_gray, upper_gray)
-    res = cv2.bitwise_and(play_window, play_window, mask=mask)
+    #res = cv2.bitwise_and(play_window, play_window, mask=mask)
 
     # Finds contours 
-    image, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     #collects the biggest contours
     possible_cnt = {}
@@ -297,9 +299,14 @@ def open_cw_bank(*args):
         x = random.randint(x,x2)
         y = random.randint(y,y2)
 
-        #move click chest
-        Mouse.moveClick(x,y,1)
-        time.sleep(1)
+        # Clicks on any banker otherwise on a chest bank
+        if args[0] == 'banker':
+            Mouse.moveClick(x,y,3)
+            findOptionClick(x,y, 'banker.png')
+        else:
+            #move click chest
+            Mouse.moveClick(x,y,1)
+            time.sleep(1)
         
     except:
         print("Bank NOT found!\nMove camera around!")
@@ -466,3 +473,4 @@ def press_button(button):
     #moves to those coords
     Mouse.moveClick(x,y,1)
    
+open_cw_bank('')
