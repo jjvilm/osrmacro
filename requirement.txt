@@ -1,13 +1,12 @@
+OS: LINUX
 opencv2 
-matplotlib
 numpy
 pyscreenshot
 autopy
 pillow
 imagemagick or scrot (image backend)
 xdotool
-tk 
-
+tkinter
 unix-runescape-client
 
 
