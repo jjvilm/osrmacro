@@ -2,14 +2,16 @@
 from Tkinter import *
 from PIL import Image
 from PIL import ImageTk
-#import tkFileDialog
+import tkFileDialog
 import time
 import cv2
 import numpy as np
 once = True
 
 class App:
+    
     def __init__(self, master):
+        self.img_path = None
         frame = Frame(master)
         frame.grid()
         root.title("Sliders")
@@ -62,12 +64,21 @@ class App:
         self.reds = Button(text="Blues", fg='blue', command=self.preset_b)
         self.reds.grid(row=5, column=1)
 
+        # Open
+        self.open_btn = Button(text="Open", command=self.open_file)
+        self.open_btn.grid(row=6, column=1)
+
+
 ##########################################################################################################
-        self.imglbl = Label(text="HSV",image=None)
+        self.imglbl = Label(text="HSV", image=None)
         self.imglbl.grid(row=0, column=0)
 
         self.imglbl2 = Label(text='Original',image=None)
         self.imglbl2.grid(row=0, column=1)
+##########################################################################################################
+    def open_file(self):
+        self.img_path = tkFileDialog.askopenfilename()
+
     def preset_r(self, *args):
         self.low_hue.set(0)
         self.high_hue.set(10)
@@ -95,6 +106,9 @@ class App:
 
     def show_changes(self, *args):
         global once
+
+        if self.img_path == None:
+            return 0
         # gets the values from the sliders
         # low blue, green, red
         low_hue = self.low_hue.get()
@@ -108,10 +122,10 @@ class App:
         if low_val > high_val or low_sat > high_sat or low_hue > high_hue:
             return 0
 
-        img_path = 'objects.png'
+        #img_path = 'objects.png'
         # loaded as BGR 
-        img_a = cv2.imread(img_path,1)
-        img_b = cv2.imread(img_path,1)
+        img_a = cv2.imread(self.img_path,1)
+        img_b = cv2.imread(self.img_path,1)
         if once: 
             # OpenCV represetns images in BGR order; however PIL represents
             # images in RGB order, so we need to swap the channels
