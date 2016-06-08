@@ -50,9 +50,6 @@ def run():
     # Main stringer loop
     tries = 0 
     while True:
-        RS.open_cw_bank()
-        RandTime.randTime(0,7,0,0,9,9)
-
         if RS.isBankOpen():
             if tries == 2:
                 print('Tries exausted, exiting!')
@@ -76,7 +73,8 @@ def run():
                 RS.press_button('inventory')
                 tries += 1
         else: 
-            RandTime.randTime(0,5,0,0,9,9)
+         RS.open_cw_bank()
+         RandTime.randTime(0,5,0,0,9,9)
 
                 
 

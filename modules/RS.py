@@ -250,16 +250,16 @@ def open_cw_bank():
     # gets RS window's position
     rsx,rsy = position()
     # creates coords to take a screenshot of play window
-    x1 = rsx + 13
-    y1 = rsy + 60
-    x2 = rsx + 500
-    y2 = rsy + 352
+    x1 = rsx + 266
+    y1 = rsy + 55
+    x2 = rsx + 414
+    y2 = rsy + 337
 
     # Takes screenshot, as Hue-saturated-value image
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
 
-    lower_gray = np.array([0,14,87])
-    upper_gray = np.array([4,23,130])
+    lower_gray = np.array([0,0,53])
+    upper_gray = np.array([179,25,129])
 
     # Makes a black/white mask
     mask = cv2.inRange(play_window, lower_gray, upper_gray)
@@ -293,14 +293,10 @@ def open_cw_bank():
         x = random.randint(x,x2)
         y = random.randint(y,y2)
 
-        # Clicks on any banker otherwise on a chest bank
-        if args[0] == 'banker':
-            Mouse.moveClick(x,y,3)
-            findOptionClick(x,y, 'banker.png')
-        else:
-            #move click chest
-            Mouse.moveClick(x,y,1)
-            time.sleep(1)
+        #move click chest
+        Mouse.moveClick(x,y,1)
+        RandTime.randTime(0,0,0,1,5,9)
+
         
     except:
         print("Bank NOT found!\nMove camera around!")
@@ -447,7 +443,7 @@ def press_button(button):
             'stats':(570,197,586,214),
             'quest':0,
             'inventory':(634,196,651,213),
-            'equipment':0,
+            'equipment':(666,196,687,216),
             'prayer':(700,198,720,214),
             'magic':(733,195,751,214),
             'clan':0,

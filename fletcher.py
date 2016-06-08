@@ -220,9 +220,17 @@ def start_fletching(bow):
             n_logs -= 6
         RandTime.randTime(n_logs,0,0,n_logs,9,9)
     #   #   #
+def play_sound():
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 800))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 850))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 900))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 950))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1500))
 
 if __name__ == '__main__':
     start_fletching('magicLogs.png')
     #start_fletching('mapleLogs.png')
     os.system('./stringer.py')
+    play_sound()
 

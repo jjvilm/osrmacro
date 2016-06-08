@@ -77,6 +77,8 @@ class App:
         self.imglbl2.grid(row=0, column=1)
 ##########################################################################################################
     def open_file(self):
+        global once
+        once = True
         self.img_path = tkFileDialog.askopenfilename()
 
     def preset_r(self, *args):
