@@ -24,14 +24,12 @@ def position():
 	To make sure, the bag, and options menu coordinates are relevant to the window"""
     rs_coords = subprocess.check_output(['xdotool','search','--name', 'Old','getwindowgeometry'])
     rs_coords = str(rs_coords)
-    
     ##Find the ":" and "," to get the coordinates after them 
     first_occurance = rs_coords.find(":")#x, y coordinates extracted from window geometry
     sec_occurance = rs_coords.find(",")
     thr_occurance = rs_coords.find("(")
     x = rs_coords[first_occurance+1: sec_occurance] #gets x coordinate
     y = rs_coords[sec_occurance+1:thr_occurance] #gets y coordinate
-    
     ##change from str to int
     return int(x), int(y)
 
@@ -42,7 +40,6 @@ def setWindowSize(w=767,h=564):
     if width != w or  height != h:
         os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
 
-    
 def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
 	"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
 	#Top-Left coords of where RS window is
@@ -65,7 +62,6 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 
 	#menu is the image, menuy/menux is the top-left coord of the image 
 	return menu_x, menu_y, menu
-    
 #def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
 def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
     """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
@@ -109,7 +105,6 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
         break
-        
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
     display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
@@ -300,7 +295,6 @@ def open_cw_bank():
         
     except:
         print("Bank NOT found!\nMove camera around!")
-        
 def antiban(skill):
     rsx,rsy = position()
     rn =random.randint(0,99)  
@@ -371,9 +365,6 @@ def greetings(skill):
 
 
 
-            
-        
-           
 
 def skillsHover(rsx,rsy):
         """Hovers over n skills by n times""" 
@@ -394,7 +385,6 @@ def skillsHover(rsx,rsy):
         #returns true if antiban ran, to let me know if it acutally did ran
 
 
-        
 
 def skillHover(skill):
     """Hovers over passed skill from 1-5 secs"""
