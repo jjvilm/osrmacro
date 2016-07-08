@@ -100,8 +100,6 @@ def withdraw_from_bank(template_file, option):#pass template to function
 
             RS.findOptionClick(rx,ry,'withdrawAll')
             break
-
-
 	 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -115,7 +113,6 @@ def gen_coords(pt,btmX,btmY):
     within_y = random.randint(y1,y2)
     return within_x, within_y
 
-    
 def moveToFletchingOptions(item):
     cwd = os.getcwd()
     rsx, rsy = RS.position() #gets position of RS window
@@ -216,7 +213,6 @@ def blow_glass(item, tool):
             n_logs -= 6
         RandTime.randTime(n_logs,0,0,n_logs,9,9)
     #   #   #
-
 if __name__ == '__main__':
     blow_glass('moltenGlass.png','glassblowingPipe.png')
     RS.logout()

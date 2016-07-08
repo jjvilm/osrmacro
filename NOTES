@@ -1,6 +1,0 @@
-reset back to last commit:
-	reson being.  fletcher.py is buggy and slow, unless it 
-	can be fixed.
-hsv values for gray bankers: 
-bgrlow = 107,111,119
-brghigh= 120,119,128
