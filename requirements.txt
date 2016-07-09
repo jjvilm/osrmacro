@@ -1,0 +1,12 @@
+OS: Arch Linux
+pacman opencv2 
+pacman numpy 2
+pip2 pyscreenshot
+pip2 autopy
+pip2 pillow
+pacman imagemagick or scrot (image backend)
+pacman xdotool
+pacman tkinter (tk)
+pacman unix-runescape-client
+
+
