@@ -15,10 +15,6 @@ import RandTime
 import Match
 import Keyboard
 
-
-
-
-
 def position():
     """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
 	To make sure, the bag, and options menu coordinates are relevant to the window"""
@@ -105,6 +101,7 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
         break
+
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
     display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
@@ -116,7 +113,6 @@ def center_window():
     #moves window to center of screen
     os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
     #os.system('xdotool search old windowmove 0 0')
-
 def get_bag(bagornot):
     x1, y1 = position() #Get runescapes top-left coords
 
@@ -198,7 +194,6 @@ def closeBank():
         Mouse.moveClick(rx,ry,1)
         break
 
-
 def depositAll():
     rsx, rsy = position()
 
@@ -253,8 +248,8 @@ def open_cw_bank():
     # Takes screenshot, as Hue-saturated-value image
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
 
-    lower_gray = np.array([0,0,53])
-    upper_gray = np.array([179,25,129])
+    lower_gray = np.array([0,15,55])
+    upper_gray = np.array([10,25,125])
 
     # Makes a black/white mask
     mask = cv2.inRange(play_window, lower_gray, upper_gray)
@@ -295,6 +290,7 @@ def open_cw_bank():
         
     except:
         print("Bank NOT found!\nMove camera around!")
+         
 def antiban(skill):
     rsx,rsy = position()
     rn =random.randint(0,99)  
@@ -322,7 +318,6 @@ def antiban(skill):
     #will ask for players skill lv
 #    elif rn == 2:
 #        greetings(skill)
-
 def moveback(skill):
     if skill == 'magic':
         press_button('magic')
@@ -330,7 +325,6 @@ def moveback(skill):
         #moves back to bag
         press_button('inventory')
     print("Antiban end")
-
 
 def greetings(skill):
     n = random.randint(0,10)
@@ -363,9 +357,6 @@ def greetings(skill):
 
     RandTime.randTime(5,0,0,13,9,9)
 
-
-
-
 def skillsHover(rsx,rsy):
         """Hovers over n skills by n times""" 
 
@@ -383,9 +374,6 @@ def skillsHover(rsx,rsy):
                 Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
                 RandTime.randTime(1,0,0,2,9,9)
         #returns true if antiban ran, to let me know if it acutally did ran
-
-
-
 def skillHover(skill):
     """Hovers over passed skill from 1-5 secs"""
     #Coordinates of skill's button

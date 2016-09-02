@@ -99,8 +99,6 @@ def withdraw_from_bank(template_file, option):#pass template to function
 
             RS.findOptionClick(rx,ry,'withdrawAll')
             break
-
-
 	 
 def gen_coords(pt,btmX,btmY):
     """Generates random coords of where to click once a template is found inside the bag screenshot"""
@@ -114,7 +112,6 @@ def gen_coords(pt,btmX,btmY):
     within_y = random.randint(y1,y2)
     return within_x, within_y
 
-    
 def moveToFletchingOptions(bow):
     cwd = os.getcwd()
     rsx, rsy = RS.position() #gets position of RS window
@@ -229,8 +226,8 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1500))
 
 if __name__ == '__main__':
-    start_fletching('magicLogs.png')
-    #start_fletching('mapleLogs.png')
+    #start_fletching('magicLogs.png')
+    start_fletching('mapleLogs.png')
     os.system('./stringer.py')
     play_sound()
 

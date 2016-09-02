@@ -18,15 +18,15 @@ def findMonk():
 
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
     #finds red shades
-    lower_red = np.array([110,90,60])
-    upper_red = np.array([130,230,255])
+    lower_red = np.array([0,162,63])
+    upper_red = np.array([3,172,169])
 
     #mask = cv2.inRange(play_window, lower_red, upper_red)
     mask2 = cv2.inRange(play_window, lower_red, upper_red)
     #res = cv2.bitwise_and(play_window, play_window, mask=mask)
     #cv2.imshow('res', res)
 
-    image, contours, hierarchy = cv2.findContours(mask2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(mask2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     cnt = contours[0]
 
