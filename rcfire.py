@@ -5,7 +5,6 @@ import time
 import cv2
 import numpy as np
 
-
 # GET HSV img for mask and contours
 #img = cv2.imread('/home/jj/tmp/firealtar.png',1)
 # clones the img
@@ -23,11 +22,13 @@ def tp_duel_arena():
     x,y = Mouse.genCoords(689,395,712,417)
     Mouse.moveClick(x,y,3)
     RS.findOptionClick(x,y,'duelArenaTeleport')
+
 def tp_castle_wars():
     RS.press_button('equipment')
     x,y = Mouse.genCoords(689,395,712,417)
     Mouse.moveClick(x,y,3)
     RS.findOptionClick(x,y,'castleWarsTeleport')
+
 def detect_fire_altar():
     img = Screenshot.shoot(45,61,455,300, 'hsv')
     # lower and upper reddish colors for fire altar 
@@ -105,10 +106,6 @@ def detect_fire_altar():
         print("Not found!\nTrying Again\n")
         time.sleep(.5)
         return False
-    
-
-
-
 
 tp_duel_arena()
 time.sleep(9)

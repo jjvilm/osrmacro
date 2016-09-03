@@ -8,9 +8,7 @@ from modules import RandTime
 import random
 #import autopy
 import time
-
 cwd = os.getcwd()
-
 def checkInv(template):
     """Finds bowstring and unstrung bow in inventory and clicks them, if not found then returns false, true otherwise"""
     rs_bag, bgx, bgy = RS.get_bag('bag and other variables')
@@ -25,7 +23,6 @@ def checkInv(template):
         return True
     return False
         
-       
 def dobowstring(pt, w, h, bgx, bgy):
     rsx, rsy = RS.position()
     x, y = pt
@@ -75,8 +72,6 @@ def run():
         else: 
          RS.open_cw_bank()
          RandTime.randTime(0,5,0,0,9,9)
-
-                
 
 def withdrawFromBank(template_):
     rsx, rsy = RS.position()

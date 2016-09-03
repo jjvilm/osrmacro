@@ -32,7 +32,6 @@ def back2bank():
     RandTime.randTime(4,0,0,4,9,9)
     Mouse.randMove(394,174,480,201,1)
     
-    
 def run():
     counter = 0
     skipL = True
