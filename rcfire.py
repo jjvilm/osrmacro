@@ -105,8 +105,11 @@ def detect_fire_altar():
         print("Not found!\nTrying Again\n")
         time.sleep(.5)
         return False
-    
 
+def walk_to_fire_altar():    
+    # detect green cactus, click on most northern one
+    pass
+    
 
 
 
