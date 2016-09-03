@@ -226,8 +226,8 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1500))
 
 if __name__ == '__main__':
-    start_fletching('magicLogs.png')
-    #start_fletching('mapleLogs.png')
+    #start_fletching('magicLogs.png')
+    start_fletching('mapleLogs.png')
     os.system('./stringer.py')
     play_sound()
 

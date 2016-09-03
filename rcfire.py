@@ -107,6 +107,10 @@ def detect_fire_altar():
         time.sleep(.5)
         return False
 
+def walk_to_fire_altar():    
+    # detect green cactus, click on most northern one
+    pass
+
 tp_duel_arena()
 time.sleep(9)
 while not detect_fire_altar():
