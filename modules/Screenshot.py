@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import pyscreenshot
 
-
 def shoot(x1,y1,x2,y2, *args, **kwargs):
     """Takes screenshot at given coordinates as PIL image format, the converts to cv2 grayscale image format and returns it"""
     # PIL format as RGB
@@ -37,6 +36,3 @@ def shoot(x1,y1,x2,y2, *args, **kwargs):
     #cv2.destroyAllWindows()
     
     return cv_gray
-
-
-
