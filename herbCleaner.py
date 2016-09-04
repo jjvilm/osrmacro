@@ -5,11 +5,9 @@ import autopy #for smooth mouse move
 import subprocess #needed to access xdotool output
 import random #get random time
 import time #for sleep
-import os #needed to 
-from modules import Mouse
-from modules import Screenshot
-from modules import RS
-
+import os 
+from modules import Mouse # "Human like" mouse movement
+from modules import RS # to open bank at Castle Wars
 
 #Finds an image from the given template.  
 cur_dir = os.getcwd()
@@ -65,7 +63,7 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
     time.sleep(milisecs)
 
 if __name__ == '__main__':
-    while not False:
+    while True:
         #open bank
         RS.open_cw_bank()
 
@@ -81,7 +79,6 @@ if __name__ == '__main__':
         #if RS.countItemInInv('grimmyGuam.png', 1):
         if not RS.isInvEmpty():
             RS.depositAll()
-
         
         #loop makes sure herbs are withdrawn!
         while True:
@@ -107,11 +104,8 @@ if __name__ == '__main__':
         #close bank
         RS.closeBank()
         #clean herbs
-        find_template(cur_dir+'/imgs/grimmyGuam.png')
-
-
-
-    #find_template(cur_dir+'/imgs/grimmyIrit.png')
-    #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
-    #find_template(cur_dir+'/imgs/grimmyTarromin.png')
-    #print("Time taken:",timer)
+        #find_template(cur_dir+'/imgs/grimmyGuam.png')
+        find_template(cur_dir+'/imgs/grimmyIrit.png')
+        #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
+        #find_template(cur_dir+'/imgs/grimmyTarromin.png')
+        #print("Time taken:",timer)
