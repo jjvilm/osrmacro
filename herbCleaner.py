@@ -62,8 +62,12 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
     milisecs = float(milisecs)
     time.sleep(milisecs)
 
-if __name__ == '__main__':
+def main():
+    # var to break out of loop after 3 bank tries
+    bankchecking = 0
     while True:
+        if bankchecking == 3:
+            break
         #open bank
         RS.open_cw_bank()
 
@@ -72,7 +76,9 @@ if __name__ == '__main__':
 
         #check if bank is open, if not end
         if not RS.isBankOpen():
-            break
+            bankchecking +=1 
+            time.sleep(2)
+            continue
 
         #deposit all
         #if herb in inventory
@@ -109,3 +115,6 @@ if __name__ == '__main__':
         #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
         #find_template(cur_dir+'/imgs/grimmyTarromin.png')
         #print("Time taken:",timer)
+
+if __name__ == '__main__':
+    main()
