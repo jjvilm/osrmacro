@@ -80,30 +80,30 @@ def main():
             time.sleep(2)
             continue
 
+        # resets bankchecking
+        bankchecking = 0
         #deposit all
-        #if herb in inventory
+        #if herb_name in inventory
         #if RS.countItemInInv('grimmyGuam.png', 1):
         if not RS.isInvEmpty():
             RS.depositAll()
         
         #loop makes sure herbs are withdrawn!
         while True:
-            #take out all grimmy herbs
-            #grimmy guam in bank loc
-            grimx, grimy = Mouse.genCoords(273,255,288,271)
-            grimx += RSX
-            grimy += RSY
-            Mouse.moveClick(grimx,grimy,3)
+            herbx,herby = findherb('irit')
+            Mouse.moveClick(herbx,herby,3)
 
-            grimx -= RSX
-            grimy -= RSY
-            RS.findOptionClick(grimx,grimy,'withdrawAll')
+            # removes RS coords since added back in in findOptionClick
+            herbx -= RSX
+            herby -= RSY
+            RS.findOptionClick(herbx,herby,'withdrawAll')
 
             time.sleep(.9)
             randTime(0,0,0,0,0,9)
             if not RS.isInvEmpty():
                 break
             else:
+                # deposits all items from inventory
                 x,y = Mouse.genCoords(RSX+13,RSY+60,RSX+500,RSY+352)
                 Mouse.moveTo(x,y)
 
@@ -116,5 +116,54 @@ def main():
         #find_template(cur_dir+'/imgs/grimmyTarromin.png')
         #print("Time taken:",timer)
 
+def findherb(herb_name):
+    import Herbdat
+    bank_screenshot, bankx, banky = RS.getBankWindow('hsv')
+    # finds all grimmys first
+    low, high = Herbdat.herb('grimmy')
+    low = np.array(low)
+    high = np.array(high)
+    mask = cv2.inRange(bank_screenshot, low, high)
+
+    kernel = np.ones((5,5), np.uint8)
+    # removes noise
+    #erosion = cv2.erode(mask, kernel, iterations = 1)
+    # increases white 
+    dilation = cv2.dilate(mask, kernel, iterations = 1)
+
+    contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #####################################3
+    for con in contours:
+        x, y, w, h = cv2.boundingRect(con)
+        cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
+    # result of finding only grimmys
+    res = cv2.bitwise_and(bank_screenshot,bank_screenshot, mask = mask.copy())
+    # finding the passed herb here based on color range 
+    low, high = Herbdat.herb(herb_name)
+    low = np.array(low)
+    high = np.array(high)
+    mask = cv2.inRange(res, low, high)
+    #################################
+    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contour_areas = {}
+    for con in contours:
+        M = cv2.moments(con)
+        #print(M)
+        # gets center of object
+        x,y = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
+        break
+    # makes coords relative to the window
+    x += RSX + bankx
+    y += RSY + banky
+    # creates a list from -20 to 20
+    pixels = [i for i in range(-20,20)]
+    # randomly adds value from pixels list
+    x += random.choice(pixels)
+    y += random.choice(pixels)
+
+    # returns coords to right click and get options
+    return x, y 
+
 if __name__ == '__main__':
     main()
+    #findherb('irit')

@@ -1,4 +1,0 @@
-gavantoe = ([69,189,39],[73,213,106])
-print(gavantoe)
-print(type(gavantoe))
-print(gavantoe[0],gavantoe[1])

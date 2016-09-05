@@ -132,18 +132,23 @@ def get_bag(bagornot):
     else:
         return rs_bag, x1, y1
 
-def getBankWindow():
+def getBankWindow(*args):
     rsx, rsy = position() #Get runescapes top-left coords
     #creates bank window boundaries
     x1 = rsx + 21
     y1 = rsy + 23
     x2 = rsx + 486
     y2 = rsy + 335
-    #gets screenshot object
-    bankWindow = Screenshot.shoot(x1,y1,x2,y2)
-    #save for debug
-    #cv2.imwrite('debug_bankWindow.png', bankWindow)
-    return bankWindow, x1, y1
+    # passing 'hsv' to this function returns hsv image
+    try:
+        if args[0] == 'hsv':
+            #gets screenshot object
+            bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+            return bankWindow, x1, y1
+    except:
+        #gets screenshot object
+        bankWindow = Screenshot.shoot(x1,y1,x2,y2)
+        return bankWindow, x1, y1
 
 def isBankOpen():
     """checks to see if bank is open, returns True, else False"""
