@@ -8,44 +8,11 @@ import time #for sleep
 import os 
 from modules import Mouse # "Human like" mouse movement
 from modules import RS # to open bank at Castle Wars
+import Herbdat
 
 #Finds an image from the given template.  
 cur_dir = os.getcwd()
 RSX,RSY = RS.position()
-
-def find_template(template_file):#pass template to function
-    rs_bag, bagx, bagy = RS.get_bag('bag and its coords')
-    #cv2.imwrite('debug_bag.png', rs_bag)
-    
-    #template
-    template = cv2.imread(template_file,0)
-    w, h = template.shape[::-1]
-    res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .9 #default is 8 
-    loc = np.where( res >= threshold)
-    for pt in zip(*loc[::-1]):#goes through each found image
-        btmX = pt[0] + w - 10 #pt == top-left coord of template, bottom-right point of of template image
-        btmY = pt[1] + h - 10 
-        #moving the pt coord of the template a bit to the right, so options menu get brought up
-        pt = (pt[0] + 10, pt[1] +10 )
-        
-        x, y = gen_coords(pt,btmX, btmY, bagx, bagy)#gets random x, y coords relative to RSposition on where to click
-        Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
-        randTime(0,0,0,0,0,7)
-        randTime(0,0,0,0,0,5)
-        randTime(0,0,1,0,0,1)
-
-def gen_coords(pt,btmX,btmY, bagx, bagy):
-    """Generates random coords of where to click once a template is found inside the bag screenshot"""
-    x1 = pt[0] +( bagx + 1) #gets top-left location of able to be right clicked
-    y1 = pt[1] +( bagy + 1)
-
-    x2 = btmX +( bagx - 1) #bttm-right location able to be right clicked
-    y2 = btmY +( bagy - 1)
-
-    within_x = random.randint(x1,x2)#generates a range of clickable locations 
-    within_y = random.randint(y1,y2)
-    return within_x, within_y
 
 def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.sdigit+tdigit+random
     random.seed()
@@ -62,7 +29,7 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
     milisecs = float(milisecs)
     time.sleep(milisecs)
 
-def main():
+def main(herb_name):
     # var to break out of loop after 3 bank tries
     bankchecking = 0
     while True:
@@ -84,13 +51,12 @@ def main():
         bankchecking = 0
         #deposit all
         #if herb_name in inventory
-        #if RS.countItemInInv('grimmyGuam.png', 1):
         if not RS.isInvEmpty():
             RS.depositAll()
         
         #loop makes sure herbs are withdrawn!
         while True:
-            herbx,herby = findherb('irit')
+            herbx,herby = findherb(herb_name)
             Mouse.moveClick(herbx,herby,3)
 
             # removes RS coords since added back in in findOptionClick
@@ -109,43 +75,43 @@ def main():
 
         #close bank
         RS.closeBank()
-        #clean herbs
-        #find_template(cur_dir+'/imgs/grimmyGuam.png')
-        find_template(cur_dir+'/imgs/grimmyIrit.png')
-        #find_template(cur_dir+'/imgs/grimmyMarrentil.png')
-        #find_template(cur_dir+'/imgs/grimmyTarromin.png')
-        #print("Time taken:",timer)
+        find_grimmy_herbs_in_inventory()
 
 def findherb(herb_name):
-    import Herbdat
+    #takes bank screenshot
     bank_screenshot, bankx, banky = RS.getBankWindow('hsv')
+
     # finds all grimmys first
     low, high = Herbdat.herb('grimmy')
     low = np.array(low)
     high = np.array(high)
     mask = cv2.inRange(bank_screenshot, low, high)
 
+    # how big in pixels to remove noise
     kernel = np.ones((5,5), np.uint8)
+
     # removes noise
     #erosion = cv2.erode(mask, kernel, iterations = 1)
+
     # increases white 
     dilation = cv2.dilate(mask, kernel, iterations = 1)
 
     contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    #####################################3
+    # fills in the contours in the mask with a rect
     for con in contours:
         x, y, w, h = cv2.boundingRect(con)
         cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
-    # result of finding only grimmys
+    # result of finding only grimmys in the hsv image
     res = cv2.bitwise_and(bank_screenshot,bank_screenshot, mask = mask.copy())
     # finding the passed herb here based on color range 
     low, high = Herbdat.herb(herb_name)
     low = np.array(low)
     high = np.array(high)
-    mask = cv2.inRange(res, low, high)
-    #################################
-    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    herb_mask = cv2.inRange(res, low, high)
+
+    contours, _ = cv2.findContours(herb_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contour_areas = {}
+    # finds center of herb
     for con in contours:
         M = cv2.moments(con)
         #print(M)
@@ -156,7 +122,7 @@ def findherb(herb_name):
     x += RSX + bankx
     y += RSY + banky
     # creates a list from -20 to 20
-    pixels = [i for i in range(-20,20)]
+    pixels = [i for i in range(-15,15)]
     # randomly adds value from pixels list
     x += random.choice(pixels)
     y += random.choice(pixels)
@@ -164,6 +130,76 @@ def findherb(herb_name):
     # returns coords to right click and get options
     return x, y 
 
+def find_grimmy_herbs_in_inventory():
+    rs_bag, bagx, bagy = RS.get_bag('bag and its coords', 'hsv')
+    # finds all grimmys first
+    low, high = Herbdat.herb('grimmy2')
+    low = np.array(low)
+    high = np.array(high)
+    # applies mask based on above values
+    mask = cv2.inRange(rs_bag, low, high)
+
+    kernel = np.ones((5,5), np.uint8)
+    dilation = cv2.dilate(mask, kernel, iterations = 1)
+
+    contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # adds a white rectangle to all grimmys
+    for con in contours:
+        x, y, w, h = cv2.boundingRect(con)
+        cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
+    # goes through each item and clicks it
+    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    items_coords = []
+    row = []
+    col = 0
+    for con in contours[::-1]:
+        M = cv2.moments(con)
+        #print(M)
+        # gets center of object
+        x,y = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
+        # makes coords relative to the window
+        x += RSX + bagx
+        y += RSY + bagy 
+        # creates a list from -20 to 20
+        pixels = [i for i in range(-10,10)]
+        # randomly adds value from pixels list
+        x += random.choice(pixels)
+        y += random.choice(pixels)
+
+        row.append((x,y))
+
+        col += 1
+        # appends the row 
+        if col == 4:
+            items_coords.append(row)
+            row = []
+            col = 0
+    
+    # starting at 2 to have all non divisible rows by 2 be inverted
+    row = 2
+    for rows in items_coords:
+        # first row gets clicked from left to right
+        if row % 2 == 0:
+            for coords in rows:
+                x, y = coords
+                Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
+                randTime(0,0,0,0,0,7)
+                randTime(0,0,0,0,0,5)
+                randTime(0,0,1,0,0,1)
+
+            row += 1
+            continue
+        else:
+        # inverts this row, from right to left
+            for coords in rows[::-1]:
+                x, y = coords
+                Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
+                randTime(0,0,0,0,0,7)
+                randTime(0,0,0,0,0,5)
+                randTime(0,0,1,0,0,1)
+        row += 1
+
 if __name__ == '__main__':
-    main()
-    #findherb('irit')
+    main("irit")

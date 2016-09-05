@@ -113,7 +113,7 @@ def center_window():
     #moves window to center of screen
     os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
     #os.system('xdotool search old windowmove 0 0')
-def get_bag(bagornot):
+def get_bag(bagornot, *args):
     x1, y1 = position() #Get runescapes top-left coords
 
     x1 += 557    #make The Bag's top-left, and btm-right coords
@@ -121,12 +121,15 @@ def get_bag(bagornot):
     y1 += 200    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
     y2 = y1 + 285#253default for arch
-     
-    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-    #cv2.imwrite('rs_bag_debug.png',rs_bag)
+    try: # block to allow this func to also get 'hsv' img objects
+        if args[0] == 'hsv':
+            rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+    except:
+        rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+        #cv2.imwrite('rs_bag_debug.png',rs_bag)
 
-    #returns image object, and top-left point of bag
-    #returns image only if stringed passed
+        #returns image object, and top-left point of bag
+        #returns image only if stringed passed
     if bagornot == 'only':
         return rs_bag
     else:
@@ -144,6 +147,10 @@ def getBankWindow(*args):
         if args[0] == 'hsv':
             #gets screenshot object
             bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+            ##### DEBUG
+            #cv2.imshow('bankwindow', bankWindow)
+            #cv2.waitKey(0)
+            ####
             return bankWindow, x1, y1
     except:
         #gets screenshot object
