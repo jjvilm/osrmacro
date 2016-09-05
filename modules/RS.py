@@ -252,10 +252,10 @@ def open_cw_bank():
     # gets RS window's position
     rsx,rsy = position()
     # creates coords to take a screenshot of play window
-    x1 = rsx + 266
-    y1 = rsy + 55
-    x2 = rsx + 414
-    y2 = rsy + 337
+    x1 = rsx + 200
+    y1 = rsy + 80
+    x2 = rsx + 500
+    y2 = rsy + 350
 
     # Takes screenshot, as Hue-saturated-value image
     play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
@@ -265,6 +265,7 @@ def open_cw_bank():
 
     # Makes a black/white mask
     mask = cv2.inRange(play_window, lower_gray, upper_gray)
+    # inverts selection
     #res = cv2.bitwise_and(play_window, play_window, mask=mask)
 
     # Finds contours 
