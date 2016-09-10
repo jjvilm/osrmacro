@@ -159,26 +159,28 @@ def getBankWindow(*args):
 
 def isBankOpen():
     """checks to see if bank is open, returns True, else False"""
-    #get base directory osrmacro
-    cwd = os.getcwd()
-    if 'modules' in cwd: 
-        occurance = cwd.rfind("/") #finds the last "/", returns its index
-        cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
+    # button saved as an array instead of reading a file
+    buttonarray = np.array([[ 0,  0, 94, 94, 94, 94, 94, 94,  0,  0],
+                                [ 0,  0,  0, 94, 94, 94, 94,  0,  0,  0],
+                                [94,  0,  0,  0, 94, 94,  0,  0,  0, 94],
+                                [88, 88,  0,  0,  0,  0,  0,  0, 88, 88],
+                                [88, 88, 88,  0,  0,  0,  0, 88, 88, 88],
+                                [88, 88, 88, 88,  0,  0, 88, 88, 88, 88],
+                                [83, 83, 83,  0,  0,  0,  0, 83, 83, 83],
+                                [83, 83,  0,  0,  0,  0,  0,  0, 83, 83],
+                                [83,  0,  0,  0, 83, 83,  0,  0,  0, 83],
+                                [ 0,  0,  0, 78, 78, 78, 78,  0,  0,  0],
+                                [ 0,  0, 78, 78, 78, 78, 78, 78,  0,  0]], dtype='uint8')
     rsx,rsy = position()
-    #position bank's close button, relative to RS window
-    x1 = rsx+470
-    y1 = rsy+10
-    x2 = rsx+500
-    y2 = rsy+55
-
+    x1 = rsx+480
+    y1 = rsy+38
+    x2 = rsx+490
+    y2 = rsy+49
+    # checks to make sure both image objects match
     closeButton = Screenshot.shoot(x1,y1,x2,y2)
-    #SAVE FOR DEBUG
-    #cv2.imwrite('debug_closeButton.png',closeButton)
-    loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
-    #only runs if bank open
-    for pt in zip(*loc[::-1]):
+    if (closeButton == buttonarray).all():
         return True
-    return False
+    return False 
 
 def closeBank():
     cwd = os.getcwd()
@@ -458,6 +460,7 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
+    #isBankOpen()
     pass
     #print(isInvEmpty())
                         
