@@ -32,8 +32,9 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
 def main(herb_name):
     # var to break out of loop after 3 bank tries
     bankchecking = 0
+    n_secs = 1
     while True:
-        if bankchecking == 3:
+        if bankchecking == 5:
             break
         #open bank
         RS.open_cw_bank()
@@ -44,7 +45,9 @@ def main(herb_name):
         #check if bank is open, if not end
         if not RS.isBankOpen():
             bankchecking +=1 
-            time.sleep(2)
+            n_secs = n_secs * bankchecking
+
+            time.sleep(n_secs)
             continue
 
         # resets bankchecking
@@ -56,7 +59,11 @@ def main(herb_name):
         
         #loop makes sure herbs are withdrawn!
         while True:
-            herbx,herby = findherb(herb_name)
+            try:
+                herbx,herby = findherb(herb_name)
+            except:
+                print('No more herbs')
+                return
             Mouse.moveClick(herbx,herby,3)
 
             # removes RS coords since added back in in findOptionClick
@@ -66,6 +73,7 @@ def main(herb_name):
 
             time.sleep(.9)
             randTime(0,0,0,0,0,9)
+            # breaks when items are taken out into inventory
             if not RS.isInvEmpty():
                 break
             else:
@@ -118,6 +126,8 @@ def findherb(herb_name):
         # gets center of object
         x,y = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
         break
+    if y == 1:
+        return 
     # makes coords relative to the window
     x += RSX + bankx
     y += RSY + banky
@@ -202,4 +212,8 @@ def find_grimmy_herbs_in_inventory():
         row += 1
 
 if __name__ == '__main__':
-    main("irit")
+    answer = raw_input("Shutdown after done? [Y]/[N]\n")
+    current_herb = raw_input("What herb?\n")
+    main(current_herb)
+    if answer == 'y':
+        os.system('sudo shutdown now')

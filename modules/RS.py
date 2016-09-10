@@ -267,9 +267,32 @@ def open_cw_bank():
     mask = cv2.inRange(play_window, lower_gray, upper_gray)
     # inverts selection
     #res = cv2.bitwise_and(play_window, play_window, mask=mask)
+    kernel = np.ones((5,5), np.uint8)
+    dilation = cv2.dilate(mask, kernel, iterations = 1)
+
+    #cv2.imshow('img', dilation)
+    #cv2.waitKey(0)
+
 
     # Finds contours 
-    contours,_ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    ################################################## work in progress to find bank a diff way
+#    #area
+#    for con in contours:
+#        if cv2.contourArea(con) > 3000:
+#            print(cv2.contourArea(con))
+#            M = cv2.moments(con)
+#            coords = (int(M["m10"] / M["m10"]), int(M["m01"] / M["m00"]))
+#            print(coords)
+#            xcoords, ycoords = coords
+#            xcoords += x1
+#            ycoords += y1
+#            print(xcoords, ycoords)
+#            Mouse.moveTo(xcoords,ycoords)
+#
+#
+#    return
+    ################################################## work in progress to find bank a diff way
 
     #collects the biggest contours
     possible_cnt = {}
@@ -300,9 +323,9 @@ def open_cw_bank():
         Mouse.moveClick(x,y,1)
         RandTime.randTime(0,0,0,1,5,9)
 
-        
     except:
         print("Bank NOT found!\nMove camera around!")
+        play_sound()
          
 def antiban(skill):
     rsx,rsy = position()
@@ -453,3 +476,11 @@ def press_button(button):
     x,y = Mouse.genCoords(x1,y1,x2,y2)
     #moves to those coords
     Mouse.moveClick(x,y,1)
+
+def play_sound():
+    for _ in range(3):
+        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
+
+if __name__ == '__main__':
+    open_cw_bank()
+                        
