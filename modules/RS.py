@@ -116,11 +116,11 @@ def center_window():
 def get_bag(bagornot, *args):
     x1, y1 = position() #Get runescapes top-left coords
 
-    x1 += 557    #make The Bag's top-left, and btm-right coords
+    x1 += 561    #make The Bag's top-left, and btm-right coords
 	#y1=229 default for archlinux 
-    y1 += 200    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 173 
-    y2 = y1 + 285#253default for arch
+    y1 += 233    #x2,y2 == btm-right coord, width and height
+    x2 = x1 + 160 
+    y2 = y1 + 250#253default for arch
     try: # block to allow this func to also get 'hsv' img objects
         if args[0] == 'hsv':
             rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
@@ -237,12 +237,19 @@ def countItemInInv(template_file,*args):
     return count
 
 def isInvEmpty():
-    cwd = os.getcwd()
-    bag = get_bag('only') 
-    loc, w, h = Match.this(bag, cwd+'/imgs/emptySlot.png')
-    
-    for pt in zip(*loc[::-1]):
-        #returns True if there is no itme in the first slot
+    bag, bagx,bagy = get_bag('bag and coords', 'hsv') 
+    # looks for color of empty inv
+    low = np.array([10,46,58])
+    high= np.array([21,92,82])
+    # applies mask
+    mask = cv2.inRange(bag, low, high)
+    # removes any noise
+    kernel = np.ones((5,5), np.uint8)
+    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    # looks to see if the inv is all white pixels
+    # returns true, else False
+    if (closing.view() == 255).all():
         return True
     return False
 
@@ -291,7 +298,7 @@ def open_cw_bank():
 
                 #move click chest
                 Mouse.moveClick(xcoords,ycoords,1)
-                RandTime.randTime(0,0,0,0,9,9)
+                RandTime.randTime(0,0,0,0,0,9)
                 break
     except:
         print("Bank NOT found!\nMove camera around!")
@@ -451,5 +458,6 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
-    open_cw_bank()
+    pass
+    #print(isInvEmpty())
                         
