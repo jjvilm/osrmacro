@@ -273,56 +273,26 @@ def open_cw_bank():
     #cv2.imshow('img', dilation)
     #cv2.waitKey(0)
 
-
     # Finds contours 
     contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    ################################################## work in progress to find bank a diff way
-#    #area
-#    for con in contours:
-#        if cv2.contourArea(con) > 3000:
-#            print(cv2.contourArea(con))
-#            M = cv2.moments(con)
-#            coords = (int(M["m10"] / M["m10"]), int(M["m01"] / M["m00"]))
-#            print(coords)
-#            xcoords, ycoords = coords
-#            xcoords += x1
-#            ycoords += y1
-#            print(xcoords, ycoords)
-#            Mouse.moveTo(xcoords,ycoords)
-#
-#
-#    return
-    ################################################## work in progress to find bank a diff way
 
-    #collects the biggest contours
-    possible_cnt = {}
-    for cnt in contours:
-        # Finds contours with 4 sides
-        approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt,True),True)
-        if len(approx)==4 and len(cnt) >4:
-            possible_cnt[len(cnt)] = cnt
-
-    # Will try to click in bank if all goes right
     try:
-        biggest_cnt = max(possible_cnt.keys())
+        # looks for center of grey color with biggest area, > 3000
+        for con in contours:
+            if cv2.contourArea(con) > 3000:
+                M = cv2.moments(con)
+                # finds centroid
+                xcoords,ycoords = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                xcoords += x1
+                ycoords += y1
+                # adds randomness to coords
+                xcoords += random.randint(-25,25)
+                ycoords += random.randint(-25,25)
 
-        #builds boundingrect 
-        x,y,w,h = cv2.boundingRect(possible_cnt[biggest_cnt])
-        
-        #adds RS coords to the bounding box
-        x += x1
-        y += y1
-        x2 = x + w
-        y2 = y + h
-
-        # generate random coords
-        x = random.randint(x,x2)
-        y = random.randint(y,y2)
-
-        #move click chest
-        Mouse.moveClick(x,y,1)
-        RandTime.randTime(0,0,0,1,5,9)
-
+                #move click chest
+                Mouse.moveClick(xcoords,ycoords,1)
+                RandTime.randTime(0,0,0,0,9,9)
+                break
     except:
         print("Bank NOT found!\nMove camera around!")
         play_sound()
@@ -478,8 +448,7 @@ def press_button(button):
     Mouse.moveClick(x,y,1)
 
 def play_sound():
-    for _ in range(3):
-        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
     open_cw_bank()
