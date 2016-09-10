@@ -186,8 +186,11 @@ def find_grimmy_herbs_in_inventory():
             items_coords.append(row)
             row = []
             col = 0
+    # makes sure to clean the last 3 herbs in bank
+    if len(contours) <= 3:
+        items_coords.append(row)
     
-    # starting at 2 to have all non divisible rows by 2 be inverted
+    # clicks on herbs in a zigzag pattern
     row = 2
     for rows in items_coords:
         # first row gets clicked from left to right
