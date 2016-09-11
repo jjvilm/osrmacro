@@ -64,9 +64,8 @@ def main():
     while True:
         p = check_prayer()
         print("{:.2f}".format(p))
-        if p <= .50:
+        if p <= .25:
             find_prayer_pot()
-            break
         time.sleep(3)
 
 main()
