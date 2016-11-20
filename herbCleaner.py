@@ -61,8 +61,9 @@ def main(herb_name):
         while True:
             try:
                 herbx,herby = findherb(herb_name)
-            except:
+            except Exception as e:
                 print('No more herbs')
+                print(e)
                 return
             Mouse.moveClick(herbx,herby,3)
 
@@ -104,7 +105,7 @@ def findherb(herb_name):
     # increases white 
     dilation = cv2.dilate(mask, kernel, iterations = 1)
 
-    contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # fills in the contours in the mask with a rect
     for con in contours:
         x, y, w, h = cv2.boundingRect(con)
@@ -116,8 +117,14 @@ def findherb(herb_name):
     low = np.array(low)
     high = np.array(high)
     herb_mask = cv2.inRange(res, low, high)
+    ###########
+    #debug line
+    #cv2.imshow('debug.png', herb_mask)
+    #cv2.waitKey(0)
+    #return
+    ###########
 
-    contours, _ = cv2.findContours(herb_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(herb_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contour_areas = {}
     # finds center of herb
     for con in contours:
@@ -152,14 +159,14 @@ def find_grimmy_herbs_in_inventory():
     kernel = np.ones((5,5), np.uint8)
     dilation = cv2.dilate(mask, kernel, iterations = 1)
 
-    contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # adds a white rectangle to all grimmys
     for con in contours:
         x, y, w, h = cv2.boundingRect(con)
         cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
     # goes through each item and clicks it
-    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     items_coords = []
     row = []

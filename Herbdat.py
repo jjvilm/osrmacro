@@ -2,7 +2,9 @@ import sys
 """file to store all the hsv range values of all herbs"""
 
 def herb(name):
+    name = name.lower()
     herbdic = {
+        "lantadyme":([78,224,34],[85,225,100]),
         "avantoe":([69,189,39],[73,213,106]),
         "irit":([46,0,52],[52,255,255]),
         "guam":([48,220,4],[65,255,83]),
@@ -11,8 +13,9 @@ def herb(name):
            }
     try:
         return herbdic[name]
-    except: # catch *all* exceptions
-        e = sys.exc_info()[0]
-        print( "Error: {}".format(e))
+    except Exception as e: # catch *all* exceptions
+        #e = sys.exc_info()[0]
+        #print( "Error: {}".format(e))
+        print(e)
         
 

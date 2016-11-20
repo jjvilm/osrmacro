@@ -185,10 +185,10 @@ def isBankOpen():
 def closeBank():
     cwd = os.getcwd()
     rsx, rsy = position()
-    x1 = rsx+470
-    y1 = rsy+10
-    x2 = rsx+500
-    y2 = rsy+80
+    x1 = rsx+449
+    y1 = rsy+0
+    x2 = rsx+522
+    y2 = rsy+59
 
     closeButton = Screenshot.shoot(x1,y1,x2,y2)
     #SAVE FOR DEBUG
@@ -283,7 +283,7 @@ def open_cw_bank():
     #cv2.waitKey(0)
 
     # Finds contours 
-    contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _,contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     try:
         # looks for center of grey color with biggest area, > 3000
@@ -302,9 +302,9 @@ def open_cw_bank():
                 Mouse.moveClick(xcoords,ycoords,1)
                 RandTime.randTime(0,0,0,0,0,9)
                 break
-    except:
+    except Exception as e:
         print("Bank NOT found!\nMove camera around!")
-        play_sound()
+        #play_sound()
          
 def antiban(skill):
     rsx,rsy = position()

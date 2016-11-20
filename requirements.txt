@@ -1,12 +1,12 @@
-OS: Arch Linux
-pacman opencv2 
-pacman numpy 2
-pip2 pyscreenshot
-pip2 autopy
-pip2 pillow
-pacman imagemagick or scrot (image backend)
-pacman xdotool
-pacman tkinter (tk)
-pacman unix-runescape-client
+sudo pip2 install numpy
+sudo pip2 install pyscreenshot
+sudo pip2 install autopy
+sudo pip2 install pillow
+sudo pacman -S opencv 3.1.0-3+
+sudo pacman -S imagemagick or scrot (image backend)
+sudo pacman -S xdotool
+sudo pacman -S tk (tkinter (tk))
+sudo pacman -S unix-runescape-client
+sudo pacman -S i3 # window manager
 
 

@@ -14,7 +14,7 @@ from modules import RS
 from modules import Match
 from modules import Keyboard
 
-bag_coord =( ((557,200),(173,260)) )#runescape bag coords as x,y coord, w, h
+bag_coord =( ((557,234),(175,248)) )#runescape bag coords as x,y coord, w, h
 cwd = os.getcwd()
 
 def find_template(template_file, option=None):#pass template to function
@@ -124,8 +124,8 @@ def moveToFletchingOptions(bow):
         x += rsx
         y += rsy
     elif 'yew' in bow or 'maple' in bow:
-        x = rsx + random.randint(215,280)#x coord range of long bow. Defautl 209,299
-        y = rsy + random.randint(405,446) #BR-coord of longbow. Default: 395,456
+        x = rsx + random.randint(290,338)#x coord range of long bow. Defautl 209,299
+        y = rsy + random.randint(405,466) #BR-coord of longbow. Default: 395,456
 
     Mouse.moveClick(x,y,3) #right-clicks on short bow
     #taking away rs position since getoptionsmenu func adds them back in
@@ -172,8 +172,10 @@ def start_fletching(bow):
                 RS.depositAll()
                 withdraw_from_bank('knife.png','click') 
                 withdraw_from_bank(bow,'withdrawAll') 
+                RandTime.randTime(0,5,0,0,9,9)
                 RS.closeBank()
 
+                RandTime.randTime(0,5,0,0,9,9)
                 if RS.countItemInInv('knife.png',1):
                     n_logs = RS.countItemInInv(bow)
                     if n_logs:
@@ -202,7 +204,7 @@ def start_fletching(bow):
             #Moves to fletch short/long/stock
             #right cliks, make X, type 99
             moveToFletchingOptions(bow)
-            RandTime.randTime(3,5,0,3,9,9)
+            RandTime.randTime(5,5,0,7,9,9)
     #   #   #
             if RS.countItemInInv('yewLongbowU.png',1):
                 break
@@ -229,5 +231,5 @@ if __name__ == '__main__':
     #start_fletching('magicLogs.png')
     start_fletching('mapleLogs.png')
     os.system('./stringer.py')
-    play_sound()
+    #play_sound()
 
