@@ -222,8 +222,7 @@ def find_grimmy_herbs_in_inventory():
         row += 1
 
 if __name__ == '__main__':
-    answer = raw_input("Shutdown after done? [Y]/[N]\n")
-    current_herb = raw_input("What herb?\n")
-    main(current_herb)
-    if answer == 'y':
-        os.system('sudo shutdown now')
+    #answer = raw_input("Shutdown after done? [Y]/[N]\n")
+    main(Herbdat.chooseHerbs())
+    #if answer == 'y':
+    #    os.system('sudo shutdown now')

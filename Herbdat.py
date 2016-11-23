@@ -1,7 +1,7 @@
 import sys
 """file to store all the hsv range values of all herbs"""
 
-def herb(name):
+def herb(name='guam'):
     name = name.lower()
     herbdic = {
         "lantadyme":([78,225,50],[85,255,100]),
@@ -18,4 +18,21 @@ def herb(name):
         #print( "Error: {}".format(e))
         print("Error in function herb .Herbdat",e)
         
+def chooseHerbs():
+    # Prints the options
+    for i, key in enumerate(herbdic.keys()):
+        print("[{}] : {}\n".format(i, key.upper()))
+    # User input
+    # Assure int input
+    while 1:
+        try:
+            herbNo = int(raw_input("\nHerb No.:"))
+            break
+        except:
+            print("Not a number!")
+        
+    # Choose herb by No.
+    for i, key in enumerate(herbdic.keys()):
+        if herbNo == i:
+            return key
 
