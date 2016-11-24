@@ -29,7 +29,7 @@ def randTime(x,y,z,fdigit, sdigit, tdigit):#sleeps in  miliseconds from fdigit.s
     milisecs = float(milisecs)
     time.sleep(milisecs)
 
-def main(herb_name):
+def main(herb_object):
     # var to break out of loop after 3 bank tries
     bankchecking = 0
     n_secs = 1
@@ -53,14 +53,14 @@ def main(herb_name):
         # resets bankchecking
         bankchecking = 0
         #deposit all
-        #if herb_name in inventory
+        #if herb_object in inventory
         if not RS.isInvEmpty():
             RS.depositAll()
         
         #loop makes sure herbs are withdrawn!
         while True:
             try:
-                herbx,herby = findherb(herb_name)
+                herbx,herby = findherb(herb_object)
             except Exception as e:
                 print('No more herbs')
                 print(e)
@@ -84,14 +84,14 @@ def main(herb_name):
 
         #close bank
         RS.closeBank()
-        find_grimmy_herbs_in_inventory()
+        find_grimmy_herbs_in_inventory(herb_object)
 
-def findherb(herb_name):
+def findherb(herb_object):
     #takes bank screenshot
     bank_screenshot, bankx, banky = RS.getBankWindow('hsv')
 
     # finds all grimmys first
-    low, high = Herbdat.herb('grimmy')
+    low, high = herb_object.herbdic['grimmy']
     low = np.array(low)
     high = np.array(high)
     mask = cv2.inRange(bank_screenshot, low, high)
@@ -113,7 +113,7 @@ def findherb(herb_name):
     # result of finding only grimmys in the hsv image
     res = cv2.bitwise_and(bank_screenshot,bank_screenshot, mask = mask.copy())
     # finding the passed herb here based on color range 
-    low, high = Herbdat.herb(herb_name)
+    low, high = herb_object.hsv_range
     low = np.array(low)
     high = np.array(high)
     herb_mask = cv2.inRange(res, low, high)
@@ -147,10 +147,10 @@ def findherb(herb_name):
     # returns coords to right click and get options
     return x, y 
 
-def find_grimmy_herbs_in_inventory():
+def find_grimmy_herbs_in_inventory(herb_object):
     rs_bag, bagx, bagy = RS.get_bag('bag and its coords', 'hsv')
     # finds all grimmys first
-    low, high = Herbdat.herb('grimmy2')
+    low, high = herb_object.herbdic['grimmy2']
     low = np.array(low)
     high = np.array(high)
     # applies mask based on above values
@@ -223,6 +223,7 @@ def find_grimmy_herbs_in_inventory():
 
 if __name__ == '__main__':
     #answer = raw_input("Shutdown after done? [Y]/[N]\n")
-    main(Herbdat.chooseHerbs())
+    herb = Herbdat.Herb()
+    main(herb)
     #if answer == 'y':
     #    os.system('sudo shutdown now')
