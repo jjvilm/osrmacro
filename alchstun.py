@@ -26,7 +26,7 @@ def findMonk():
     #res = cv2.bitwise_and(play_window, play_window, mask=mask)
     #cv2.imshow('res', res)
 
-    contours, _ = cv2.findContours(mask2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(mask2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     cnt = contours[0]
 

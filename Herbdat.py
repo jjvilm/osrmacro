@@ -9,13 +9,14 @@ class Herb():
             "avantoe":([69,189,39],[73,213,106]),
             "irit":([46,0,52],[52,255,255]),
             "guam":([48,220,4],[65,255,83]),
-            "grimmy":([18,181,29],[32,255,123]),# used in bank to find thm
-            "grimmy2":([20,228,9],[28,244,130]) #for use in inventory to find to clean
+            "grimmy":([18,181,29],[32,255,123]),
+            "grimmy2":([20,228,9],[28,244,130])
                }
         # returns tuple of 2 lists, low high HSV range
         self.chooseHerbs()
             
     def chooseHerbs(self):
+        """Displays available herbs, sets self.hsv_range to chosen herb"""
         # Prints the options
         for i, key in enumerate(self.herbdic.keys()):
             print("[{}] : {}\n".format(i, key.upper()))
