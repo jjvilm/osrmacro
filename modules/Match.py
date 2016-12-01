@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 import os
 
-
-
 def this(pattern_, template_):
     """pass pattern_ as a cv2 image format, template_ as a file
     Passed Function to do w/e after finding template"""

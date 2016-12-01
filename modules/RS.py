@@ -460,7 +460,5 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
-    #isBankOpen()
-    pass
-    #print(isInvEmpty())
+    press_button('equipment')
                         
