@@ -37,28 +37,30 @@ def setWindowSize(w=767,h=564):
         os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
 
 def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
-	"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
-	#Top-Left coords of where RS window is
-	rs_x, rs_y = position()
+    #"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
+    #Top-Left coords of where RS window is
+    rs_x, rs_y = position()
 
-	#Adding Rs coords to the options menu to get its location relevant to the window
-	#24 here goes up on Y since sometimes screenshot needs to get more of the 
-	#top Y to find the right option in the options menu.  
-	menu_x = rs_x + x - 160  #higher number moves screenshot to left 
-	menu_y = rs_y + y - 40  #moves screenshot up 
+    #Adding Rs coords to the options menu to get its location relevant to the window
+    #24 here goes up on Y since sometimes screenshot needs to get more of the 
+    #top Y to find the right option in the options menu.  
+    menu_x = rs_x + x - 160  #higher number moves screenshot to left 
+    menu_y = rs_y + y - 40  #moves screenshot up 
 
-	menu_x2 = menu_x + 220 #Plus width
-	menu_y2 = menu_y + 160 #Plus height 
+    menu_x2 = menu_x + 220 #Plus width
+    menu_y2 = menu_y + 160 #Plus height 
 
-	#takes screenshot here
-	menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
+    #takes screenshot here
+    menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
 
-	#added for debug purposes
-        #cv2.imwrite('getOptionsMenu_debug.png', menu)
+    ##$#added for debug purposes####
+    #cv2.imshow('img',menu)
+    #print(menu_x,menu_y)
+    #cv2.waitKey(0)
 
-	#menu is the image, menuy/menux is the top-left coord of the image 
-	return menu_x, menu_y, menu
-#def findOptionClick(x,y,menu_x,menu_y, menu, option):#X,Y coords of where it clied in bag
+    #menu is the image, menuy/menux is the top-left coord of the image 
+    return menu_x, menu_y, menu
+
 def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
     """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
     """DOES NOT RIGHT CLICK, MUST RIGHT CLICK TO USE THIS FUNCTION"""
@@ -100,7 +102,8 @@ def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
         
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
-        break
+        return True
+    return False
 
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
@@ -122,8 +125,12 @@ def get_bag(bagornot, *args):
     x2 = x1 + 160 
     y2 = y1 + 250#253default for arch
     try: # block to allow this func to also get 'hsv' img objects
-        if args[0] == 'hsv':
-            rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        for arg in args:
+            if arg == 'hsv':
+                rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+            if arg == 'gray':
+                rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+
     except:
         rs_bag = Screenshot.shoot(x1,y1,x2,y2)
         #cv2.imwrite('rs_bag_debug.png',rs_bag)

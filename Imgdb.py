@@ -11,9 +11,10 @@ class ImageStorage(object):
         #self.createImageDb()
         #self.savePickledDict()
         self.loadPickledDict()
-        self.showImgDb()
+        #self.showImgDb()
 
     def createImageDb(self):
+        pass
         # shoots images at a predefined place
         pick = Screenshot.shoot(565,234,594,263)
         chisel = Screenshot.shoot(613,236,633,263)
@@ -41,6 +42,19 @@ class ImageStorage(object):
         self.pickled_dict['dramen_staff'] = dramen_staff
         self.pickled_dict['ring_of_dueling'] = ring_of_dueling
         print("Shots taken! images stored to a dict\n")
+        
+    def scrnshtIntoDb(self,name,x1,y1,x2,y2):
+        import time
+        time.sleep(3)
+        img4db = Screenshot.shoot(x1,y1,x2,y2)
+        self.pickled_dict[name] = img4db
+        print("{} added to dict".format(name))
+        self.savePickledDict()
+
+    def addImg(self,img_name,img):
+        self.pickled_dict[img_name] = img
+        print("{} added to dict".format(img_name))
+        self.savePickledDict()
 
     def savePickledDict(self):
         with open(self.pickled_file_path,'w') as f:
@@ -60,5 +74,36 @@ class ImageStorage(object):
             cv2.waitKey(600)
             cv2.destroyAllWindows()
 
+    def turnBinary(self, img, *args):
+        """Pass image as graysacle"""
+        #makes sure img is grayscale
+        if len(img.shape) == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        _,img = cv2.threshold(img, 254,255,cv2.THRESH_BINARY)
+        print(img.shape)
+        print("Turned Binary")
+        try:
+            for arg in args:
+                # adds passed image to image db
+                if arg == 'a':
+                    img_name = raw_input("Name for image\n")
+                    self.pickled_dict[img_name] = img
+                    self.savePickledDict()
+                # inverts binary img
+                if arg == 'inv':
+                    img_name = raw_input("Name for image\n")
+                    _, img = cv2.threshold(img,0,255,cv2.THRESH_BINARY_INV)
+                # shows img
+                if arg == "s":
+                    cv2.imshow('img',img)
+                    cv2.waitKey(0)
+        except:
+            pass
+        return img
+
 if __name__ == "__main__":
-    img_dict = ImageStorage()
+    # loads image database
+    imgdb = ImageStorage()
+    #img = cv2.imread('/home/jj/media/image/cagebinary.png')
+    #img = imgdb.turnBinary(img, 'a')
+    #imgdb.addImg('cage',)
