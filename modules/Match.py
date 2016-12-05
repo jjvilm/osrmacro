@@ -32,12 +32,13 @@ def images(img_pat, img_temp,x,y, func):
     except Exception as e:
         print("cannot match")
         print(e)
-    threshold = .8 #default is 8 
+    threshold = .9 #default is 8 
     loc = np.where( res >= threshold)
     
-    #following line NOT needed
     for pt in zip(*loc[::-1]):#goes through each found image
         func(img_pat, x, y, pt, w, h)
-        break
+        return 0
+    return 1
+
     #return loc to be iterable outisde the function
     #also sometimes width and height of image is needed

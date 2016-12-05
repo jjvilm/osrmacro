@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import pickle
 
-class ImageStorage(object):
+class ImgDb(object):
     def __init__(self):
         self.pickled_file_path = '/home/jj/github/osrmacro/modules/itemdata.pickled'
         self.pickled_dict = {}
@@ -56,6 +56,13 @@ class ImageStorage(object):
         print("{} added to dict".format(img_name))
         self.savePickledDict()
 
+    def rmImg(self,img_name=None):
+        if img_name == None:
+            img_name = raw_input("Name of image to remove:\n")
+        del self.pickled_dict[img_name]
+        print("\n{} removed from dict\n".format(img_name))
+        self.savePickledDict()
+
     def savePickledDict(self):
         with open(self.pickled_file_path,'w') as f:
             pickle.dump(self.pickled_dict,f)
@@ -68,11 +75,24 @@ class ImageStorage(object):
 
     def showImgDb(self):
         for key in self.pickled_dict.keys():
-            print(key)
-            img = self.pickled_dict[key]
-            cv2.imshow('{}'.format(key),img)
-            cv2.waitKey(600)
-            cv2.destroyAllWindows()
+            try:
+                print(key)
+                img = self.pickled_dict[key]
+                cv2.imshow('{}'.format(key),img)
+                cv2.waitKey(600)
+                cv2.destroyAllWindows()
+            except Exception as e:
+                print(e)
+                continue
+
+    def showImg(self,img_name):
+        img = self.pickled_dict[img_name]
+        cv2.imshow(img_name, img)
+        cv2.waitKey(0)
+
+    def listImgs(self):
+        for i,key in enumerate(self.pickled_dict.keys()):
+            print("{} {}".format(i,key))
 
     def turnBinary(self, img, *args):
         """Pass image as graysacle"""
@@ -103,7 +123,10 @@ class ImageStorage(object):
 
 if __name__ == "__main__":
     # loads image database
-    imgdb = ImageStorage()
+    imgdb = ImgDb()
+    imgdb.listImgs()
+   # imgdb.showImgDb()
+    #imgdb.rmImg()
     #img = cv2.imread('/home/jj/media/image/cagebinary.png')
     #img = imgdb.turnBinary(img, 'a')
     #imgdb.addImg('cage',)

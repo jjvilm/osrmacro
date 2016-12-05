@@ -61,49 +61,108 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     #menu is the image, menuy/menux is the top-left coord of the image 
     return menu_x, menu_y, menu
 
-def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
-    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
-    """DOES NOT RIGHT CLICK, MUST RIGHT CLICK TO USE THIS FUNCTION"""
-    menu_x, menu_y, menu = getOptionsMenu(x,y)
-    #get base directory osrmacro
-    cwd = os.getcwd()
-    if 'modules' in cwd: 
-            occurance = cwd.rfind("/") #finds the last "/", returns its index
-            cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
+#def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
+#    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
+#    """DOES NOT RIGHT CLICK, MUST RIGHT CLICK TO USE THIS FUNCTION"""
+#    menu_x, menu_y, menu = getOptionsMenu(x,y)
+#    #get base directory osrmacro
+#    cwd = os.getcwd()
+#    if 'modules' in cwd: 
+#            occurance = cwd.rfind("/") #finds the last "/", returns its index
+#            cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
+#
+#    #added for debug purposes
+#    #cv2.imwrite('debug_FindOptionClick.png', menu)
+#    #cv2.imshow('Dbug_FindOptionClick',menu)
+#
+#    #template
+#    template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
+#
+#    w, h = template.shape[::-1]#Width, height of template image
+#    res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
+#    threshold = .8 
+#    loc = np.where( res >= threshold)
+#
+#    for pt in zip(*loc[::-1]):#goes through each found image
+#        x1, y1 = pt #point of pattern found inside the option menu screenshot
+#        #making btm coords
+#        x2 = menu_x + x1 + (w*2)
+#        y2 = menu_y + y1 + h - ((h/2)/2) 
+#        #moving pt in by half of half of w,h
+#        x1 -= (w/2)
+#        y1 += ((h/2)/2) 
+#        #gen random coords
+#        x1 = random.randint(menu_x+x1,x2)
+#        y1 = random.randint(menu_y+y1,y2)
+#
+#        #x = menu_x + pt_x + (random.randint(5,(w*2))) #generates random x range fr
+#        #y = menu_y + y1 + (random.randint(5,h-1)) #generats random Y for drop selection
+#        
+#        Mouse.moveClick(x1,y1, 1)
+#        
+#        #autopy.mouse.click()#taking out since it does not delay the click
+#        RandTime.randTime(0,0,0,0,0,9)
+#        return True
+#    return False
 
-    #added for debug purposes
-    #cv2.imwrite('debug_FindOptionClick.png', menu)
-    #cv2.imshow('Dbug_FindOptionClick',menu)
-
+def  findOptionClick(x,y,option_name):
+    import Imgdb
+    idb = Imgdb.ImgDb()
     #template
-    template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
+    template = idb.pickled_dict[option_name]
 
     w, h = template.shape[::-1]#Width, height of template image
-    res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .8 
+
+    x1 = 5 
+    y1 = 25
+    x2 = 767 
+    y2 = 524 
+    rs_window = Screenshot.shoot(x1,y1,x2,y2)
+    rsc = rs_window.copy()
+
+    # gets only all the black and white
+    ret,thresh1 = cv2.threshold(rsc,0,255,cv2.THRESH_BINARY)
+    # inverst to only get black cloros as white
+    ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
+
+    _, contours,h = cv2.findContours(thresh1,1,2)
+
+    for cnt in contours:
+        # looks for biggest square
+        if cv2.contourArea(cnt) <= 1695.0:
+            continue
+        # checks contour sides
+        approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+
+        #draws only if its squared
+        if len(approx)==4:
+            print("square of {}".format(cv2.contourArea(cnt)))
+            cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
+
+            # get geometry of approx
+            # add rs coords
+            x,y,w,h = cv2.boundingRect(cnt)
+
+            #combines rs_window coords
+            x += x1
+            y += y1
+
+            # scrshot of option menu on play window
+            img = Screenshot.shoot(x,y,x+w,y+h)
+            ret,pattern = cv2.threshold(img,254,255,cv2.THRESH_BINARY)
+
+
+    res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
+    threshold = .9 
     loc = np.where( res >= threshold)
 
     for pt in zip(*loc[::-1]):#goes through each found image
-        x1, y1 = pt #point of pattern found inside the option menu screenshot
-        #making btm coords
-        x2 = menu_x + x1 + (w*2)
-        y2 = menu_y + y1 + h - ((h/2)/2) 
-        #moving pt in by half of half of w,h
-        x1 -= (w/2)
-        y1 += ((h/2)/2) 
-        #gen random coords
-        x1 = random.randint(menu_x+x1,x2)
-        y1 = random.randint(menu_y+y1,y2)
-
-        #x = menu_x + pt_x + (random.randint(5,(w*2))) #generates random x range fr
-        #y = menu_y + y1 + (random.randint(5,h-1)) #generats random Y for drop selection
-        
-        Mouse.moveClick(x1,y1, 1)
-        
+        x += pt[0]
+        y += pt[1]
+        print(x,y,x+w,h)
+        Mouse.randMove(x,y,x+w,y+h, 1)
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
-        return True
-    return False
 
 def center_window():
     #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code

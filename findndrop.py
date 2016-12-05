@@ -14,6 +14,7 @@ from modules import Mouse
 from modules import RandTime 
 from modules import Screenshot
 from modules import RS
+import Imgdb
 
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
@@ -21,12 +22,10 @@ cur_dir = os.getcwd()
 #timer = 0
 
 
-def find_template(template_file):#pass template to function
+def find_template(template_name):#pass template to function
     #checks to see wheater to add cur dir or not
-    if "/" not in template_file:
-        global cur_dir
-        template_file = cur_dir+"/imgs/"+template_file
-        
+    imd = Imgdb.ImgDb()
+
     x1, y1 = RS.position() #Get runescapes top-left coords
     
     x1 += 557    #make The Bag's top-left, and btm-right coords
@@ -37,7 +36,8 @@ def find_template(template_file):#pass template to function
     rs_bag = Screenshot.shoot(x1,y1,x2,y2) #Screenshot taken here, 
     
     #template
-    template = cv2.imread(template_file,0)
+    template = imd.pickled_dict[template_name]
+    #imd.showImg('salmon')
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
     threshold = .8 #default is 8 
@@ -50,8 +50,6 @@ def find_template(template_file):#pass template to function
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
         moveClick(x,y, 3)#right clicks on given x,y coords
-        menu_x, menu_y, menu = RS.getOptionsMenu(x,y)#takes screenshot of options menu and returns the point at Top-left of the menu
-        RandTime.randTime(0,0,0,0,0,1)
         
         RS.findOptionClick(x,y,'drop')
         
@@ -82,7 +80,7 @@ def moveClick(x,y, button=1):#moves to random X,Y of found match of template
     
 
 if __name__ == '__main__':
-    find_template(cur_dir+'/imgs/salmon.png')
-    find_template(cur_dir+'/imgs/trout.png')
-    find_template(cur_dir+'/imgs/burntfish.png')
+    find_template('salmon')
+    find_template('trout')
+    find_template('burntfish')
     #print("Time taken:",timer)

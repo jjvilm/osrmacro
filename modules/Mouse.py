@@ -175,6 +175,5 @@ def randMove(x1,y1,x2,y2,button):
     elif button == 3:
         moveClick(x,y,3)
     else:
-        print("Button not Found in Mouse.randMove")
-
+        moveTo(x,y)
 

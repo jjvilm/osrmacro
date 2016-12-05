@@ -4,14 +4,17 @@ from modules import Screenshot
 from modules import Mouse
 import time
 import random
+import Imgdb
 
 class AutoFish(object):
     def __init__(self):
+        # loads image DB
+        self.idb = Imgdb.ImgDb()
         #self.findFishingIcon()
         #self.findBankIcon()
         self.findFishBubbles()
         #self.findCageOption()
-        pass
+        #self.main()
 
     def mini_map_mask(self,low,high, template=None):
         x1 = 571
@@ -39,7 +42,8 @@ class AutoFish(object):
             Mouse.randMove(x,y,x2,y2,1)
             run= 0 
             time.sleep(1)
-            break
+            return 0
+        return 1
 
     def findFishBubbles(self):
         # water bubbles
@@ -54,7 +58,7 @@ class AutoFish(object):
         #cv2.imshow('img', mask)
         #cv2.waitKey(0)
 
-        kernel = np.ones((10,10), np.uint8)
+        kernel = np.ones((5,5), np.uint8)
         dilation = cv2.dilate(mask, kernel, iterations = 1)
 
         #cv2.imshow('dilation', dilation)
@@ -69,15 +73,21 @@ class AutoFish(object):
             y2 = y + h 
             Mouse.randMove(x,y,x2,y2,3)
             time.sleep(1)
+            # no
             if self.findCageOption():
+                Mouse.randMove(0,0,700,500, 1)
                 continue
             else:
-                break
+                return
+
     def findBankIcon(self):
         # bank colo
         low = np.array([26,160,176])
         high = np.array([27,244,228])
         mask, mm_x, mm_y = self.mini_map_mask(low, high)
+
+        cv2.imshow('mask', mask)
+        cv2.waitKey(0)
 
         _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -132,18 +142,20 @@ class AutoFish(object):
                 ret,thresh1 = cv2.threshold(img,254,255,cv2.THRESH_BINARY)
 
                 # loads image from db
-                import Imgdb
-                img_db = Imgdb.ImageStorage()
-                img_from_dict = img_db.pickled_dict['cage']
+                img_from_dict = self.idb.pickled_dict['cage']
 
 
                 #finds a match 
                 from modules import Match
-                # runs func when match is found
-                Match.images(thresh1,img_from_dict,x,y, self.doInMatched)
-                return False
-                break
-            return True
+                # runs func when match is found returns true to keep looking for template
+                if Match.images(thresh1,img_from_dict,x,y, self.doInMatched):
+                    # keep looking for other bubbles
+                    return 1
+                else:
+                    # found 'cage'
+                    return 0
+        # in case the options menu is aginast an edge
+        return 1
                 
     def doInMatched(self, *args, **kwargs):
         print("Found template")
@@ -154,15 +166,12 @@ class AutoFish(object):
         y = pt[1]+y
         # dimensions of pattern image
         img_pat_w, img_pat_h = img_pat.shape[::-1]
-
-        Mouse.randMove(x,y,x+img_pat_w, y, 1)
-        cv2.rectangle(img_pat, pt, (pt[0] + w, pt[1] + h), (255,255,255), 2)
+        # moves and clicks on the random passed coords
+        Mouse.randMove(x,y,x+img_pat_w-10, y, 1)
+        #cv2.rectangle(img_pat, pt, (pt[0] + w, pt[1] + h), (255,255,255), 2)
 
     def main(self):
-        while 1:
-            pass
-            
-
-
+        pass
+       
 af = AutoFish()
-af.findCageOption()
+
