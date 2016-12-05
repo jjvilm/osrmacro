@@ -4,7 +4,6 @@ import numpy as np #needed by cv2
 import autopy #for smooth mouse move
 
 import pyscreenshot #to take screenshot of bag and options menu
-import subprocess #needed to access xdotool output
 import random #get random time
 import time #for sleep
 import os #needed to 
@@ -14,18 +13,18 @@ from modules import Mouse
 from modules import RandTime 
 from modules import Screenshot
 from modules import RS
-import Imgdb
+from modules import Imgdb
 
 #Finds an image from the given template.  
 bag_coord =( ((557,229),(173,253)) )#runescape bag coords as x,y coord, w, h
 cur_dir = os.getcwd()
 #timer = 0
+imd = Imgdb.ImgDb()
 
 
 def find_template(template_name):#pass template to function
+    global imd
     #checks to see wheater to add cur dir or not
-    imd = Imgdb.ImgDb()
-
     x1, y1 = RS.position() #Get runescapes top-left coords
     
     x1 += 557    #make The Bag's top-left, and btm-right coords
@@ -34,6 +33,8 @@ def find_template(template_name):#pass template to function
     y2 = y1 + 253
      
     rs_bag = Screenshot.shoot(x1,y1,x2,y2) #Screenshot taken here, 
+   # cv2.imshow('bag', rs_bag)
+   # cv2.waitKey(0)
     
     #template
     template = imd.pickled_dict[template_name]
@@ -49,7 +50,9 @@ def find_template(template_name):#pass template to function
         pt = (pt[0] + 5, pt[1] + 2)
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
-        moveClick(x,y, 3)#right clicks on given x,y coords
+        Mouse.moveClick(x,y, 3)#right clicks on given x,y coords
+
+
         
         RS.findOptionClick(x,y,'drop')
         
@@ -67,20 +70,8 @@ def gen_coords(pt,btmX,btmY):
     within_y = random.randint(y1,y2)
     return within_x, within_y
 
-def moveClick(x,y, button=1):#moves to random X,Y of found match of template
-    """moves to x,y relative to the RS window"""
-    rsx, rsy = RS.position()
-    x = rsx + x
-    y = rsy + y 
-    Mouse.moveTo(x,y)
-
-    autopy.mouse.toggle(True,button)
-    RandTime.randTime(0,0,0,0,0,1)
-    autopy.mouse.toggle(False,button)
-    
-
 if __name__ == '__main__':
     find_template('salmon')
-    find_template('trout')
+    #find_template('trout')
     find_template('burntfish')
     #print("Time taken:",timer)

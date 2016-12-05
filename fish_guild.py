@@ -4,7 +4,7 @@ from modules import Screenshot
 from modules import Mouse
 import time
 import random
-import Imgdb
+from modules import Imgdb
 
 class AutoFish(object):
     def __init__(self):
@@ -12,9 +12,10 @@ class AutoFish(object):
         self.idb = Imgdb.ImgDb()
         #self.findFishingIcon()
         #self.findBankIcon()
-        self.findFishBubbles()
+        #self.findFishBubbles()
         #self.findCageOption()
         #self.main()
+        pass
 
     def mini_map_mask(self,low,high, template=None):
         x1 = 571
@@ -45,7 +46,12 @@ class AutoFish(object):
             return 0
         return 1
 
-    def findFishBubbles(self):
+    def findFishBubbles(self,*args):
+        if 'action' in args:
+            pass
+            # Click or right click
+            # make module for whoel game so normalize
+
         # water bubbles
         #low = np.array([103,81,0])
         #high = np.array([111,255,255])
@@ -128,7 +134,7 @@ class AutoFish(object):
             # draws only if its squared
             if len(approx)==4:
                 print("square of {}".format(cv2.contourArea(cnt)))
-                cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
+                #cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
                 # get geometry of approx
                 # add rs coords
                 x,y,w,h = cv2.boundingRect(cnt)
@@ -174,4 +180,4 @@ class AutoFish(object):
         pass
        
 af = AutoFish()
-
+af.findFishBubbles()

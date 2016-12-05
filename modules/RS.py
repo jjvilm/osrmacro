@@ -14,6 +14,10 @@ import Mouse
 import RandTime
 import Match
 import Keyboard
+import Imgdb
+
+# Image DB 
+idb = Imgdb.ImgDb()
 
 def position():
     """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
@@ -106,25 +110,26 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
 #    return False
 
 def  findOptionClick(x,y,option_name):
-    import Imgdb
-    idb = Imgdb.ImgDb()
+    global template
+    """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
     #template
     template = idb.pickled_dict[option_name]
 
     w, h = template.shape[::-1]#Width, height of template image
 
+    # coords of playing window
     x1 = 5 
     y1 = 25
     x2 = 767 
     y2 = 524 
     rs_window = Screenshot.shoot(x1,y1,x2,y2)
-    rsc = rs_window.copy()
 
     # gets only all the black and white
-    ret,thresh1 = cv2.threshold(rsc,0,255,cv2.THRESH_BINARY)
+    ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
     # inverst to only get black cloros as white
     ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
 
+    # looks for all squares 
     _, contours,h = cv2.findContours(thresh1,1,2)
 
     for cnt in contours:
@@ -134,33 +139,46 @@ def  findOptionClick(x,y,option_name):
         # checks contour sides
         approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
 
-        #draws only if its squared
+        # Square found here vvvv
         if len(approx)==4:
-            print("square of {}".format(cv2.contourArea(cnt)))
-            cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
+            #print("square of {}".format(cv2.contourArea(cnt)))
+            #cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
 
             # get geometry of approx
             # add rs coords
             x,y,w,h = cv2.boundingRect(cnt)
 
-            #combines rs_window coords
+            #combines with playing window
             x += x1
             y += y1
 
             # scrshot of option menu on play window
             img = Screenshot.shoot(x,y,x+w,y+h)
             ret,pattern = cv2.threshold(img,254,255,cv2.THRESH_BINARY)
+            ###  DEBUG LINE
+            #cv2.imshow('img',pattern)
+            #cv2.waitKey(0)
+            #return
+            break
+    else:
+        Mouse.randMove(0,0,500,500,0)
+        time.sleep(1)
+        print("Else ran")
 
 
     res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
     threshold = .9 
     loc = np.where( res >= threshold)
 
+    # clicks on option here when found in pattern
     for pt in zip(*loc[::-1]):#goes through each found image
-        x += pt[0]
-        y += pt[1]
-        print(x,y,x+w,h)
-        Mouse.randMove(x,y,x+w,y+h, 1)
+        rsx, rsy = position()
+        x += pt[0] + rsx
+        y += pt[1] + rsy
+        y1 = y
+        y2 = y+10
+        img = Screenshot.shoot(x,y1,x+w,y2)
+        Mouse.randMove(x,y1,x+w,y2, 1)
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
 
@@ -178,24 +196,22 @@ def center_window():
 def get_bag(bagornot, *args):
     x1, y1 = position() #Get runescapes top-left coords
 
-    x1 += 561    #make The Bag's top-left, and btm-right coords
+    x1 += 557    #make The Bag's top-left, and btm-right coords
 	#y1=229 default for archlinux 
-    y1 += 233    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 160 
-    y2 = y1 + 250#253default for arch
+    y1 += 229    #x2,y2 == btm-right coord, width and height
+    x2 = x1 + 173 
+    y2 = y1 + 253#253default for arch
     try: # block to allow this func to also get 'hsv' img objects
         for arg in args:
             if arg == 'hsv':
                 rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
             if arg == 'gray':
                 rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-
     except:
-        rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-        #cv2.imwrite('rs_bag_debug.png',rs_bag)
+        pass
 
-        #returns image object, and top-left point of bag
-        #returns image only if stringed passed
+    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+
     if bagornot == 'only':
         return rs_bag
     else:
@@ -526,5 +542,4 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
-    press_button('equipment')
-                        
+    get_bag('only')
