@@ -65,50 +65,6 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     #menu is the image, menuy/menux is the top-left coord of the image 
     return menu_x, menu_y, menu
 
-#def findOptionClick(x,y, option):#X,Y coords of where it clied in bag
-#    """Finds option based to the function from passed menu as cv2 image.  needs the x,y of the menu"""
-#    """DOES NOT RIGHT CLICK, MUST RIGHT CLICK TO USE THIS FUNCTION"""
-#    menu_x, menu_y, menu = getOptionsMenu(x,y)
-#    #get base directory osrmacro
-#    cwd = os.getcwd()
-#    if 'modules' in cwd: 
-#            occurance = cwd.rfind("/") #finds the last "/", returns its index
-#            cwd = cwd[:occurance+1] #'/home/user/osrmacro/'
-#
-#    #added for debug purposes
-#    #cv2.imwrite('debug_FindOptionClick.png', menu)
-#    #cv2.imshow('Dbug_FindOptionClick',menu)
-#
-#    #template
-#    template = cv2.imread(cwd+'/imgs/'+option+'.png',0)#0 here means turned gray
-#
-#    w, h = template.shape[::-1]#Width, height of template image
-#    res = cv2.matchTemplate(menu,template,cv2.TM_CCOEFF_NORMED)
-#    threshold = .8 
-#    loc = np.where( res >= threshold)
-#
-#    for pt in zip(*loc[::-1]):#goes through each found image
-#        x1, y1 = pt #point of pattern found inside the option menu screenshot
-#        #making btm coords
-#        x2 = menu_x + x1 + (w*2)
-#        y2 = menu_y + y1 + h - ((h/2)/2) 
-#        #moving pt in by half of half of w,h
-#        x1 -= (w/2)
-#        y1 += ((h/2)/2) 
-#        #gen random coords
-#        x1 = random.randint(menu_x+x1,x2)
-#        y1 = random.randint(menu_y+y1,y2)
-#
-#        #x = menu_x + pt_x + (random.randint(5,(w*2))) #generates random x range fr
-#        #y = menu_y + y1 + (random.randint(5,h-1)) #generats random Y for drop selection
-#        
-#        Mouse.moveClick(x1,y1, 1)
-#        
-#        #autopy.mouse.click()#taking out since it does not delay the click
-#        RandTime.randTime(0,0,0,0,0,9)
-#        return True
-#    return False
-
 def  findOptionClick(x,y,option_name):
     global template
     """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
@@ -178,7 +134,9 @@ def  findOptionClick(x,y,option_name):
         y1 = y
         y2 = y+10
         img = Screenshot.shoot(x,y1,x+w,y2)
-        Mouse.randMove(x,y1,x+w,y2, 1)
+        # range of x and y to click on.  
+        # in the options 
+        Mouse.randMove(x,y1,x+(w/2),y2, 1)
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
 

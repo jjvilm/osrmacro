@@ -46,11 +46,8 @@ class AutoFish(object):
             return 0
         return 1
 
-    def findFishBubbles(self,*args):
-        if 'action' in args:
-            pass
-            # Click or right click
-            # make module for whoel game so normalize
+    def findFishBubbles(self,click_n,func,*args):
+        """Pass a function to do after it finds the fish bubbles"""
 
         # water bubbles
         #low = np.array([103,81,0])
@@ -77,14 +74,24 @@ class AutoFish(object):
             y += 59
             x2 = x + w 
             y2 = y + h 
-            Mouse.randMove(x,y,x2,y2,3)
-            time.sleep(1)
-            # no
-            if self.findCageOption():
-                Mouse.randMove(0,0,700,500, 1)
+            Mouse.randMove(x,y,x2,y2,click_n)
+            # pass args to fucntion doing the actions
+            # fucn should return true if needs to continue loking  at other bubbles
+            if func():
                 continue
             else:
                 return
+
+    def doNothing(self):
+        pass
+
+    def findCageOptionInBubbles(self):
+        """Pass args from findFishBubbles meth. Finding cage option in fishing guild"""
+        if self.findCageOption():
+            Mouse.randMove(0,0,700,500, 1)
+            return True
+        else:
+            return
 
     def findBankIcon(self):
         # bank colo
@@ -180,4 +187,4 @@ class AutoFish(object):
         pass
        
 af = AutoFish()
-af.findFishBubbles()
+af.findFishBubbles(1,af.doNothing)
