@@ -16,8 +16,8 @@ def keep_clicking():
     y1 = cy - 2
     x2 = cx + 2
     y2 = cy + 2
-    timer = 0
-    while timer < 30:
+    counts = 0
+    while counts < 30:
         if count_logs('/home/jj/github/osrmacro/imgs/mapleLog.png') == 0:
             x = random.randint(x1,x2)
             y = random.randint(y1,y2)
@@ -36,6 +36,7 @@ def count_logs(template_file):
         count +=1
         break
     return count
+
 def clicker(item):
     time.sleep(3)
     cx, cy  = autopy.mouse.get_pos()
@@ -58,6 +59,7 @@ def clicker(item):
             y = random.randint(y1,y2)
             Mouse.moveClick(x,y,1)
             timer +=1
+
 def alching(clicks):
     RS.press_button('magic')
 
@@ -91,7 +93,6 @@ def alching(clicks):
         RandTime.randTime(1,1,0,1,9,9)
         RS.antiban('magic')
 
-
 def click_camelot(clicks):
     time.sleep(4)
     cx, cy  = autopy.mouse.get_pos()
@@ -114,6 +115,32 @@ def click_camelot(clicks):
         RandTime.randTime(0,0,3,0,3,5)
         if not RS.antiban('magic'):
             time.sleep(1.5)
+
+def custom_clicker(wait_in_secs, count_to, click , range_sq ):
+    print("move mouse to location to autoclick")
+    time.sleep(3)
+    cx, cy  = autopy.mouse.get_pos()
+    print("Got {} {}".format(cx,cy))
+    x1 = cx - range_sq
+    y1 = cy -range_sq
+    x2 = cx + range_sq
+    y2 = cy + range_sq
+
+    counter = 0
+
+
+    while counter < count_to:
+        x = random.randint(x1,x2)
+        y = random.randint(y1,y2)
+        Mouse.moveClick(x,y,click)
+        counter += 1
+        # randomize range of time to wait
+#custom_clicker(wait_in_secs, count_to, click , range_sq ):
+        print("Randomizing time")
+        RandTime.randTime(2,0,0,wait_in_secs,9,9)
+
+
+
 
 #click_camelot(106)
 #alching(31)
@@ -143,8 +170,10 @@ def splasher():
 
 #keep_clicking()#for fletching
 #clicker('stringer')#for stringer#for stringing
-n = int(raw_input('Alchables??\n>>'))
-alching(n)
+#n = int(raw_input('Alchables??\n>>'))
+#alching(n)
 #RS.logout()
 #import os
 #os.system('sudo shutdown now')
+#custom_clicker(wait_in_secs, count_to, click , range_sq ):
+custom_clicker(7,40,1,23)

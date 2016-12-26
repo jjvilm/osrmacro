@@ -39,7 +39,10 @@ def find_template(template_name):#pass template to function
     #template
     template = imd.pickled_dict[template_name]
     #imd.showImg('salmon')
-    w, h = template.shape[::-1]
+    color_mode, w, h = template.shape[::-1]
+    # change img to grayscale
+    if color_mode == 3:
+        template = cv2.cvtColor(template, cv2.COLOR_RGB2GRAY)
     res = cv2.matchTemplate(rs_bag,template,cv2.TM_CCOEFF_NORMED)
     threshold = .8 #default is 8 
     loc = np.where( res >= threshold)
@@ -71,7 +74,5 @@ def gen_coords(pt,btmX,btmY):
     return within_x, within_y
 
 if __name__ == '__main__':
-    find_template('salmon')
-    #find_template('trout')
-    find_template('burntfish')
-    #print("Time taken:",timer)
+    item_to_drop = raw_input("Item name to drop:\n")
+    find_template(item_to_drop)

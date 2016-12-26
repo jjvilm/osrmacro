@@ -70,6 +70,9 @@ def  findOptionClick(x,y,option_name):
     """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
     #template
     template = idb.pickled_dict[option_name]
+    # turning template to graysacle
+    if len(template.shape) == 3:
+        template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
 
     w, h = template.shape[::-1]#Width, height of template image
 
@@ -80,7 +83,7 @@ def  findOptionClick(x,y,option_name):
     y2 = 524 
     rs_window = Screenshot.shoot(x1,y1,x2,y2)
 
-    # gets only all the black and white
+    # Finds "Choose options" window in OSR window
     ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
     # inverst to only get black cloros as white
     ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
@@ -120,7 +123,6 @@ def  findOptionClick(x,y,option_name):
         Mouse.randMove(0,0,500,500,0)
         time.sleep(1)
         print("Else ran")
-
 
     res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
     threshold = .9 

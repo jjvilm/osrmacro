@@ -120,12 +120,24 @@ class ImgDb(object):
         except:
             pass
         return img
+    
+    def append_parsed_dir(self,path):
+        """pass full path to directory containing images"""
+        import os
+        for dirpath, dirname, filenames in os.walk(path):
+            for cur_file in filenames:
+                img = cv2.imread(dirpath+'/'+cur_file)
+                # strips .png from file name
+                cur_file_name = cur_file[:-4]
+                self.addImg(cur_file_name, img)
+
+
 
 if __name__ == "__main__":
     # loads image database
     imgdb = ImgDb()
     imgdb.listImgs()
-   # imgdb.showImgDb()
+    #imgdb.showImgDb()
     #imgdb.rmImg()
     #img = cv2.imread('/home/jj/media/image/cagebinary.png')
     #img = imgdb.turnBinary(img, 'a')
