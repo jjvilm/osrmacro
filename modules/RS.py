@@ -16,8 +16,6 @@ import Match
 import Keyboard
 import Imgdb
 
-# Image DB 
-idb = Imgdb.ImgDb()
 
 def position():
     """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
@@ -66,9 +64,10 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     return menu_x, menu_y, menu
 
 def  findOptionClick(x,y,option_name):
-    global template
     """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
-    #template
+    # Image DB 
+    idb = Imgdb.ImgDb()
+
     template = idb.pickled_dict[option_name]
     # turning template to graysacle
     if len(template.shape) == 3:
