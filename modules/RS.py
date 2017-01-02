@@ -16,7 +16,6 @@ import Match
 import Keyboard
 import Imgdb
 
-
 def position():
     """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
 	To make sure, the bag, and options menu coordinates are relevant to the window"""
@@ -63,7 +62,12 @@ def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring u
     #menu is the image, menuy/menux is the top-left coord of the image 
     return menu_x, menu_y, menu
 
-def  findOptionClick(x,y,option_name):
+def getPlayingScreen():
+    """Returns play screen area as an HSV image, and the first point of the image"""
+    playScreen = Screenshot.shoot(7,25,520,360,'hsv')
+    return playScreen, 7,25
+
+def findOptionClick(x,y,option_name):
     """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
     # Image DB 
     idb = Imgdb.ImgDb()
@@ -142,7 +146,6 @@ def  findOptionClick(x,y,option_name):
         RandTime.randTime(0,0,0,0,0,9)
 
 def center_window():
-    #display_x = subprocess.getoutput('xdotool getdisplaygeometry') python3 code
     display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
     display_x = display_x[:4]
     display_x = int(display_x)
@@ -151,7 +154,7 @@ def center_window():
     pos = display_x - 383
     #moves window to center of screen
     os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
-    #os.system('xdotool search old windowmove 0 0')
+
 def get_bag(bagornot, *args):
     x1, y1 = position() #Get runescapes top-left coords
 
@@ -164,8 +167,10 @@ def get_bag(bagornot, *args):
         for arg in args:
             if arg == 'hsv':
                 rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+                return rs_bag, x1, y1
             if arg == 'gray':
                 rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+                return rs_bag, x1, y1
     except:
         pass
 
@@ -259,7 +264,7 @@ def depositAll():
     RandTime.randTime(0,0,1,0,0,5)
 
 def countItemInInv(template_file,*args):
-    """Counts the N of items in INVENTORY
+    """Counts the N of the item passed in INVENTORY
     if a number is passed it will count up to that"""
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
@@ -277,6 +282,37 @@ def countItemInInv(template_file,*args):
                 return 1
         count += 1
     #print(count)
+    return count
+
+def inventory_counter():
+    """Counts the number of slots being used in inventory"""
+    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
+    # looks for color of empty inv
+    low = np.array([10,46,58])
+    high= np.array([21,92,82])
+    # applies mask
+    mask = cv2.inRange(bag, low, high)
+    # removes any noise
+    kernel = np.ones((3,3), np.uint8)
+    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    #inverts mask
+    closing = cv2.bitwise_not(closing)
+
+    # finds contours
+    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+    for cnt in contours:
+        # creates a white rectangle around items
+        x,y,w,h = cv2.boundingRect(cnt)
+        cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+
+    # finds the N of items in the newly created mask from above
+    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+
+    count = 0
+    for count,cnt in enumerate(contours):
+        count += 1
+    # returns the N of items in inv
     return count
 
 def isInvEmpty():
@@ -298,17 +334,16 @@ def isInvEmpty():
 
 def open_cw_bank():
     """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
-    
     # gets RS window's position
     rsx,rsy = position()
-    # creates coords to take a screenshot of play window
-    x1 = rsx + 200
-    y1 = rsy + 80
-    x2 = rsx + 500
-    y2 = rsy + 350
 
     # Takes screenshot, as Hue-saturated-value image
-    play_window = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+    play_window,psx,psy = getPlayingScreen()
+
+    psx += rsx
+    psy += rsy
+
+
 
     lower_gray = np.array([0,15,55])
     upper_gray = np.array([10,25,125])
@@ -332,21 +367,21 @@ def open_cw_bank():
             if cv2.contourArea(con) > 3000:
                 M = cv2.moments(con)
                 # finds centroid
-                xcoords,ycoords = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                xcoords += x1
-                ycoords += y1
+                cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                psx += cx
+                psy += cy
                 # adds randomness to coords
-                xcoords += random.randint(-25,25)
-                ycoords += random.randint(-25,25)
+                psx += random.randint(-17,17)
+                psy += random.randint(-17,17)
 
                 #move click chest
-                Mouse.moveClick(xcoords,ycoords,1)
-                RandTime.randTime(0,0,0,0,0,9)
+                Mouse.moveClick(psx,psy,1)
+                RandTime.randTime(0,0,0,0,9,9)
                 break
     except Exception as e:
         print("Bank NOT found!\nMove camera around!")
         #play_sound()
-         
+
 def antiban(skill):
     rsx,rsy = position()
     rn =random.randint(0,99)  
@@ -501,4 +536,4 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
-    get_bag('only')
+    open_cw_bank()

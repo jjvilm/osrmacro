@@ -18,12 +18,13 @@ def shoot(x1,y1,x2,y2, *args, **kwargs):
                 # Converts to BGR format for OpenCV
                 img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
                 hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                return img
+                return hsv_img
+
             if arg == 'rgb':
-                cv2_img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-                return cv2_img
+                rgb_img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                return rgb_img
     except:
         pass
-        
+
     cv_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return cv_gray
