@@ -65,7 +65,7 @@ def findBankIcon(offset=0, *args):
         RandTime.randTime(1,0,0,1,9,9)
         return
 
-def find_mining_icon(offset=0,*args)
+def find_mining_icon(offset=0,*args):
     """needs work, not fucntional, copy pasted from findBankIcon"""
     # bank hue range
     low = np.array([26,160,176])

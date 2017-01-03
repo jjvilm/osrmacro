@@ -205,6 +205,8 @@ def getBankWindow(*args):
 
 def isBankOpen():
     """checks to see if bank is open, returns True, else False"""
+    # check hsv value
+    xs_hsv = ([0,254,0],[179,255,255])
     # button saved as an array instead of reading a file
     buttonarray = np.array([[ 0,  0, 94, 94, 94, 94, 94, 94,  0,  0],
                                 [ 0,  0,  0, 94, 94, 94, 94,  0,  0,  0],
@@ -224,6 +226,9 @@ def isBankOpen():
     y2 = rsy+49
     # checks to make sure both image objects match
     closeButton = Screenshot.shoot(x1,y1,x2,y2)
+    cv2.imshow('debug', closeButton)
+    cv2.imshow('img', buttonarray)
+    cv2.waitKey(0)
     if (closeButton == buttonarray).all():
         return True
     return False 
@@ -536,4 +541,4 @@ def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
 
 if __name__ == '__main__':
-    open_cw_bank()
+    print(isBankOpen())

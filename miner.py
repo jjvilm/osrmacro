@@ -9,12 +9,14 @@ import random
 def find_mine():
     mines = {
         'tin1':([0,13,104],[3,73,148]),
-        'tin':([0,19,121],[1,30,136])
+        'tin':([0,19,121],[1,30,136]),
+        'cooper':([14,135,88],[15,140,169])
     }
 
     play_window,psx,psy = RS.getPlayingScreen()
 
-    mask = cv2.inRange(play_window, np.array(mines['tin'][0]), np.array(mines['tin'][1]))
+    #mask = cv2.inRange(play_window, np.array(mines['tin'][0]), np.array(mines['tin'][1]))
+    mask = cv2.inRange(play_window, np.array(mines['cooper'][0]), np.array(mines['cooper'][1]))
 
     kernel = np.ones((20,20), np.uint8)
     closing  =  cv2.morphologyEx(mask.copy(), cv2.MORPH_CLOSE, kernel)
@@ -90,10 +92,16 @@ def main():
     print("Full Inv")
 main()
 
-Minimap.findBankIcon(10,"n")
-RandTime.randTime(4,0,0,6,9,9)
-RS.open_cw_bank()
-if RS.isBankOpen():
-    RS.depositAll()
-    RS.closeBank()
-
+#Minimap.findBankIcon(10,"n")
+#RandTime.randTime(4,0,0,6,9,9)
+#RS.open_cw_bank()
+#while 1:
+#    if RS.isBankOpen():
+#        RS.depositAll()
+#        RS.closeBank()
+#        break
+#    else:
+#        print('not open')
+#        RandTime.randTime(0,1,0,0,9,9)
+#        continue
+#
