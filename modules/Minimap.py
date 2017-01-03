@@ -34,7 +34,7 @@ def findFishingIcon():
         return 0
     return 1
 
-def findBankIcon(*args):
+def findBankIcon(offset=0, *args):
     # bank hue range
     low = np.array([26,160,176])
     high = np.array([27,244,228])
@@ -48,18 +48,55 @@ def findBankIcon(*args):
     for c in contours:
         (x, y, w, h) = cv2.boundingRect(c)
         if args[0] == "n":
-            x += 568
-            y += 36
+            x += mm_x
+            y += mm_y - offset
             x2 = x + w
-            y2 = y + (h/2)
+            y2 = y + (h/2) 
+            Mouse.randMove(x,y,x2,y2,1)
+            #Mouse.moveTo(x,y)
+            RandTime.randTime(1,0,0,1,9,9)
+            return
 
-        x += 568
-        y += 36
+        x += mm_x
+        y += mm_y
         x2 = x + w
         y2 = y + h
         Mouse.randMove(x,y,x2,y2,1)
         RandTime.randTime(1,0,0,1,9,9)
         return
+
+def find_mining_icon(offset=0,*args)
+    """needs work, not fucntional, copy pasted from findBankIcon"""
+    # bank hue range
+    low = np.array([26,160,176])
+    high = np.array([27,244,228])
+    mask, mm_x, mm_y = get_mini_map_mask(low, high)
+
+    #cv2.imshow('mask', mask)
+    #cv2.waitKey(0)
+
+    _, contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for c in contours:
+        (x, y, w, h) = cv2.boundingRect(c)
+        if args[0] == "n":
+            x += mm_x
+            y += mm_y - offset
+            x2 = x + w
+            y2 = y + (h/2) 
+            Mouse.randMove(x,y,x2,y2,1)
+            #Mouse.moveTo(x,y)
+            RandTime.randTime(1,0,0,1,9,9)
+            return
+
+        x += mm_x
+        y += mm_y
+        x2 = x + w
+        y2 = y + h
+        Mouse.randMove(x,y,x2,y2,1)
+        RandTime.randTime(1,0,0,1,9,9)
+        return
+
 
 if __name__ == "__main__":
     findBankIcon()

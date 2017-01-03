@@ -8,22 +8,32 @@ import random
 
 def find_mine():
     mines = {
-        'tin':([0,13,104],[3,73,148])
+        'tin1':([0,13,104],[3,73,148]),
+        'tin':([0,19,121],[1,30,136])
     }
 
     play_window,psx,psy = RS.getPlayingScreen()
 
     mask = cv2.inRange(play_window, np.array(mines['tin'][0]), np.array(mines['tin'][1]))
 
-    _,contours,_ = cv2.findContours(mask.copy(), 1, 2)
-
     kernel = np.ones((20,20), np.uint8)
-
     closing  =  cv2.morphologyEx(mask.copy(), cv2.MORPH_CLOSE, kernel)
 
+    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+    # adds white rectangle around the mines
+    for con in contours:
+        x,y,w,h = cv2.boundingRect(con)
+        cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+    #cv2.imshow('closing', closing)
+    #cv2.waitKey(0)
+
+    # finds mine mounts
+    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
     mine_areas = {}
     for con in contours:
-        if cv2.contourArea(con) > 300:
+        #print("\n###############################")
+        #print(cv2.contourArea(con))
+        if cv2.contourArea(con) > 500:
             #print(cv2.contourArea(con))
             M = cv2.moments(con)
             cx = int(M['m10']/M['m00'])
@@ -31,8 +41,12 @@ def find_mine():
             # adds areas to dictionary to call next
             mine_areas[cv2.contourArea(con)] = (cx,cy)
 
-    # gets random mine from mine areas
-    random_mine = random.choice(mine_areas.keys())
+    try:
+        # gets random mine from mine areas
+        random_mine = random.choice(mine_areas.keys())
+    except Exception as e:
+        print(e)
+        random_mine = mine_areas[mine_areas.keys()[0]]
     #print(random_mine)
     mine_center_x, mine_center_y = mine_areas[random_mine]
     # combine coords with playscreen to make relative
@@ -40,20 +54,46 @@ def find_mine():
     mine_center_y += psy
 
     # adds randomness to coords
-    mine_center_x += random.randint(-15,15)
-    mine_center_y += random.randint(-15,15)
+    mine_center_x += random.randint(-11,11)
+    mine_center_y += random.randint(-11,11)
 
     Mouse.moveClick(mine_center_x, mine_center_y,1)
+    #cv2.destroyAllWindows()
     #cv2.imshow('img', mask)
     #cv2.imshow('closing', closing)
     #cv2.waitKey(0)
 
+def main():
+    item_n = RS.inventory_counter()
+    print("Current itme number is:{}".format(item_n))
+    while 1:
+        if item_n == 28:
+            break
+        try:
+            #mines the ore
+            find_mine()
+        except:
+            RandTime.randTime(1,0,0,1,0,9)
+            continue
 
-while RS.inventory_counter() < 28:
-    find_mine()
-    RandTime.randTime(2,0,0,5,9,9)
+        # waits for obtained ore to move on
+        while 1:
+            current_n_items = RS.inventory_counter()
+            # counts to make sure +1 has been added to inv
+            if item_n + 1 == current_n_items:
+                item_n = current_n_items
+                break
+            else:
+                RandTime.randTime(0,1,0,0,9,9)
+                continue
 
-Minimap.findBankIcon()
-RandTime.randTime(3,0,0,5,9,9)
+    print("Full Inv")
+main()
+
+Minimap.findBankIcon(10,"n")
+RandTime.randTime(4,0,0,6,9,9)
 RS.open_cw_bank()
+if RS.isBankOpen():
+    RS.depositAll()
+    RS.closeBank()
 
