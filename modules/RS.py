@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-#RS.py
+
 import cv2
 import numpy as np
 import autopy
@@ -15,6 +15,7 @@ import RandTime
 import Match
 import Keyboard
 import Imgdb
+
 
 def position():
     """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
@@ -205,33 +206,33 @@ def getBankWindow(*args):
 
 def isBankOpen():
     """checks to see if bank is open, returns True, else False"""
-    # check hsv value
-    xs_hsv = ([0,254,0],[179,255,255])
-    # button saved as an array instead of reading a file
-    buttonarray = np.array([[ 0,  0, 94, 94, 94, 94, 94, 94,  0,  0],
-                                [ 0,  0,  0, 94, 94, 94, 94,  0,  0,  0],
-                                [94,  0,  0,  0, 94, 94,  0,  0,  0, 94],
-                                [88, 88,  0,  0,  0,  0,  0,  0, 88, 88],
-                                [88, 88, 88,  0,  0,  0,  0, 88, 88, 88],
-                                [88, 88, 88, 88,  0,  0, 88, 88, 88, 88],
-                                [83, 83, 83,  0,  0,  0,  0, 83, 83, 83],
-                                [83, 83,  0,  0,  0,  0,  0,  0, 83, 83],
-                                [83,  0,  0,  0, 83, 83,  0,  0,  0, 83],
-                                [ 0,  0,  0, 78, 78, 78, 78,  0,  0,  0],
-                                [ 0,  0, 78, 78, 78, 78, 78, 78,  0,  0]], dtype='uint8')
+    # black X button hsv values
+    buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
+    # gets current game's position 
     rsx,rsy = position()
+    #button X on bank window coords
     x1 = rsx+480
     y1 = rsy+38
     x2 = rsx+490
     y2 = rsy+49
-    # checks to make sure both image objects match
-    closeButton = Screenshot.shoot(x1,y1,x2,y2)
-    cv2.imshow('debug', closeButton)
-    cv2.imshow('img', buttonarray)
-    cv2.waitKey(0)
-    if (closeButton == buttonarray).all():
+    # Screenshot X button
+    closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+    # Apply hsv ranges 
+    mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
+
+    # counts white pixels in X
+    counter = 0
+    for colors in mask:
+        for color_value in colors:
+            if color_value == 255:
+                counter += 1
+    #print(counter)
+    #cv2.imshow('img', mask)
+    #cv2.waitKey(0)
+    # 54 = Bank is open
+    if counter == 54:
         return True
-    return False 
+    return False
 
 def closeBank():
     cwd = os.getcwd()
@@ -303,6 +304,8 @@ def inventory_counter():
 
     #inverts mask
     closing = cv2.bitwise_not(closing)
+    #cv2.imshow('img', closing)
+    #cv2.waitKey(0)
 
     # finds contours
     _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
@@ -363,7 +366,7 @@ def open_cw_bank():
     #cv2.imshow('img', dilation)
     #cv2.waitKey(0)
 
-    # Finds contours 
+    # Finds contours
     _,contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     try:
@@ -385,16 +388,63 @@ def open_cw_bank():
                 break
     except Exception as e:
         print("Bank NOT found!\nMove camera around!")
-        #play_sound()
+
+def find_bank_booth():
+    """Finds bank booth and clicks it.  Returns True if found, else False"""
+
+    bank_booth_glass_window = ([0,72,149],[179,82,163])
+    # take screenshot of playing area
+    play_area_screen,psx,psy = getPlayingScreen()
+
+    # find glasswindow for bankbooth
+    mask = cv2.inRange(play_area_screen, np.array(bank_booth_glass_window[0]), np.array(bank_booth_glass_window[1]))
+
+    # gets RS window's position
+    rsx,rsy = position()
+
+    psx += rsx
+    psy += rsy
+
+    kernel = np.ones((3,3), np.uint8)
+    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+
+    #cv2.imshow('img', closing)
+    #cv2.waitKey(0)
+
+    # Finds contours
+    _,contours,_ = cv2.findContours(closing.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    try:
+        for con in contours:
+            if cv2.contourArea(con) > 10:
+                #print(cv2.contourArea(con))
+                M = cv2.moments(con)
+                # finds centroid
+                cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                psx += cx
+                psy += cy
+                # adds randomness to coords
+                psx += random.randint(-7,7)
+                psy += random.randint(-7,7)
+
+                #move click
+                Mouse.moveClick(psx,psy,1)
+                RandTime.randTime(0,0,0,0,9,9)
+                return 1
+    except Exception as e:
+        print("Bank NOT found!\nMove camera around!")
+    # returns False if bank not found
+    return 0
 
 def antiban(skill):
     rsx,rsy = position()
-    rn =random.randint(0,99)  
+    rn =random.randint(0,99)
     if rn == 0:
         print("Starting antiban")
         # Tuples of locations
         stats_btn = Mouse.genCoords(567,194,589,215)
-        
+
         #Clicks the skills button
         Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
 
@@ -411,9 +461,7 @@ def antiban(skill):
         skillsHover(rsx,rsy)
         moveback(skill)
         return True
-    #will ask for players skill lv
-#    elif rn == 2:
-#        greetings(skill)
+
 def moveback(skill):
     if skill == 'magic':
         press_button('magic')
@@ -454,13 +502,11 @@ def greetings(skill):
     RandTime.randTime(5,0,0,13,9,9)
 
 def skillsHover(rsx,rsy):
-        """Hovers over n skills by n times""" 
-
+        """Hovers over n skills by n times"""
         n = random.randint(0,2)
         if n > 0:
             # Tuples of locations
             stats_btn = Mouse.genCoords(567,194,589,215)
-            
             #Clicks the skills button
             Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
             for i in range(n):
@@ -469,7 +515,7 @@ def skillsHover(rsx,rsy):
                 # Randomly hovers over a random skill
                 Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
                 RandTime.randTime(1,0,0,2,9,9)
-        #returns true if antiban ran, to let me know if it acutally did ran
+
 def skillHover(skill):
     """Hovers over passed skill from 1-5 secs"""
     #Coordinates of skill's button
