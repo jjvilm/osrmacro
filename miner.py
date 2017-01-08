@@ -10,13 +10,15 @@ def find_mine():
     mines = {
         'tin1':([0,13,104],[3,73,148]),
         'tin':([0,19,121],[1,30,136]),
-        'cooper':([14,135,88],[15,140,169])
+        'cooper':([14,135,88],[15,140,169]),
+        'iron':([7,138,50],[10,146,85])
     }
 
     play_window,psx,psy = RS.getPlayingScreen()
 
     #mask = cv2.inRange(play_window, np.array(mines['tin'][0]), np.array(mines['tin'][1]))
-    mask = cv2.inRange(play_window, np.array(mines['cooper'][0]), np.array(mines['cooper'][1]))
+    #mask = cv2.inRange(play_window, np.array(mines['cooper'][0]), np.array(mines['cooper'][1]))
+    mask = cv2.inRange(play_window, np.array(mines['iron'][0]), np.array(mines['iron'][1]))
 
     kernel = np.ones((20,20), np.uint8)
     closing  =  cv2.morphologyEx(mask.copy(), cv2.MORPH_CLOSE, kernel)
@@ -47,7 +49,7 @@ def find_mine():
         # gets random mine from mine areas
         random_mine = random.choice(mine_areas.keys())
     except Exception as e:
-        print(e)
+        #print(e)
         random_mine = mine_areas[mine_areas.keys()[0]]
     #print(random_mine)
     mine_center_x, mine_center_y = mine_areas[random_mine]

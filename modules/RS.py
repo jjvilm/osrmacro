@@ -292,6 +292,10 @@ def countItemInInv(template_file,*args):
 
 def inventory_counter():
     """Counts the number of slots being used in inventory"""
+    # makes sure inventory button is selected
+    if not is_button_selected('inventory'):
+        press_button('inventory')
+
     bag, bagx,bagy = get_bag('bag and coords', 'hsv')
     # looks for color of empty inv
     low = np.array([10,46,58])
@@ -556,13 +560,13 @@ def logout():
     y +=rsy
     Mouse.moveClick(x,y,1)
 
-def press_button(button):
-    """Presses button on random coordinates stored in the buttons dictionary"""
+def press_button(button, *args):
+    """Presses button on random coordinates stored in the buttons dictionary.  Returns button coords if 'coors' passed as argument"""
     buttons = {
             'combat':0,
             'stats':(570,197,586,214),
             'quest':0,
-            'inventory':(634,196,651,213),
+            'inventory':(631,194,658,221),
             'equipment':(666,196,687,216),
             'prayer':(700,198,720,214),
             'magic':(733,195,751,214),
@@ -576,15 +580,41 @@ def press_button(button):
             'quick-prayer':0,
             'run':0
             }
+
     #unpacks the tuple
     x1,y1,x2,y2 = buttons[button]
-    #generates random coords 
+
+    try :
+        if args[0] == 'coords':
+            return x1,y1,x2,y2
+    except:
+        pass
+
+    #generates random coords
     x,y = Mouse.genCoords(x1,y1,x2,y2)
     #moves to those coords
     Mouse.moveClick(x,y,1)
 
+def is_button_selected(button_name):
+    """Returns true if button is selected, else False"""
+    x1, y1, x2, y2 = press_button(button_name, 'coords')
+    button_img = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+    lower_red = np.array([0,179,0])
+    upper_red = np.array([4,193,255])
+
+    mask = cv2.inRange(button_img, lower_red, upper_red)
+
+    for colors in mask:
+        for value in colors:
+            if value == 255:
+                #print('{} is selected'.format(button_name))
+                return 1
+    #print('{} is NOT selected'.format(button_name))
+    return 0
+
+
 def play_sound():
-    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 1000))
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
 
 if __name__ == '__main__':
-    print(isBankOpen())
+    play_sound()

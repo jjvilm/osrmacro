@@ -177,3 +177,9 @@ def randMove(x1,y1,x2,y2,button):
     else:
         moveTo(x,y)
 
+def mouse_loc():
+    return autopy.mouse.get_pos()
+
+if __name__ == "__main__":
+    print(mouse_loc())
+

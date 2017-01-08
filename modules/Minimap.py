@@ -4,16 +4,38 @@ import cv2
 import numpy as np
 import RandTime
 
+
 def get_mini_map_mask(low,high, template=None):
-        # coords for the minimap
-        x1 = 571
-        y1 = 29
-        x2 = 710
-        y2 = 180
-        mini_map = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-        # applies mask
-        mask = cv2.inRange(mini_map, low, high)
-        return mask, x1, y1
+    # coords for the minimap
+    x1 = 571
+    y1 = 29
+    x2 = 710
+    y2 = 180
+    mini_map = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+    # applies mask
+    mask = cv2.inRange(mini_map, low, high)
+    return mask, x1, y1
+
+def find_self():
+    low_white = np.array([0,0,255])
+    upper_white = np.array([1,255,255])
+
+    mask,mmx, mmy = get_mini_map_mask(low_white,upper_white)
+
+    _, contours, _ = cv2.findContours(mask.copy(), 1,2)
+
+    for cnt in contours:
+        M = cv2.moments(cnt)
+        print(cv2.contourArea(cnt))
+        if cv2.contourArea(cnt) == 4:
+            #centroid from img moments
+            cx = int(M['m10']/M['m00'])
+            cy = int(M['m01']/M['m00'])
+            print(cx,cy)
+
+    cv2.imshow('img', mask)
+    cv2.waitKey(0)
+
 
 def findFishingIcon():
     #fish color
@@ -144,4 +166,4 @@ def find_furnance(offset=0,*args):
 
 
 if __name__ == "__main__":
-    findBankIcon()
+    find_self()
