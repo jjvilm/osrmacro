@@ -612,9 +612,9 @@ def is_button_selected(button_name):
     #print('{} is NOT selected'.format(button_name))
     return 0
 
-
 def play_sound():
     os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
+
 
 if __name__ == '__main__':
     play_sound()

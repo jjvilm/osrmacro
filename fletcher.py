@@ -50,7 +50,7 @@ def find_template(template_file, option=None):#pass template to function
             #RS.findOptionClick(x,y, menu_x, menu_y, menu, option)
             RS.findOptionClick(x,y,option)
         break
-        
+
 def withdraw_from_bank(template_file, option):#pass template to function
     #option == to option in menu options when righ-clicked on item
     #checks to see wheater to add cur dir or not
@@ -61,11 +61,11 @@ def withdraw_from_bank(template_file, option):#pass template to function
 
     #creating bank window coords
     rsx,rsy = RS.position()
-    #creates  sceenshot object of bankwindow, 	
+    #creates  sceenshot object of bankwindow,
     bankWindow, x1, y1 = RS.getBankWindow()
     #SAVE for DEBUG
     #cv2.imwrite('debug_inBankLog.png',bankWindow)
-    
+
     # This For loop runs through found matches and clicks or right-clicks
     #loc == coordinates found in match
     loc, w, h = Match.this(bankWindow, template_file)
