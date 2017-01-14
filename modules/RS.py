@@ -14,7 +14,6 @@ import Mouse
 import RandTime
 import Match
 import Keyboard
-import Imgdb
 
 
 def position():
@@ -70,6 +69,7 @@ def getPlayingScreen():
 
 def findOptionClick(x,y,option_name):
     """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
+    import Imgdb
     # Image DB 
     idb = Imgdb.ImgDb()
 
@@ -89,7 +89,7 @@ def findOptionClick(x,y,option_name):
 
     # Finds "Choose options" window in OSR window
     ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
-    # inverst to only get black cloros as white
+    # inverst to only get black clors as white
     ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
 
     # looks for all squares 
@@ -129,7 +129,7 @@ def findOptionClick(x,y,option_name):
         print("Else ran")
 
     res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .9 
+    threshold = .9
     loc = np.where( res >= threshold)
 
     # clicks on option here when found in pattern
@@ -140,8 +140,8 @@ def findOptionClick(x,y,option_name):
         y1 = y
         y2 = y+10
         img = Screenshot.shoot(x,y1,x+w,y2)
-        # range of x and y to click on.  
-        # in the options 
+        # range of x and y to click on.
+        # in the options
         Mouse.randMove(x,y1,x+(w/2),y2, 1)
         #autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)

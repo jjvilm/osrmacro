@@ -42,18 +42,18 @@ class ImgDb(object):
         self.pickled_dict['dramen_staff'] = dramen_staff
         self.pickled_dict['ring_of_dueling'] = ring_of_dueling
         print("Shots taken! images stored to a dict\n")
-        
+
     def scrnshtIntoDb(self,name,x1,y1,x2,y2):
         import time
         time.sleep(3)
         img4db = Screenshot.shoot(x1,y1,x2,y2)
         self.pickled_dict[name] = img4db
-        print("{} added to dict".format(name))
+        print("Screenshot: '{}' added to dict".format(name))
         self.savePickledDict()
 
     def addImg(self,img_name,img):
         self.pickled_dict[img_name] = img
-        print("{} added to dict".format(img_name))
+        print("Image: '{}' added to dict".format(img_name))
         self.savePickledDict()
 
     def rmImg(self,img_name=None):
@@ -67,7 +67,7 @@ class ImgDb(object):
         with open(self.pickled_file_path,'w') as f:
             pickle.dump(self.pickled_dict,f)
         print("saved dict as pickled in: {}\n".format(self.pickled_file_path))
-    
+
     def loadPickledDict(self):
         with open(self.pickled_file_path,'r') as f:
             self.pickled_dict = pickle.load(f)
@@ -120,7 +120,7 @@ class ImgDb(object):
         except:
             pass
         return img
-    
+
     def append_parsed_dir(self,path):
         """pass full path to directory containing images"""
         import os
@@ -132,13 +132,12 @@ class ImgDb(object):
                 self.addImg(cur_file_name, img)
 
 
-
 if __name__ == "__main__":
     # loads image database
     imgdb = ImgDb()
-    imgdb.listImgs()
+    #imgdb.listImgs()
     #imgdb.showImgDb()
     #imgdb.rmImg()
-    #img = cv2.imread('/home/jj/media/image/cagebinary.png')
+    img = cv2.imread('/home/jj/tmp/pickpocket.png')
     #img = imgdb.turnBinary(img, 'a')
-    #imgdb.addImg('cage',)
+    imgdb.addImg('pickpocket',img)
