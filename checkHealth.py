@@ -1,10 +1,9 @@
 #!/usr/bin/python2
-"""NOT DONE WITH IT YET!!
-WHEN DONE IT SHOULD BE ABLE TO REACH HEALTH NUMBER"""
 from modules import RS
 from modules import Screenshot
-from modules import Match
+import numpy as np
 import cv2
+import time
 
 
 def checkHealth():
@@ -15,11 +14,30 @@ def checkHealth():
     x2 = rsx + HEART_POS[2]
     y2 = rsy + HEART_POS[3]
 
-    heart = Screenshot.shoot(x1,y1, x2, y2)
+    heart = Screenshot.shoot(x1,y1, x2, y2, 'hsv')
+
+    lower = np.array([0,248,0])
+    upper = np.array([4,252,255])
+    mask = cv2.inRange(heart, lower, upper)
+    # turns into array
+    mask = np.array(mask)
+
+    percentage = 0
+    # counts pixels of value 255
+    for color in mask:
+        for element in color:
+            if element == 255:
+                percentage += 1
+            else:
+                continue
+
     #cv2.imwrite('DEBUG.heart.png', heart)
-    return health
+    #cv2.imshow('img',heart)
+    #cv2.waitKey(0)
+    print("{:.2f}".format(percentage/382.0))
+    # 382 == full health
+    return percentage/382.0
 
-loc, w, h = Match.this(checkHealth(), 'health.png')
-for pt in zip(*loc[::-1])
-    print("FOUND")
-
+while 1:
+    time.sleep(3)
+    checkHealth()

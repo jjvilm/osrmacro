@@ -60,7 +60,7 @@ def main():
             return
         find_ham_guard()
         # loop to wait while confuse
-        RandTime.randTime(2,0,0,3,9,9)
+        RandTime.randTime(1,5,0,1,9,9)
         if RS.inventory_counter() > n_items_in_inventory:
             continue
         else:
@@ -70,7 +70,6 @@ def main():
                     while find_yellow_birds():
                         pass
                 else:
-                    print(RS.inventory_counter())
                     break
 
 

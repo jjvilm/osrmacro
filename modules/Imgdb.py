@@ -71,7 +71,7 @@ class ImgDb(object):
     def loadPickledDict(self):
         with open(self.pickled_file_path,'r') as f:
             self.pickled_dict = pickle.load(f)
-        print("pickled dict loaded from: {}\n".format(self.pickled_file_path))
+        #print("pickled dict loaded from: {}\n".format(self.pickled_file_path))
 
     def showImgDb(self):
         for key in self.pickled_dict.keys():
