@@ -308,37 +308,10 @@ def inventory_counter():
 
     #inverts mask
     closing = cv2.bitwise_not(closing)
-    #cv2.imshow('img', closing)
-    #cv2.waitKey(0)
 
     # finds contours
     _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
 
-    ##debug
-    # checks each slot for white pixels
-    for row in xrange(7):
-        for cols in xrange(4):
-            #print(row,cols)
-            x1 = 0
-            y1 = 0
-
-            x2 = 43
-            y2 = 36
-
-            print(closing.shape)
-            sloth = closing.shape[0] / 7
-            slotw = closing.shape[1] / 4
-            print("slot height:{}, slot width:{}".format(sloth, slotw))
-
-            #cv2.imshow('img', closing)
-            #cv2.waitKey(0)
-            slot = closing[0:0,50:50]
-            cv2.imshow('img', slot)
-            cv2.waitKey(0)
-            return
-
-                #look at higher than 0
-    ######
     # draws white rectangle on found itmes
     for cnt in contours:
         # creates a white rectangle around items
@@ -346,20 +319,50 @@ def inventory_counter():
         cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
 
     # counts rectangles
-    ####debug 
     # draws row lines
-    #for i,rows in enumerate(xrange(6)):
-    #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
+    sloth = closing.shape[0] / 7
+    slotw = closing.shape[1] / 4
+    for i,rows in enumerate(xrange(6)):
+        cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
     # draws col lines
-    #for i,cols in enumerate(xrange(3)):
-    #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+    for i,cols in enumerate(xrange(3)):
+        cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+
+    ##debug
+    # checks each slot for white pixels
+    for row in xrange(7):
+        for cols in xrange(4):
+            if row == 0 and cols == 0:
+                #print(row,cols)
+                slot_x = 0
+                slot_x2 = 36
+
+                slot_y = 0
+                slot_y2 = 43
+            elif row == 0 or cols == 0:
+                slot_x = row*
+                slot_x2 = 36
+
+                slot_y = 0
+                slot_y2 = 43
+
+            else:
+                if row == 0:
+                    row = 1
+                if cols == 0:
+                    cols = 1
+                slot_x = row*43
+                slot_x2 = cols*36
+
+                slot_y = row*43
+                slot_y2 = cols*36
 
 
+            slot = closing[slot_x:slot_x2, slot_y:slot_y2]
+            cv2.imshow('img', slot)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
 
-    #cv2.imshow('img', closing)
-    #cv2.waitKey(0)
-    #return
-    #####k
     _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
 
 
