@@ -310,28 +310,31 @@ def inventory_counter():
     closing = cv2.bitwise_not(closing)
 
     # finds contours
-    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+    #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
 
-    # draws white rectangle on found itmes
-    for cnt in contours:
-        # creates a white rectangle around items
-        x,y,w,h = cv2.boundingRect(cnt)
-        cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+    ### draws white rectangle on found itmes ###
+    #for cnt in contours:
+    #    # creates a white rectangle around items
+    #    x,y,w,h = cv2.boundingRect(cnt)
+    #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+    ############################################
 
-    # counts rectangles
+    ### Draws division lines ###
     # draws row lines
-    sloth = closing.shape[0] / 7
-    slotw = closing.shape[1] / 4
-    for i,rows in enumerate(xrange(6)):
-        cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
+    #sloth = closing.shape[0] / 7
+    #slotw = closing.shape[1] / 4
+    #for i,rows in enumerate(xrange(6)):
+    #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
     # draws col lines
-    for i,cols in enumerate(xrange(3)):
-        cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+    #for i,cols in enumerate(xrange(3)):
+    #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+    ############################
 
-    ##debug
     # checks each slot for white pixels
+    count = 0
     for row in xrange(7):
         for cols in xrange(4):
+            # 1st Slot ROI
             if row == 0 and cols == 0:
                 #print(row,cols)
                 slot_x = 0
@@ -339,36 +342,20 @@ def inventory_counter():
 
                 slot_y = 0
                 slot_y2 = 43
-            elif row == 0 or cols == 0:
-                slot_x = row*
-                slot_x2 = 36
-
-                slot_y = 0
-                slot_y2 = 43
-
+            # rest of slots ROI
             else:
-                if row == 0:
-                    row = 1
-                if cols == 0:
-                    cols = 1
-                slot_x = row*43
-                slot_x2 = cols*36
+                slot_x = row*36+1
+                slot_x2 = (row*36)+36-1
 
-                slot_y = row*43
-                slot_y2 = cols*36
+                slot_y = cols*43+1
+                slot_y2 = 43 + (cols*43)-1
 
-
+            # Selected ROI
             slot = closing[slot_x:slot_x2, slot_y:slot_y2]
-            cv2.imshow('img', slot)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            # check pixel value == 255
+            if 255 in slot:
+                count += 1
 
-    _,contours,_ = cv2.findContours(closing.copy(), 1, 2)
-
-
-    count = 0
-    for count,cnt in enumerate(contours):
-        count += 1
     # returns the N of items in inv
     return count
 
