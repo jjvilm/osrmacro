@@ -1,12 +1,11 @@
 #!/usr/bin/python2
-from modules import RS
-from modules import Screenshot
+import RS
+import Screenshot
 import numpy as np
 import cv2
-import time
 
 
-def checkHealth():
+def percentage():
     rsx, rsy = RS.position()
     HEART_POS = (542,65,568,91)
     x1 = rsx + HEART_POS[0]
@@ -34,10 +33,11 @@ def checkHealth():
     #cv2.imwrite('DEBUG.heart.png', heart)
     #cv2.imshow('img',heart)
     #cv2.waitKey(0)
-    print("{:.2f}".format(percentage/382.0))
     # 382 == full health
     return percentage/382.0
 
-while 1:
-    time.sleep(3)
-    checkHealth()
+if __name__ == "__main__":
+    import time
+    while 1:
+        print("{:.2f}".format(percentage()))
+        time.sleep(3)

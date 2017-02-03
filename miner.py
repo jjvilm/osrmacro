@@ -6,19 +6,24 @@ import cv2
 import numpy as np
 import random
 
+# What to mine pass value as string?
+mine_this = 'gems'
+
 def find_mine():
+    global mine_this
     mines = {
         'tin1':([0,13,104],[3,73,148]),
         'tin':([0,19,121],[1,30,136]),
         'cooper':([14,135,88],[15,140,169]),
-        'iron':([7,138,50],[10,146,85])
+        'iron':([7,138,50],[10,146,85]),
+        'gems':([150,223,61],[151,235,169])
     }
 
     play_window,psx,psy = RS.getPlayingScreen()
 
     #mask = cv2.inRange(play_window, np.array(mines['tin'][0]), np.array(mines['tin'][1]))
     #mask = cv2.inRange(play_window, np.array(mines['cooper'][0]), np.array(mines['cooper'][1]))
-    mask = cv2.inRange(play_window, np.array(mines['iron'][0]), np.array(mines['iron'][1]))
+    mask = cv2.inRange(play_window, np.array(mines[mine_this][0]), np.array(mines[mine_this][1]))
 
     kernel = np.ones((20,20), np.uint8)
     closing  =  cv2.morphologyEx(mask.copy(), cv2.MORPH_CLOSE, kernel)
@@ -81,6 +86,7 @@ def main():
             continue
 
         # waits for obtained ore to move on
+        safe_counter = 0 #if reaches a X amount safe switches
         while 1:
             current_n_items = RS.inventory_counter()
             # counts to make sure +1 has been added to inv
@@ -88,7 +94,10 @@ def main():
                 item_n = current_n_items
                 break
             else:
+                if safe_counter >=45:
+                    break
                 RandTime.randTime(0,1,0,0,9,9)
+                safe_counter += 1
                 continue
 
     print("Full Inv")

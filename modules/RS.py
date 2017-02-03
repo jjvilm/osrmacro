@@ -68,7 +68,7 @@ def getPlayingScreen():
     return playScreen, 7,25
 
 def findOptionClick(x,y,option_name):
-    """Opiton name of in Image database only needs to be passed, x,y are obsoleate"""
+    """Option name of in Image database only needs to be passed, x,y are obsoleate"""
     import Imgdb
     # Image DB 
     idb = Imgdb.ImgDb()
@@ -290,24 +290,33 @@ def countItemInInv(template_file,*args):
     #print(count)
     return count
 
-def inventory_counter():
+def inventory_counter(*args):
     """Counts the number of slots being used in inventory"""
+    """pass a func to do something with each slot's ROI, then upper and lower """
     # makes sure inventory button is selected
     if not is_button_selected('inventory'):
         press_button('inventory')
 
     bag, bagx,bagy = get_bag('bag and coords', 'hsv')
-    # looks for color of empty inv
-    low = np.array([10,46,58])
-    high= np.array([21,92,82])
+    # HSV range passed in args
+    if args:
+        low = args[1]
+        high = args[2]
+    # HSV range of Empy Inventory
+    else:
+        low = np.array([10,46,58])
+        high= np.array([21,92,82])
     # applies mask
     mask = cv2.inRange(bag, low, high)
-    # removes any noise
-    kernel = np.ones((3,3), np.uint8)
-    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-    #inverts mask
-    closing = cv2.bitwise_not(closing)
+    # only applies to empty inventory
+    if not args:
+        # removes any noise
+        kernel = np.ones((3,3), np.uint8)
+        closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+        #inverts mask
+        closing = cv2.bitwise_not(closing)
 
     # finds contours
     #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
@@ -350,11 +359,27 @@ def inventory_counter():
                 slot_y = cols*43+1
                 slot_y2 = 43 + (cols*43)-1
 
-            # Selected ROI
-            slot = closing[slot_x:slot_x2, slot_y:slot_y2]
-            # check pixel value == 255
-            if 255 in slot:
-                count += 1
+            if args:
+                slot_roi = mask[slot_x:slot_x2, slot_y:slot_y2]
+            else:
+                # Selected ROI
+                slot_roi = closing[slot_x:slot_x2, slot_y:slot_y2]
+
+            # Do fucntion with slot_roi else  add to count
+            if args:
+                passed_func = args[0]
+                #x,y,_,_ = cv2.boundingRect(slot_roi)
+                #_, psx, psy = getPlayingScreen()
+                slot_x += bagx# + psx 
+                slot_y += bagy# + psy
+                passed_func(slot_x,slot_y)
+                continue
+
+            # just count
+            else:
+                # check pixel value == 255
+                if 255 in slot_roi:
+                    count += 1
 
     # returns the N of items in inv
     return count

@@ -95,7 +95,7 @@ class ImgDb(object):
             print("{} {}".format(i,key))
 
     def turnBinary(self, img, *args):
-        """Pass image as graysacle"""
+        """Pass image as graysacle, else will be converted, other args include 'a' - add to DB, 'inv'-inverting, 's'-show"""
         #makes sure img is grayscale
         if len(img.shape) == 3:
             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -136,8 +136,11 @@ if __name__ == "__main__":
     # loads image database
     imgdb = ImgDb()
     #imgdb.listImgs()
+    #imgdb.showImg('drop')
     #imgdb.showImgDb()
     #imgdb.rmImg()
-    img = cv2.imread('/home/jj/tmp/pickpocket.png')
-    #img = imgdb.turnBinary(img, 'a')
-    imgdb.addImg('pickpocket',img)
+    #img = cv2.imread('/home/jj/tmp/pickpocket.png')
+    img = imgdb.pickled_dict['drop']
+    img = imgdb.turnBinary(img,'s','a')
+    
+    #imgdb.addImg('pickpocket',img)
