@@ -81,15 +81,15 @@ def findOptionClick(x,y,option_name):
     w, h = template.shape[::-1]#Width, height of template image
 
     # coords of playing window
-    x1 = 5 
+    x1 = 0 #5 
     y1 = 25
     x2 = 767 
     y2 = 524 
     rs_window = Screenshot.shoot(x1,y1,x2,y2)
 
-    # Finds "Choose options" window in OSR window
+    # Finds all black lines
     ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
-    # inverst to only get black clors as white
+    # inverst to black to white
     ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
 
     # looks for all squares 
@@ -384,6 +384,107 @@ def inventory_counter(*args):
     # returns the N of items in inv
     return count
 
+def invSlotIter():
+    # loads database of items to drop
+    item_database = {}
+    # makes sure inventory button is selected
+    if not is_button_selected('inventory'):
+        press_button('inventory')
+
+    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
+    bag_grey = get_bag('only')
+    # debug
+    cv2.imshow('bag', bag)
+    cv2.waitKey(0)
+    cv2.imshow('bag_grey', bag_grey)
+    cv2.waitKey(0)
+
+    # HSV range of Empy Inventory
+    low = np.array([10,46,58])
+    high= np.array([21,92,82])
+    # applies mask
+    mask = cv2.inRange(bag, low, high)
+    cv2.imshow('mask', mask)
+    cv2.waitKey(0)
+
+
+    # removes any noise
+    kernel = np.ones((3,3), np.uint8)
+    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+    #inverts mask
+    closing = cv2.bitwise_not(closing)
+    cv2.imshow('closing', closing)
+    cv2.waitKey(0)
+
+    # finds contours
+    #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+
+    ### draws white rectangle on found itmes ###
+    #for cnt in contours:
+    #    # creates a white rectangle around items
+    #    x,y,w,h = cv2.boundingRect(cnt)
+    #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+    ############################################
+
+    ### Draws division lines ###
+    # draws row lines
+    #sloth = closing.shape[0] / 7
+    #slotw = closing.shape[1] / 4
+    #for i,rows in enumerate(xrange(6)):
+    #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
+    # draws col lines
+    #for i,cols in enumerate(xrange(3)):
+    #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+    ############################
+
+    # checks each slot for white pixels
+    count = 0
+    for row in xrange(7):
+        for cols in xrange(4):
+            # 1st Slot ROI
+            if row == 0 and cols == 0:
+                #print(row,cols)
+                slot_x = 0
+                slot_x2 = 36
+
+                slot_y = 0
+                slot_y2 = 43
+            # rest of slots ROI
+            else:
+                slot_x = row*36+1
+                slot_x2 = (row*36)+36-1
+
+                slot_y = cols*43+1
+                slot_y2 = 43 + (cols*43)-1
+
+            # Selected ROI
+            slot_roi = closing[slot_x:slot_x2, slot_y:slot_y2]
+
+            # check pixel value == 255
+            if 255 in slot_roi:
+                # getting ROI from original screenshot
+                bag_roi = bag_grey[slot_x:slot_x2, slot_y:slot_y2]
+
+                item_database[count] = (slot_x,slot_x2, slot_y, slot_y2)
+
+                #cv2.imshow('image',bag_roi)
+                #cv2.waitKey(0)
+                count += 1
+            else:
+                item_database[count] = 0
+                count += 1
+
+    for img_in_db in item_database:
+        print(img_in_db)
+        if img_in_db != 0:
+            x, x2, y, y2 = img_in_db
+            img_in_db = bag_grey[x:x2,y:y2]
+            cv2.imshow('img', img_in_db)
+            cv2.waitKey(0)
+
+    return count
+
 def isInvEmpty():
     bag, bagx,bagy = get_bag('bag and coords', 'hsv') 
     # looks for color of empty inv
@@ -674,4 +775,4 @@ def play_sound():
 
 
 if __name__ == '__main__':
-    inventory_counter()
+   invSlotIter() 

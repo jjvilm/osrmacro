@@ -14,6 +14,10 @@ def findWine():
 
     mask = cv2.inRange(ps, lower, upper)
 
+    # removes left side of stall
+    w, h = mask.shape
+    cv2.rectangle(mask,(0,0),(w,h),(0,0,0),-1)
+
     _, contours, _  = cv2.findContours(mask.copy(), 1, 2)
     # find biggest area
     biggest_area = 0
@@ -23,14 +27,12 @@ def findWine():
 
     # click on bnding rectangle of biggest area
     for cnt in contours:
-        if cv2.contourArea(cnt) == biggest_area and biggest_area > 300:
+        if cv2.contourArea(cnt) == biggest_area and biggest_area > 100:
             x,y,w,h = cv2.boundingRect(cnt)
             #cv2.rectangle(mask, (x,y), (x+w, y+h), (255,255,255), -1)
             x = x + psx
             y = y + psy
 
-    #cv2.imshow('img', mask)
-    #cv2.waitKey(0)
             Mouse.moveClick(x,y,1)
             return
 ##
@@ -39,9 +41,9 @@ def dropJug(x,y):
     RS.findOptionClick(x,y,'drop')
 
 def main():
-    while 1:
+    while RS.inventory_counter() <28:
         findWine()
-        RandTime.randTime(1,0,0,1,9,9)
+        RandTime.randTime(1,0,0,2,9,9)
 
     # HSV range for wine in inventory
     #upper = np.array([0,100,74])

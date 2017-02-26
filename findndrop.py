@@ -31,7 +31,16 @@ def find_template(template_name):#pass template to function
     y1 += 229    #x2,y2 == btm-right coord, width and height
     x2 = x1 + 173 
     y2 = y1 + 253
-     
+
+    if not RS.is_button_selected('inventory'):
+        #RS.press_button('inventory')
+        init_x = random.randint(x1,x2)
+        init_y = random.randint(y1,y2)
+
+        Mouse.moveTo(init_x,init_y)
+        autopy.key.tap(autopy.key.K_F1)
+
+    # image of bag 
     rs_bag = Screenshot.shoot(x1,y1,x2,y2) #Screenshot taken here, 
    # cv2.imshow('bag', rs_bag)
    # cv2.waitKey(0)
@@ -53,11 +62,16 @@ def find_template(template_name):#pass template to function
         pt = (pt[0] + 5, pt[1] + 2)
         
         x, y = gen_coords(pt,btmX, btmY)#gets random x, y coords relative to RSposition on where to click
-        Mouse.moveClick(x,y, 3)#right clicks on given x,y coords
+        #Mouse.moveClick(x,y, 3)#right clicks on given x,y coords
+
+        # using new method to drop. holding shift
+        autopy.key.toggle(autopy.key.K_SHIFT,True)
+        Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
+        autopy.key.toggle(autopy.key.K_SHIFT,False) 
 
 
         
-        RS.findOptionClick(x,y,'drop')
+        #RS.findOptionClick(x,y,'drop')
         
     RandTime.randTime(2,0,0,2,9,9)
  
@@ -74,5 +88,10 @@ def gen_coords(pt,btmX,btmY):
     return within_x, within_y
 
 if __name__ == '__main__':
-    item_to_drop = raw_input("Item name to drop:\n")
-    find_template(item_to_drop)
+    #item_to_drop = raw_input("Item name to drop:\n")
+    item_to_drop = 'salmon'
+    while 1:
+        if RS.inventory_counter() >= 28:
+            find_template(item_to_drop)
+        else:
+            time.sleep(3)

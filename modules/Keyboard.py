@@ -28,3 +28,6 @@ def press(button):
         RandTime.randTime(0,0,1,0,0,1)
         autopy.key.toggle(autopy.key.K_RETURN, False)
 
+    else:
+        autopy.key.toggle(autopy.key.button, True)
+
