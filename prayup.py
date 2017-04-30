@@ -40,13 +40,13 @@ def find_prayer_pot():
     kernel = np.ones((5,5), np.uint8)
     dilation = cv2.dilate(mask, kernel, iterations = 1)
     
-    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _,contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for con in contours:
         x, y, w, h = cv2.boundingRect(con)
         cv2.rectangle(mask,(x,y), (x+w, y+h), (255,255,255),-1)
 
-    contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    _,contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for con in contours[::-1]:
         M = cv2.moments(con)
         mx, my = int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"])
@@ -65,7 +65,12 @@ def main():
         p = check_prayer()
         print("{:.2f}".format(p))
         if p <= .25:
+            if not RS.is_button_selected('inventory'):
+                RS.press_button('inventory')
             find_prayer_pot()
+        if p == 0:
+            print('NO POTIONS FOUND, TERMINATING MACRO!')
+            return
         time.sleep(3)
 
 main()
