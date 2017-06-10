@@ -184,6 +184,7 @@ def get_bag(bagornot, *args):
 
 def getBankWindow(*args):
     rsx, rsy = position() #Get runescapes top-left coords
+    bankWin
     #creates bank window boundaries
     x1 = rsx + 21
     y1 = rsy + 23

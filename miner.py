@@ -7,7 +7,8 @@ import numpy as np
 import random
 
 # What to mine pass value as string?
-mine_this = 'gems'
+#mine_this = 'gems'
+mine_this = 'iron'
 
 def find_mine():
     global mine_this

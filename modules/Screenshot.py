@@ -1,4 +1,4 @@
-#!/usr/bin/python27
+#!/usr/bin/python2
 import cv2
 import numpy as np
 import pyscreenshot

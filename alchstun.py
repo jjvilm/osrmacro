@@ -49,6 +49,7 @@ def genCoords(x1,y1,x2,y2):
     x = random.randint(x1,x2)
     y = random.randint(y1,y2)
     return x,y
+
 def spell(*args, **kwargs):
     for s in args:
         if s == 'curse':
@@ -72,7 +73,6 @@ counter = 0
 nats = int(raw_input("Alchabels??\n> "))
 souls = int(raw_input("Souls??\n> "))
 bodys = int(raw_input("Body runes??\n> "))
-RS.press_button('magic')
 while True:
     if counter >= nats+souls+bodys:
         print('done!')
@@ -88,11 +88,18 @@ while True:
     if bodys and not souls:
         spell('curse')
         bodys -= 1
-    if (counter % 10 == 0 or counter == 0) and ((souls > 0) or (bodys > 0)):
+    if (counter % (random.choice([2,3])) == 0 or counter == 0) and ((souls > 0) or (bodys > 0)):
         print(counter,'Finding Monk')
         x1,y1,x2,y2 = findMonk()
     if (souls > 0) or (bodys > 0): 
+        if not RS.is_button_selected('magic'):
+            RS.press_button('magic')
         x, y = genCoords(x1,y1,x2, y2)
         Mouse.moveClick(x,y,1)
+        if random.randint(1,100) == 0:
+            RandTime.randTime(0,0,0,9,9,9)
+        else:
+            RandTime.randTime(0,0,0,1,2,3)
+
     counter += 1 
     RS.antiban('magic')
