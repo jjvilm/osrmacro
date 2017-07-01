@@ -1,154 +1,132 @@
 #!/usr/bin/python2 
-import RandTime 
-import autopy
+from modules import RandTime 
+import pyautogui
 import random
-
+import math
+import time
 
 """Module to move mouse"""
 
-def moveTo(x,y):
-    """Move mouse  NOT in a straight line"""
-    cur_x, cur_y = autopy.mouse.get_pos() #Gets initial mouse location
-    #screen_x, screen_y = autopy.screen.get_size() #gets screen size
-   
-    while True:
-        min_x = min(cur_x, x)#Decides minimun X,Y 
-        max_x = max(cur_x, x)#Decides maximum X,Y coords
+mouseSpeed = 20
 
-        min_y = min(cur_y, y)
-        max_y = max(cur_y, y)
-        
-        #find furthest distance of X and Y
-        len_x = max_x - min_x
-        len_y = max_y - min_y
 
-        overshoot = random.randint(0,99)
-        #breaks once it's around +-2 pixels around the target area
-        if (len_x) <= 2 and  (len_y) <= 2:
-            break
-#        ############################################ DEBUG ###################################
-#        if random.randint(0,4)==0:
-#            if cur_x > x:#Higher X
-#                cur_x -= random.randint(0,2)
-#            else:#Lower x
-#                cur_x += random.randint(0,2)
-#            #checks if current Y is higher or lower than target Y
-#            if cur_y > y: # Higher Y
-#                cur_y -= random.randint(0,2)
-#            else: #Lower Y
-#                cur_y += random.randint(0,2)
-#        else:
-#
-#            if cur_x > x:#Higher X
-#                cur_x -= random.randint(0,7)
-#            else:#Lower x
-#                cur_x += random.randint(0,7)
-#            #checks if current Y is higher or lower than target Y
-#            if cur_y > y: # Higher Y
-#                cur_y -= random.randint(0,7)
-#            else: #Lower Y
-#                cur_y += random.randint(0,7)
-#        if random.randint(0,4) == 0:
-#            RandTime.randTime(0,0,1,0,0,1)
-#            
-#        #####################################################################################
-        ##checks if current X is higher or lower than target X
-        if cur_x > x:#Higher X
-            if len_x > 100:
-                cur_x -= random.randint(51,99)
-            elif len_x <= 5:
-                cur_x -= random.randint(1,3)
-                if overshoot == 5:
-                    cur_x -= random.randint(1,9)
-            elif len_x <= 11:
-                cur_x -= random.randint(1,5)
-            elif len_x <= 19:
-                cur_x -= random.randint(1,9)
-            elif len_x <= 50:
-                cur_x -= random.randint(5,24)
-            elif len_x <= 100:
-                cur_x -= random.randint(25,55)
+class MouseMovementCalculator:
 
-        else:#Lower x
-            if len_x > 100:
-                cur_x += random.randint(51,99)
-            elif len_x <= 5:
-                cur_x += random.randint(1,3)
-                if overshoot == 7:
-                    cur_x += random.randint(1,9)
-            elif len_x <= 11:
-                cur_x += random.randint(1,5)
-            elif len_x <= 19:
-                cur_x += random.randint(1,9)
-            elif len_x <= 50:
-                cur_x += random.randint(5,24)
-            elif len_x <= 100:
-                cur_x += random.randint(25,55)
+    def __init__(self, gravity, wind, mouseSpeed, targetError):
+        self.gravity = gravity
+        self.wind = wind
+        self.mouseSpeed = mouseSpeed
+        self.targetError = targetError
 
-        #checks if current Y is higher or lower than target Y
-        if cur_y > y: # Higher Y
-            if len_y > 100:
-                cur_y -= random.randint(51,99)
-            elif len_y <= 5:
-                cur_y -= random.randint(1,3)
-                if overshoot == 7:
-                    cur_x -= random.randint(1,9)
-            elif len_y <= 11:
-                cur_y -= random.randint(1,5)
-            elif len_y <= 19:
-                cur_y -= random.randint(1,9)
-            elif len_y <= 50:
-                cur_y -= random.randint(5,24)
-            elif len_y <= 100:
-                cur_y -= random.randint(25,55)
-        else: #Lower Y
-            if len_y > 100:
-                cur_y += random.randint(51,99)
-            elif len_y <= 5:
-                cur_y += random.randint(1,3)
-                if overshoot == 7:
-                    cur_x += random.randint(1,9)
-            elif len_y <= 11:
-                cur_y += random.randint(1,5)
-            elif len_y <= 19:
-                cur_y += random.randint(1,9)
-            elif len_y <= 50:
-                cur_y += random.randint(5,25)
-            elif len_y <= 100:
-                cur_y += random.randint(25,55)
-        
-        #print("Moving to {0} {1}".format(cur_x, cur_y))
-        if overshoot == 7:
-            RandTime.randTime(0,0,1,0,9,9)
+    def calcCoordsAndDelay(self, startCoords, endCoords):
+        veloX, veloY = (0, 0)
+        coordsAndDelay = []
+        xs, ys = startCoords
+        xe, ye = endCoords
+        totalDist = math.hypot(xs - xe, ys - ye)
 
-        #slows down if closer to target coord
-        if (len_x) <= random.randint(1,5) and  (len_y) <= random.randint(1,5):
-            RandTime.randTime(0,0,0,0,0,9)
+        self._windX = 0
+        self._windY = 0
+
+        while True:
+            veloX, veloY = self._calcVelocity(
+                (xs, ys), (xe, ye), veloX, veloY, totalDist)
+            xs += veloX
+            ys += veloY
+
+            w = round(
+                max(random.randint(0, max(0, round(100 / self.mouseSpeed) - 1)) * 6, 5) * 0.9)
+
+            coordsAndDelay.append((xs, ys, w))
+
+            if math.hypot(xs - xe, ys - ye) < 1:
+                break
+
+        if round(xe) != round(xs) or round(ye) != round(ys):
+            coordsAndDelay.append((round(xe), round(ye), 0))
+
+        return coordsAndDelay
+
+    def _calcVelocity(self, curCoords, endCoords, veloX, veloY, totalDist):
+        xs, ys = curCoords
+        xe, ye = endCoords
+        dist = math.hypot(xs - xe, ys - ye)
+        self.wind = max(min(self.wind, dist), 1)
+
+        if dist == 0:
+            return (veloX, veloY)
+
+        maxStep = None
+        D = max(min(round(round(totalDist) * 0.3) / 7, 25), 5)
+        rCnc = random.randint(0, 5)
+
+        if rCnc == 1:
+            D = 2
+
+        if D <= round(dist):
+            maxStep = D
         else:
-            if overshoot == 0:
-                RandTime.randTime(0,0,0,0,0,2)
+            maxStep = round(dist)
 
-        autopy.mouse.smooth_move(cur_x,cur_y)#moves to generated location
+        if dist >= self.targetError:
+            self._windX = self._windX / \
+                math.sqrt(3) + (random.randint(0, round(self.wind) * 2) -
+                                self.wind) / math.sqrt(5)
+            self._windY = self._windY / \
+                math.sqrt(3) + (random.randint(0, round(self.wind) * 2) -
+                                self.wind) / math.sqrt(5)
+        else:
+            self._windX = self._windX / math.sqrt(2)
+            self._windY = self._windY / math.sqrt(2)
 
-        #autopy.mouse.move(cur_x, cur_y)
+        veloX = veloX + self._windX
+        veloY = veloY + self._windY
+        veloX = veloX + self.gravity * (xe - xs) / dist
+        veloY = veloY + self.gravity * (ye - ys) / dist
+
+        if math.hypot(veloX, veloY) > maxStep:
+            randomDist = maxStep / 2.0 + \
+                random.randint(0, math.floor(round(maxStep) / 2))
+            veloMag = math.sqrt(veloX * veloX + veloY * veloY)
+            veloX = (veloX / veloMag) * randomDist
+            veloY = (veloY / veloMag) * randomDist
+
+        return (veloX, veloY)
+
+
+
+
+def moveTo(x,y):
+    startCoords = (pyautogui.position())
+    endCoords = (x, y)
+
+    mouseCalc = MouseMovementCalculator(3, 3, mouseSpeed, 10 * mouseSpeed)
+    coordsAndDelay = mouseCalc.calcCoordsAndDelay(startCoords, endCoords)
+
+    pyautogui.moveTo(startCoords[0], startCoords[1])
+
+    for x, y, delay in coordsAndDelay:
+        delay = delay / 10000
+        delay += random.random()
+        pyautogui.moveTo(x, y)
+        #time.sleep(delay)
+
 
 def click(button):
     #autopy.mouse.click()
     #
-    autopy.mouse.toggle(True,button)
-    RandTime.randTime(0,0,0,0,0,1)#time between click
-    RandTime.randTime(0,0,0,0,0,0)
-    autopy.mouse.toggle(False,button)
+    pyautogui.mouseDown(button='left')
+    RandTime.randTime(0,1,0,0,2,9)#time between click
+    pyautogui.mouseUp(button='left')
 
-    RandTime.randTime(0,0,0,0,1,9)
 
 def moveClick(x,y, button=0):#moves to random X,Y of found match of template
     moveTo(x,y)
     RandTime.randTime(0,0,0,0,0,2)
     if button != 0:
-        autopy.mouse.toggle(True,button)
-        RandTime.randTime(0,0,0,0,0,1)
-        autopy.mouse.toggle(False,button)
+        pyautogui.mouseDown(button='left')
+        RandTime.randTime(0,1,0,0,2,9)#time between click
+        pyautogui.mouseUp(button='left')
 def randCoord(pt,w,h ):
     """Takes a top-left point as pt, and width and height of template
         returns a pair of coordinates within the the size of the template, to be used with inventory bag items only"""
@@ -157,14 +135,14 @@ def randCoord(pt,w,h ):
     print(w)
     print(h)
 
-    x = random.randint(pt[0]+3,(w-3))
-    y = random.randint(pt[1]+3,(h-3))
+    x = random.random.randint(pt[0]+3,(w-3))
+    y = random.random.randint(pt[1]+3,(h-3))
     return x,y
 
 def genCoords(x1,y1,x2,y2):
     """Returns random coords of passed coordinates, not relative to RS window"""
-    x = random.randint(x1,x2)
-    y = random.randint(y1,y2)
+    x = random.random.randint(x1,x2)
+    y = random.random.randint(y1,y2)
     return x, y
 
 def randMove(x1,y1,x2,y2,button):
@@ -177,7 +155,7 @@ def randMove(x1,y1,x2,y2,button):
         moveTo(x,y)
 
 def mouse_loc():
-    return autopy.mouse.get_pos()
+    return pyautogui.position()
 
 if __name__ == "__main__":
     print(mouse_loc())

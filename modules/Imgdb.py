@@ -136,11 +136,11 @@ if __name__ == "__main__":
     # loads image database
     imgdb = ImgDb()
     #imgdb.listImgs()
-    #imgdb.showImg('drop')
     #imgdb.showImgDb()
     #imgdb.rmImg()
     #img = cv2.imread('/home/jj/tmp/pickpocket.png')
-    img = imgdb.pickled_dict['drop']
-    img = imgdb.turnBinary(img,'s','a')
+    #img = imgdb.pickled_dict['drop']
+    imgdb.showImg('drop')
+    #img = imgdb.turnBinary(img,'s','a')
     
     #imgdb.addImg('pickpocket',img)

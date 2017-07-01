@@ -2,64 +2,66 @@
 
 import cv2
 import numpy as np
-import autopy
 import subprocess
 import os
 import random
 import time
 
-#### My Modules 
-import Screenshot
-import Mouse
-import RandTime
-import Match
-import Keyboard
+# Local Modules
+from modules import Screenshot
+from modules import Mouse
+from modules import RandTime
+from modules import Match
+from modules import Keyboard
 
 
 def position():
-    """Finds Old Runescape Window by name "old", returns the top-left coord as x,y
-	To make sure, the bag, and options menu coordinates are relevant to the window"""
-    rs_coords = subprocess.check_output(['xdotool','search','--name', 'Old','getwindowgeometry'])
+    """Gets Runescape Window ,returns the top-left coords as x,y """
+
+    rs_coords = subprocess.check_output(['xdotool', 'search', '--name',
+                                        'Old', 'getwindowgeometry'])
     rs_coords = str(rs_coords)
-    ##Find the ":" and "," to get the coordinates after them 
-    first_occurance = rs_coords.find(":")#x, y coordinates extracted from window geometry
+    # Find the ":" and "," to get the coordinates after them
+    first_occurance = rs_coords.find(":")  # x, y coords from window geometry
     sec_occurance = rs_coords.find(",")
     thr_occurance = rs_coords.find("(")
-    x = rs_coords[first_occurance+1: sec_occurance] #gets x coordinate
-    y = rs_coords[sec_occurance+1:thr_occurance] #gets y coordinate
-    ##change from str to int
+    x = rs_coords[first_occurance+1: sec_occurance]  # gets x coordinate
+    y = rs_coords[sec_occurance+1:thr_occurance]  # gets y coordinate
+    # change from str to int
     return int(x), int(y)
 
+
 def setWindowSize(w=767,h=564):
-    geometry = subprocess.check_output(['xdotool','search','--name', 'Old','getwindowgeometry'])
+    geometry = subprocess.check_output(['xdotool', 'search',
+                                        '--name', 'Old', 'getwindowgeometry'])
     width = geometry[-7:-4]
     height = geometry[-3:]
     if width != w or  height != h:
         os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
 
-def getOptionsMenu(x, y):#X,Y coords of where it right-clicked in bag to bring up the Options Menu
+def getOptionsMenu(x, y):  # X,Y coords of where it right-clicked in bag to bring up the Options Menu
     #"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
-    #Top-Left coords of where RS window is
+    # Top-Left coords of where RS window is
     rs_x, rs_y = position()
 
-    #Adding Rs coords to the options menu to get its location relevant to the window
-    #24 here goes up on Y since sometimes screenshot needs to get more of the 
-    #top Y to find the right option in the options menu.  
-    menu_x = rs_x + x - 160  #higher number moves screenshot to left 
-    menu_y = rs_y + y - 40  #moves screenshot up 
+    # Adding Rs coords to the options menu to get its location relevant to the window
+    # 24 here goes up on Y since sometimes screenshot needs to get more of the
+    # top Y to find the right option in the options menu.
+    menu_x = rs_x + x - 160  #higher number moves screenshot to left
+    menu_y = rs_y + y - 40  #moves screenshot up
 
     menu_x2 = menu_x + 220 #Plus width
-    menu_y2 = menu_y + 160 #Plus height 
+    menu_y2 = menu_y + 160 #Plus height
 
     #takes screenshot here
-    menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2) 
+    menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2)
 
     ##$#added for debug purposes####
     #cv2.imshow('img',menu)
     #print(menu_x,menu_y)
     #cv2.waitKey(0)
 
-    #menu is the image, menuy/menux is the top-left coord of the image 
+    #menu is the image, menuy/menux is the top-left coord of the image
     return menu_x, menu_y, menu
 
 def getPlayingScreen():
@@ -70,7 +72,7 @@ def getPlayingScreen():
 def findOptionClick(x,y,option_name):
     """Option name of in Image database only needs to be passed, x,y are obsoleate"""
     import Imgdb
-    # Image DB 
+    # Image DB
     idb = Imgdb.ImgDb()
 
     template = idb.pickled_dict[option_name]
@@ -81,10 +83,10 @@ def findOptionClick(x,y,option_name):
     w, h = template.shape[::-1]#Width, height of template image
 
     # coords of playing window
-    x1 = 0 #5 
+    x1 = 0 #5
     y1 = 25
-    x2 = 767 
-    y2 = 524 
+    x2 = 767
+    y2 = 524
     rs_window = Screenshot.shoot(x1,y1,x2,y2)
 
     # Finds all black lines
@@ -92,7 +94,7 @@ def findOptionClick(x,y,option_name):
     # inverst to black to white
     ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
 
-    # looks for all squares 
+    # looks for all squares
     _, contours,h = cv2.findContours(thresh1,1,2)
 
     for cnt in contours:
@@ -143,7 +145,7 @@ def findOptionClick(x,y,option_name):
         # range of x and y to click on.
         # in the options
         Mouse.randMove(x,y1,x+(w/2),y2, 1)
-        #autopy.mouse.click()#taking out since it does not delay the click
+        # autopy.mouse.click()#taking out since it does not delay the click
         RandTime.randTime(0,0,0,0,0,9)
 
 def center_window():
@@ -160,9 +162,9 @@ def get_bag(bagornot, *args):
     x1, y1 = position() #Get runescapes top-left coords
 
     x1 += 557    #make The Bag's top-left, and btm-right coords
-	#y1=229 default for archlinux 
+	#y1=229 default for archlinux
     y1 += 229    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 173 
+    x2 = x1 + 173
     y2 = y1 + 253#253default for arch
     try: # block to allow this func to also get 'hsv' img objects
         for arg in args:
@@ -209,7 +211,7 @@ def isBankOpen():
     """checks to see if bank is open, returns True, else False"""
     # black X button hsv values
     buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
-    # gets current game's position 
+    # gets current game's position
     rsx,rsy = position()
     #button X on bank window coords
     x1 = rsx+480
@@ -218,7 +220,7 @@ def isBankOpen():
     y2 = rsy+49
     # Screenshot X button
     closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-    # Apply hsv ranges 
+    # Apply hsv ranges
     mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
 
     # counts white pixels in X
@@ -247,13 +249,13 @@ def closeBank():
     #SAVE FOR DEBUG
     #cv2.imwrite('debug_closeButton.png',closeButton)
     loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
-    
+
     for pt in zip(*loc[::-1]):
         #making pt relative to the RS window
-        pt = (pt[0] + x1, pt[1] + y1) 
+        pt = (pt[0] + x1, pt[1] + y1)
         #make Btm-Right pt
-        btx = pt[0] + w 
-        bty = pt[1] + h 
+        btx = pt[0] + w
+        bty = pt[1] + h
         #gen random coords
         rx = random.randint(pt[0], btx)
         ry = random.randint(pt[1], bty)
@@ -276,13 +278,13 @@ def countItemInInv(template_file,*args):
     #checks to see wheater to add cur dir or not
     if "/" not in template_file:
         template_file = os.getcwd()+"/imgs/"+template_file
-    rs_bag = get_bag('only') #Screenshot taken here, 
-    #saves image for DEBUG 
+    rs_bag = get_bag('only') #Screenshot taken here,
+    #saves image for DEBUG
     #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
     #loc == coordinates found in match
     loc, w, h = Match.this(rs_bag, template_file)
     #starts fount
-    count = 0 
+    count = 0
     for pt in zip(*loc[::-1]):#goes through each found image
         if args != ():
             if args[0] == 1:
@@ -371,7 +373,7 @@ def inventory_counter(*args):
                 passed_func = args[0]
                 #x,y,_,_ = cv2.boundingRect(slot_roi)
                 #_, psx, psy = getPlayingScreen()
-                slot_x += bagx# + psx 
+                slot_x += bagx# + psx
                 slot_y += bagy# + psy
                 passed_func(slot_x,slot_y)
                 continue
@@ -487,7 +489,7 @@ def invSlotIter():
     return count
 
 def isInvEmpty():
-    bag, bagx,bagy = get_bag('bag and coords', 'hsv') 
+    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
     # looks for color of empty inv
     low = np.array([10,46,58])
     high= np.array([21,92,82])
@@ -696,7 +698,7 @@ def skillHover(skill):
             'magic':(557,388,602,402),'fletching':(620,389,666,406),'woodcutting':0,
 
             'runecraft':0,'slayer':0,'farming':0,
-            
+
             'construction':0,'hunter':0
             }
 
@@ -734,7 +736,7 @@ def press_button(button, *args):
             'enemy':0,
             'logout':0,
             'options':0,
-            'emotes':0, 
+            'emotes':0,
             'music':0,
             'quick-prayer':0,
             'run':0
@@ -776,4 +778,4 @@ def play_sound():
 
 
 if __name__ == '__main__':
-   invSlotIter() 
+   invSlotIter()

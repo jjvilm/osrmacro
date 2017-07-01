@@ -2,6 +2,7 @@ from modules import RS
 from modules import RandTime
 from modules import Mouse
 from modules import Minimap
+from modules import Screenshot
 import cv2
 import numpy as np
 import random
