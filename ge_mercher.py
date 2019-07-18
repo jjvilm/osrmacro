@@ -1,51 +1,48 @@
 from modules import Screenshot
+from modules import Keyboard
 from modules import setup
+from modules import RandTime
+from modules import Mouse
 import pyautogui
 import cv2
 import time
 import numpy as np
 import random
 
+items = ['swordfish', 'gold ore', 'rune scimitar', 'lobster', 'yew logs', 'maple logs',
+        'willow logs', 'oak logs', 'iron ore', 'coal ore', 'runite ore', 'adamantite ore',
+        'cosmic rune', 'nature rune', 'death rune', 'rune platebody', 'rune platelegs', 
+        'rune full helm']
+
 class GE_Trading():
 
     def __init__(self):
         # below is tuple w/ 4 elements: x, y , w, h
         self.pos = 0
-        
-    def buy_slots(self):
-        """ Returns available sell slot location by x, y, w, h """
+
+    def get_slots(self, buysell):
+        """ Returns available buy/sell slot location by x, y, w, h """
         # gets trading window pos
         x, y, w, h = self.pos
-        # find buy slots
+        # find buy/sell slots
         img = Screenshot.this(x, y, w, h, 'hsv')
-        low = [32,248,192]
-        high = [35,254,203]
-        buy_slots = self.get_hsv_pattern_pos(img, low, high)
 
-        buys = list()
-        for cnt in buy_slots:
+        if buysell == 'buy':
+            low = [32,248,192]
+            high = [35,254,203]
+        elif buysell == 'sell':
+            low = [16,248,122]
+            high = [17,251,204]
+
+        available_slots = self.get_hsv_pattern_pos(img, low, high)
+
+        slots = list()
+        for cnt in available_slots:
             rect = cv2.boundingRect(cnt)
             #pyautogui.moveTo(x, y)
-            buys.append(rect)
-        return buys #positions of buy arrow 
+            slots.append(rect)
+        return slots #positions of buy/sell arrows 
 
-    def sell_slots(self):
-        """ Returns available sell slot location by x, y, w, h """
-        # gets trading window pos
-        x, y, w, h = self.pos
-        # find buy slots
-        img = Screenshot.this(x, y, w, h, 'hsv')
-        low = [16,248,122]
-        high = [17,251,204]
-        sells = self.get_hsv_pattern_pos(img, low, high)
-
-        sell_slots = list()
-        for cnt in sells:
-            rect = cv2.boundingRect(cnt)
-            #pyautogui.moveTo(x, y)
-            sell_slots.append(rect)
-        return sell_slots #positions of buy arrow 
-            
 
     def get_hsv_pattern_pos(self, image=None,low_hsv=None,high_hsv=None):
         """Returns contours of location pattern is found"""
@@ -55,7 +52,6 @@ class GE_Trading():
 
         contours, h = cv2.findContours(mask, 1, 2)
         return contours
-
 
 
     def set_main_wndw(self):
@@ -95,6 +91,7 @@ class GE_Trading():
                     return
 
     def add_randomness(self,level, *args, **kwargs):
+        """Adds randomess to selection coords by increments of 'level'"""
         x = args[0] + self.pos[0]
         y = args[1] + self.pos[1]
         print(f"Before adding randomes X={x} Y={y}")
@@ -106,12 +103,17 @@ class GE_Trading():
         return x,y
 
     def select(self, *args):
+        try:
+            buysell = args[0]
+            item = args[1]
+        except Exception as e:
+            print(e)
         #Setting for Buying
-        if args[0] == 'buy':
-            slots = self.buy_slots()
+        if buysell == 'buy':
+            slots = self.get_slots(buysell)
         #Setting for Selling
-        elif args[0] == 'sell':
-            slots = self.sell_slots()
+        elif buysell == 'sell':
+            slots = self.get_slots(buysell)
         else:
             print("Make a selection buy or sell")
 
@@ -123,15 +125,23 @@ class GE_Trading():
         y = pos[1]
         ## adds randomness
         mx, my = self.add_randomness(17,x,y+15)
-        pyautogui.moveTo(mx,my)
-        time.sleep(.5)
+        #pyautogui.moveTo(mx,my)
+        Mouse.moveTo(mx,my)
+        pyautogui.click()
+        RandTime.randTime(0,5,7,1,9,9)
 
-
+        if buysell == 'buy':
+            Keyboard.type_this(item)
+        else:
+            Keyboard.type_this(item)
 
 
 
     def main(self):
-        self.select('sell')
+        rn = random.randint(0, len(items) - 1)
+        item = items[rn]
+        self.select('buy', item)
+        #self.select('sell')
         return
 
 if __name__ == "__main__":
