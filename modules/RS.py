@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import cv2
 import numpy as np
@@ -13,769 +13,775 @@ from modules import Mouse
 from modules import RandTime
 from modules import Match
 from modules import Keyboard
+from modules import setup
+
+pos = None
+
+class Osr_game():
+    def __init__(self):
+        # object contains window ID and x,y positions
+        rs_window = setup.window()
+        rs_window = rs_window.position
+        global pos 
+        pos = rs_window
+        return rs_window
+
+    def position(self, windowID=''):
+        """Gets Runescape Window ,returns the top-left coords as x,y """
+        global pos
+        if pos == None:
+            pos = Rs_window()
+        else:
+            return pos
 
 
-def position():
-    """Gets Runescape Window ,returns the top-left coords as x,y """
 
-    rs_coords = subprocess.check_output(['xdotool', 'search', '--name',
-                                        'Old', 'getwindowgeometry'])
-    rs_coords = str(rs_coords)
-    # Find the ":" and "," to get the coordinates after them
-    first_occurance = rs_coords.find(":")  # x, y coords from window geometry
-    sec_occurance = rs_coords.find(",")
-    thr_occurance = rs_coords.find("(")
-    x = rs_coords[first_occurance+1: sec_occurance]  # gets x coordinate
-    y = rs_coords[sec_occurance+1:thr_occurance]  # gets y coordinate
-    # change from str to int
-    return int(x), int(y)
+    #def setWindowSize(w=771,h=539):
+    #    geometry = subprocess.check_output(['xdotool', 'search',
+    #                                        '--name', 'Old', 'getwindowgeometry'])
+    #    width = geometry[-7:-4]
+    #    height = geometry[-3:]
+    #    if width != w or  height != h:
+    #        os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
 
+    def getOptionsMenu(self, x, y):  # X,Y coords of where it right-clicked in bag to bring up the Options Menu
+        #"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
+        # Top-Left coords of where RS window is
+        rs_x, rs_y = position()
 
-def setWindowSize(w=767,h=564):
-    geometry = subprocess.check_output(['xdotool', 'search',
-                                        '--name', 'Old', 'getwindowgeometry'])
-    width = geometry[-7:-4]
-    height = geometry[-3:]
-    if width != w or  height != h:
-        os.system('xdotool search --name Old windowsize --sync {0} {1}'.format(w,h))
+        # Adding Rs coords to the options menu to get its location relevant to the window
+        # 24 here goes up on Y since sometimes screenshot needs to get more of the
+        # top Y to find the right option in the options menu.
+        menu_x = rs_x + x - 160  #higher number moves screenshot to left
+        menu_y = rs_y + y - 40  #moves screenshot up
 
-def getOptionsMenu(x, y):  # X,Y coords of where it right-clicked in bag to bring up the Options Menu
-    #"""Returns screenshot as menu, and menu_x, and menu_y which is topleft pt of the menu"""
-    # Top-Left coords of where RS window is
-    rs_x, rs_y = position()
+        menu_x2 = menu_x + 220 #Plus width
+        menu_y2 = menu_y + 160 #Plus height
 
-    # Adding Rs coords to the options menu to get its location relevant to the window
-    # 24 here goes up on Y since sometimes screenshot needs to get more of the
-    # top Y to find the right option in the options menu.
-    menu_x = rs_x + x - 160  #higher number moves screenshot to left
-    menu_y = rs_y + y - 40  #moves screenshot up
+        #takes screenshot here
+        menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2)
 
-    menu_x2 = menu_x + 220 #Plus width
-    menu_y2 = menu_y + 160 #Plus height
+        ##$#added for debug purposes####
+        #cv2.imshow('img',menu)
+        #print(menu_x,menu_y)
+        #cv2.waitKey(0)
 
-    #takes screenshot here
-    menu = Screenshot.shoot(menu_x, menu_y,menu_x2, menu_y2)
+        #menu is the image, menuy/menux is the top-left coord of the image
+        return menu_x, menu_y, menu
 
-    ##$#added for debug purposes####
-    #cv2.imshow('img',menu)
-    #print(menu_x,menu_y)
-    #cv2.waitKey(0)
+    def getPlayingScreen():
+        """Returns play screen area as an HSV image, and the first point of the image"""
+        playScreen = Screenshot.shoot(7,25,520,360,'hsv')
+        return playScreen, 7,25
 
-    #menu is the image, menuy/menux is the top-left coord of the image
-    return menu_x, menu_y, menu
+    def findOptionClick(x,y,option_name):
+        """Option name of in Image database only needs to be passed, x,y are obsoleate"""
+        import Imgdb
+        # Image DB
+        idb = Imgdb.ImgDb()
 
-def getPlayingScreen():
-    """Returns play screen area as an HSV image, and the first point of the image"""
-    playScreen = Screenshot.shoot(7,25,520,360,'hsv')
-    return playScreen, 7,25
+        template = idb.pickled_dict[option_name]
+        # turning template to graysacle
+        if len(template.shape) == 3:
+            template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
 
-def findOptionClick(x,y,option_name):
-    """Option name of in Image database only needs to be passed, x,y are obsoleate"""
-    import Imgdb
-    # Image DB
-    idb = Imgdb.ImgDb()
+        w, h = template.shape[::-1]#Width, height of template image
 
-    template = idb.pickled_dict[option_name]
-    # turning template to graysacle
-    if len(template.shape) == 3:
-        template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
+        # coords of playing window
+        x1 = 0 #5
+        y1 = 25
+        x2 = 767
+        y2 = 524
+        rs_window = Screenshot.shoot(x1,y1,x2,y2)
 
-    w, h = template.shape[::-1]#Width, height of template image
+        # Finds all black lines
+        ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
+        # inverst to black to white
+        ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
 
-    # coords of playing window
-    x1 = 0 #5
-    y1 = 25
-    x2 = 767
-    y2 = 524
-    rs_window = Screenshot.shoot(x1,y1,x2,y2)
+        # looks for all squares
+        _, contours,h = cv2.findContours(thresh1,1,2)
 
-    # Finds all black lines
-    ret,thresh1 = cv2.threshold(rs_window,0,255,cv2.THRESH_BINARY)
-    # inverst to black to white
-    ret,thresh1 = cv2.threshold(thresh1,0,255,cv2.THRESH_BINARY_INV)
+        for cnt in contours:
+            # looks for biggest square
+            if cv2.contourArea(cnt) <= 1695.0:
+                continue
+            # checks contour sides
+            approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
 
-    # looks for all squares
-    _, contours,h = cv2.findContours(thresh1,1,2)
+            # Square found here vvvv
+            if len(approx)==4:
+                #print("square of {}".format(cv2.contourArea(cnt)))
+                #cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
 
-    for cnt in contours:
-        # looks for biggest square
-        if cv2.contourArea(cnt) <= 1695.0:
-            continue
-        # checks contour sides
-        approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+                # get geometry of approx
+                # add rs coords
+                x,y,w,h = cv2.boundingRect(cnt)
 
-        # Square found here vvvv
-        if len(approx)==4:
-            #print("square of {}".format(cv2.contourArea(cnt)))
-            #cv2.drawContours(rs_window,[cnt],0,(255,255,255),-1)
+                #combines with playing window
+                x += x1
+                y += y1
 
-            # get geometry of approx
-            # add rs coords
-            x,y,w,h = cv2.boundingRect(cnt)
+                # scrshot of option menu on play window
+                img = Screenshot.shoot(x,y,x+w,y+h)
+                ret,pattern = cv2.threshold(img,254,255,cv2.THRESH_BINARY)
+                ###  DEBUG LINE
+                #cv2.imshow('img',pattern)
+                #cv2.waitKey(0)
+                #return
+                break
+        else:
+            Mouse.randMove(0,0,500,500,0)
+            time.sleep(1)
+            print("Else ran")
 
-            #combines with playing window
-            x += x1
-            y += y1
+        res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
+        threshold = .9
+        loc = np.where( res >= threshold)
 
-            # scrshot of option menu on play window
-            img = Screenshot.shoot(x,y,x+w,y+h)
-            ret,pattern = cv2.threshold(img,254,255,cv2.THRESH_BINARY)
-            ###  DEBUG LINE
-            #cv2.imshow('img',pattern)
-            #cv2.waitKey(0)
-            #return
-            break
-    else:
-        Mouse.randMove(0,0,500,500,0)
-        time.sleep(1)
-        print("Else ran")
+        # clicks on option here when found in pattern
+        for pt in zip(*loc[::-1]):#goes through each found image
+            rsx, rsy = position()
+            x += pt[0] + rsx
+            y += pt[1] + rsy
+            y1 = y
+            y2 = y+10
+            img = Screenshot.shoot(x,y1,x+w,y2)
+            # range of x and y to click on.
+            # in the options
+            Mouse.randMove(x,y1,x+(w/2),y2, 1)
+            # autopy.mouse.click()#taking out since it does not delay the click
+            RandTime.randTime(0,0,0,0,0,9)
 
-    res = cv2.matchTemplate(pattern,template,cv2.TM_CCOEFF_NORMED)
-    threshold = .9
-    loc = np.where( res >= threshold)
+    def center_window():
+        display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
+        display_x = display_x[:4]
+        display_x = int(display_x)
+        display_x //= 2
 
-    # clicks on option here when found in pattern
-    for pt in zip(*loc[::-1]):#goes through each found image
-        rsx, rsy = position()
-        x += pt[0] + rsx
-        y += pt[1] + rsy
-        y1 = y
-        y2 = y+10
-        img = Screenshot.shoot(x,y1,x+w,y2)
-        # range of x and y to click on.
-        # in the options
-        Mouse.randMove(x,y1,x+(w/2),y2, 1)
-        # autopy.mouse.click()#taking out since it does not delay the click
-        RandTime.randTime(0,0,0,0,0,9)
+        pos = display_x - 383
+        #moves window to center of screen
+        os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
 
-def center_window():
-    display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
-    display_x = display_x[:4]
-    display_x = int(display_x)
-    display_x //= 2
+    def get_bag(bagornot, *args):
+        x1, y1 = position() #Get runescapes top-left coords
 
-    pos = display_x - 383
-    #moves window to center of screen
-    os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
+        x1 += 557    #make The Bag's top-left, and btm-right coords
+            #y1=229 default for archlinux
+        y1 += 229    #x2,y2 == btm-right coord, width and height
+        x2 = x1 + 173
+        y2 = y1 + 253#253default for arch
+        try: # block to allow this func to also get 'hsv' img objects
+            for arg in args:
+                if arg == 'hsv':
+                    rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+                    return rs_bag, x1, y1
+                if arg == 'gray':
+                    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+                    return rs_bag, x1, y1
+        except:
+            pass
 
-def get_bag(bagornot, *args):
-    x1, y1 = position() #Get runescapes top-left coords
+        rs_bag = Screenshot.shoot(x1,y1,x2,y2)
 
-    x1 += 557    #make The Bag's top-left, and btm-right coords
-	#y1=229 default for archlinux
-    y1 += 229    #x2,y2 == btm-right coord, width and height
-    x2 = x1 + 173
-    y2 = y1 + 253#253default for arch
-    try: # block to allow this func to also get 'hsv' img objects
-        for arg in args:
-            if arg == 'hsv':
-                rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-                return rs_bag, x1, y1
-            if arg == 'gray':
-                rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-                return rs_bag, x1, y1
-    except:
-        pass
+        if bagornot == 'only':
+            return rs_bag
+        else:
+            return rs_bag, x1, y1
 
-    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-
-    if bagornot == 'only':
-        return rs_bag
-    else:
-        return rs_bag, x1, y1
-
-def getBankWindow(*args):
-    rsx, rsy = position() #Get runescapes top-left coords
-    bankWin
-    #creates bank window boundaries
-    x1 = rsx + 21
-    y1 = rsy + 23
-    x2 = rsx + 486
-    y2 = rsy + 335
-    # passing 'hsv' to this function returns hsv image
-    try:
-        if args[0] == 'hsv':
+    def getBankWindow(*args):
+        rsx, rsy = position() #Get runescapes top-left coords
+        bankWin
+        #creates bank window boundaries
+        x1 = rsx + 21
+        y1 = rsy + 23
+        x2 = rsx + 486
+        y2 = rsy + 335
+        # passing 'hsv' to this function returns hsv image
+        try:
+            if args[0] == 'hsv':
+                #gets screenshot object
+                bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+                ##### DEBUG
+                #cv2.imshow('bankwindow', bankWindow)
+                #cv2.waitKey(0)
+                ####
+                return bankWindow, x1, y1
+        except:
             #gets screenshot object
-            bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
-            ##### DEBUG
-            #cv2.imshow('bankwindow', bankWindow)
-            #cv2.waitKey(0)
-            ####
+            bankWindow = Screenshot.shoot(x1,y1,x2,y2)
             return bankWindow, x1, y1
-    except:
-        #gets screenshot object
-        bankWindow = Screenshot.shoot(x1,y1,x2,y2)
-        return bankWindow, x1, y1
 
-def isBankOpen():
-    """checks to see if bank is open, returns True, else False"""
-    # black X button hsv values
-    buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
-    # gets current game's position
-    rsx,rsy = position()
-    #button X on bank window coords
-    x1 = rsx+480
-    y1 = rsy+38
-    x2 = rsx+490
-    y2 = rsy+49
-    # Screenshot X button
-    closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-    # Apply hsv ranges
-    mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
+    def isBankOpen():
+        """checks to see if bank is open, returns True, else False"""
+        # black X button hsv values
+        buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
+        # gets current game's position
+        rsx,rsy = position()
+        #button X on bank window coords
+        x1 = rsx+480
+        y1 = rsy+38
+        x2 = rsx+490
+        y2 = rsy+49
+        # Screenshot X button
+        closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        # Apply hsv ranges
+        mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
 
-    # counts white pixels in X
-    counter = 0
-    for colors in mask:
-        for color_value in colors:
-            if color_value == 255:
-                counter += 1
-    #print(counter)
-    #cv2.imshow('img', mask)
-    #cv2.waitKey(0)
-    # 54 = Bank is open
-    if counter == 54:
-        return True
-    return False
+        # counts white pixels in X
+        counter = 0
+        for colors in mask:
+            for color_value in colors:
+                if color_value == 255:
+                    counter += 1
+        #print(counter)
+        #cv2.imshow('img', mask)
+        #cv2.waitKey(0)
+        # 54 = Bank is open
+        if counter == 54:
+            return True
+        return False
 
-def closeBank():
-    cwd = os.getcwd()
-    rsx, rsy = position()
-    x1 = rsx+449
-    y1 = rsy+0
-    x2 = rsx+522
-    y2 = rsy+59
+    def closeBank():
+        cwd = os.getcwd()
+        rsx, rsy = position()
+        x1 = rsx+449
+        y1 = rsy+0
+        x2 = rsx+522
+        y2 = rsy+59
 
-    closeButton = Screenshot.shoot(x1,y1,x2,y2)
-    #SAVE FOR DEBUG
-    #cv2.imwrite('debug_closeButton.png',closeButton)
-    loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
+        closeButton = Screenshot.shoot(x1,y1,x2,y2)
+        #SAVE FOR DEBUG
+        #cv2.imwrite('debug_closeButton.png',closeButton)
+        loc, w, h = Match.this(closeButton, cwd+'/imgs/bankXbutton.png')
 
-    for pt in zip(*loc[::-1]):
-        #making pt relative to the RS window
-        pt = (pt[0] + x1, pt[1] + y1)
-        #make Btm-Right pt
-        btx = pt[0] + w
-        bty = pt[1] + h
-        #gen random coords
-        rx = random.randint(pt[0], btx)
-        ry = random.randint(pt[1], bty)
-        #Move to and Click the X to close bank
-        Mouse.moveClick(rx,ry,1)
-        break
+        for pt in zip(*loc[::-1]):
+            #making pt relative to the RS window
+            pt = (pt[0] + x1, pt[1] + y1)
+            #make Btm-Right pt
+            btx = pt[0] + w
+            bty = pt[1] + h
+            #gen random coords
+            rx = random.randint(pt[0], btx)
+            ry = random.randint(pt[1], bty)
+            #Move to and Click the X to close bank
+            Mouse.moveClick(rx,ry,1)
+            break
 
-def depositAll():
-    rsx, rsy = position()
+    def depositAll():
+        rsx, rsy = position()
 
-    x = rsx + random.randint(432,457)
-    y = rsy + random.randint(320,348)
+        x = rsx + random.randint(432,457)
+        y = rsy + random.randint(320,348)
 
-    Mouse.moveClick(x,y,1)
-    RandTime.randTime(0,0,1,0,0,5)
+        Mouse.moveClick(x,y,1)
+        RandTime.randTime(0,0,1,0,0,5)
 
-def countItemInInv(template_file,*args):
-    """Counts the N of the item passed in INVENTORY
-    if a number is passed it will count up to that"""
-    #checks to see wheater to add cur dir or not
-    if "/" not in template_file:
-        template_file = os.getcwd()+"/imgs/"+template_file
-    rs_bag = get_bag('only') #Screenshot taken here,
-    #saves image for DEBUG
-    #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
-    #loc == coordinates found in match
-    loc, w, h = Match.this(rs_bag, template_file)
-    #starts fount
-    count = 0
-    for pt in zip(*loc[::-1]):#goes through each found image
-        if args != ():
-            if args[0] == 1:
-                return 1
-        count += 1
-    #print(count)
-    return count
+    def countItemInInv(template_file,*args):
+        """Counts the N of the item passed in INVENTORY
+        if a number is passed it will count up to that"""
+        #checks to see wheater to add cur dir or not
+        if "/" not in template_file:
+            template_file = os.getcwd()+"/imgs/"+template_file
+        rs_bag = get_bag('only') #Screenshot taken here,
+        #saves image for DEBUG
+        #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
+        #loc == coordinates found in match
+        loc, w, h = Match.this(rs_bag, template_file)
+        #starts fount
+        count = 0
+        for pt in zip(*loc[::-1]):#goes through each found image
+            if args != ():
+                if args[0] == 1:
+                    return 1
+            count += 1
+        #print(count)
+        return count
 
-def inventory_counter(*args):
-    """Counts the number of slots being used in inventory"""
-    """pass a func to do something with each slot's ROI, then upper and lower """
-    # makes sure inventory button is selected
-    if not is_button_selected('inventory'):
-        press_button('inventory')
+    def inventory_counter(*args):
+        """Counts the number of slots being used in inventory"""
+        """pass a func to do something with each slot's ROI, then upper and lower """
+        # makes sure inventory button is selected
+        if not is_button_selected('inventory'):
+            press_button('inventory')
 
-    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
-    # HSV range passed in args
-    if args:
-        low = args[1]
-        high = args[2]
-    # HSV range of Empy Inventory
-    else:
+        bag, bagx,bagy = get_bag('bag and coords', 'hsv')
+        # HSV range passed in args
+        if args:
+            low = args[1]
+            high = args[2]
+        # HSV range of Empy Inventory
+        else:
+            low = np.array([10,46,58])
+            high= np.array([21,92,82])
+        # applies mask
+        mask = cv2.inRange(bag, low, high)
+
+        # only applies to empty inventory
+        if not args:
+            # removes any noise
+            kernel = np.ones((3,3), np.uint8)
+            closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
+            #inverts mask
+            closing = cv2.bitwise_not(closing)
+
+        # finds contours
+        #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+
+        ### draws white rectangle on found itmes ###
+        #for cnt in contours:
+        #    # creates a white rectangle around items
+        #    x,y,w,h = cv2.boundingRect(cnt)
+        #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+        ############################################
+
+        ### Draws division lines ###
+        # draws row lines
+        #sloth = closing.shape[0] / 7
+        #slotw = closing.shape[1] / 4
+        #for i,rows in enumerate(xrange(6)):
+        #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
+        # draws col lines
+        #for i,cols in enumerate(xrange(3)):
+        #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+        ############################
+
+        # checks each slot for white pixels
+        count = 0
+        for row in xrange(7):
+            for cols in xrange(4):
+                # 1st Slot ROI
+                if row == 0 and cols == 0:
+                    #print(row,cols)
+                    slot_x = 0
+                    slot_x2 = 36
+
+                    slot_y = 0
+                    slot_y2 = 43
+                # rest of slots ROI
+                else:
+                    slot_x = row*36+1
+                    slot_x2 = (row*36)+36-1
+
+                    slot_y = cols*43+1
+                    slot_y2 = 43 + (cols*43)-1
+
+                if args:
+                    slot_roi = mask[slot_x:slot_x2, slot_y:slot_y2]
+                else:
+                    # Selected ROI
+                    slot_roi = closing[slot_x:slot_x2, slot_y:slot_y2]
+
+                # Do fucntion with slot_roi else  add to count
+                if args:
+                    passed_func = args[0]
+                    #x,y,_,_ = cv2.boundingRect(slot_roi)
+                    #_, psx, psy = getPlayingScreen()
+                    slot_x += bagx# + psx
+                    slot_y += bagy# + psy
+                    passed_func(slot_x,slot_y)
+                    continue
+
+                # just count
+                else:
+                    # check pixel value == 255
+                    if 255 in slot_roi:
+                        count += 1
+
+        # returns the N of items in inv
+        return count
+
+    def invSlotIter():
+        # loads database of items to drop
+        item_database = {}
+        # makes sure inventory button is selected
+        if not is_button_selected('inventory'):
+            press_button('inventory')
+
+        bag, bagx,bagy = get_bag('bag and coords', 'hsv')
+        bag_grey = get_bag('only')
+        # debug
+        cv2.imshow('bag', bag)
+        cv2.waitKey(0)
+        cv2.imshow('bag_grey', bag_grey)
+        cv2.waitKey(0)
+
+        # HSV range of Empy Inventory
         low = np.array([10,46,58])
         high= np.array([21,92,82])
-    # applies mask
-    mask = cv2.inRange(bag, low, high)
+        # applies mask
+        mask = cv2.inRange(bag, low, high)
+        cv2.imshow('mask', mask)
+        cv2.waitKey(0)
 
-    # only applies to empty inventory
-    if not args:
+
         # removes any noise
         kernel = np.ones((3,3), np.uint8)
         closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
         #inverts mask
         closing = cv2.bitwise_not(closing)
+        cv2.imshow('closing', closing)
+        cv2.waitKey(0)
 
-    # finds contours
-    #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
+        # finds contours
+        #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
 
-    ### draws white rectangle on found itmes ###
-    #for cnt in contours:
-    #    # creates a white rectangle around items
-    #    x,y,w,h = cv2.boundingRect(cnt)
-    #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
-    ############################################
+        ### draws white rectangle on found itmes ###
+        #for cnt in contours:
+        #    # creates a white rectangle around items
+        #    x,y,w,h = cv2.boundingRect(cnt)
+        #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
+        ############################################
 
-    ### Draws division lines ###
-    # draws row lines
-    #sloth = closing.shape[0] / 7
-    #slotw = closing.shape[1] / 4
-    #for i,rows in enumerate(xrange(6)):
-    #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
-    # draws col lines
-    #for i,cols in enumerate(xrange(3)):
-    #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
-    ############################
+        ### Draws division lines ###
+        # draws row lines
+        #sloth = closing.shape[0] / 7
+        #slotw = closing.shape[1] / 4
+        #for i,rows in enumerate(xrange(6)):
+        #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
+        # draws col lines
+        #for i,cols in enumerate(xrange(3)):
+        #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
+        ############################
 
-    # checks each slot for white pixels
-    count = 0
-    for row in xrange(7):
-        for cols in xrange(4):
-            # 1st Slot ROI
-            if row == 0 and cols == 0:
-                #print(row,cols)
-                slot_x = 0
-                slot_x2 = 36
+        # checks each slot for white pixels
+        count = 0
+        for row in xrange(7):
+            for cols in xrange(4):
+                # 1st Slot ROI
+                if row == 0 and cols == 0:
+                    #print(row,cols)
+                    slot_x = 0
+                    slot_x2 = 36
 
-                slot_y = 0
-                slot_y2 = 43
-            # rest of slots ROI
-            else:
-                slot_x = row*36+1
-                slot_x2 = (row*36)+36-1
+                    slot_y = 0
+                    slot_y2 = 43
+                # rest of slots ROI
+                else:
+                    slot_x = row*36+1
+                    slot_x2 = (row*36)+36-1
 
-                slot_y = cols*43+1
-                slot_y2 = 43 + (cols*43)-1
+                    slot_y = cols*43+1
+                    slot_y2 = 43 + (cols*43)-1
 
-            if args:
-                slot_roi = mask[slot_x:slot_x2, slot_y:slot_y2]
-            else:
                 # Selected ROI
                 slot_roi = closing[slot_x:slot_x2, slot_y:slot_y2]
 
-            # Do fucntion with slot_roi else  add to count
-            if args:
-                passed_func = args[0]
-                #x,y,_,_ = cv2.boundingRect(slot_roi)
-                #_, psx, psy = getPlayingScreen()
-                slot_x += bagx# + psx
-                slot_y += bagy# + psy
-                passed_func(slot_x,slot_y)
-                continue
-
-            # just count
-            else:
                 # check pixel value == 255
                 if 255 in slot_roi:
+                    # getting ROI from original screenshot
+                    bag_roi = bag_grey[slot_x:slot_x2, slot_y:slot_y2]
+
+                    item_database[count] = (slot_x,slot_x2, slot_y, slot_y2)
+
+                    #cv2.imshow('image',bag_roi)
+                    #cv2.waitKey(0)
+                    count += 1
+                else:
+                    item_database[count] = 0
                     count += 1
 
-    # returns the N of items in inv
-    return count
+        for img_in_db in item_database:
+            print(img_in_db)
+            if img_in_db != 0:
+                x, x2, y, y2 = img_in_db
+                img_in_db = bag_grey[x:x2,y:y2]
+                cv2.imshow('img', img_in_db)
+                cv2.waitKey(0)
 
-def invSlotIter():
-    # loads database of items to drop
-    item_database = {}
-    # makes sure inventory button is selected
-    if not is_button_selected('inventory'):
-        press_button('inventory')
+        return count
 
-    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
-    bag_grey = get_bag('only')
-    # debug
-    cv2.imshow('bag', bag)
-    cv2.waitKey(0)
-    cv2.imshow('bag_grey', bag_grey)
-    cv2.waitKey(0)
+    def isInvEmpty():
+        bag, bagx,bagy = get_bag('bag and coords', 'hsv')
+        # looks for color of empty inv
+        low = np.array([10,46,58])
+        high= np.array([21,92,82])
+        # applies mask
+        mask = cv2.inRange(bag, low, high)
+        # removes any noise
+        kernel = np.ones((5,5), np.uint8)
+        closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-    # HSV range of Empy Inventory
-    low = np.array([10,46,58])
-    high= np.array([21,92,82])
-    # applies mask
-    mask = cv2.inRange(bag, low, high)
-    cv2.imshow('mask', mask)
-    cv2.waitKey(0)
+        # looks to see if the inv is all white pixels
+        # returns true, else False
+        if (closing.view() == 255).all():
+            return True
+        return False
 
+    def open_cw_bank():
+        """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
+        # gets RS window's position
+        rsx,rsy = position()
 
-    # removes any noise
-    kernel = np.ones((3,3), np.uint8)
-    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+        # Takes screenshot, as Hue-saturated-value image
+        play_window,psx,psy = getPlayingScreen()
 
-    #inverts mask
-    closing = cv2.bitwise_not(closing)
-    cv2.imshow('closing', closing)
-    cv2.waitKey(0)
-
-    # finds contours
-    #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
-
-    ### draws white rectangle on found itmes ###
-    #for cnt in contours:
-    #    # creates a white rectangle around items
-    #    x,y,w,h = cv2.boundingRect(cnt)
-    #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
-    ############################################
-
-    ### Draws division lines ###
-    # draws row lines
-    #sloth = closing.shape[0] / 7
-    #slotw = closing.shape[1] / 4
-    #for i,rows in enumerate(xrange(6)):
-    #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
-    # draws col lines
-    #for i,cols in enumerate(xrange(3)):
-    #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
-    ############################
-
-    # checks each slot for white pixels
-    count = 0
-    for row in xrange(7):
-        for cols in xrange(4):
-            # 1st Slot ROI
-            if row == 0 and cols == 0:
-                #print(row,cols)
-                slot_x = 0
-                slot_x2 = 36
-
-                slot_y = 0
-                slot_y2 = 43
-            # rest of slots ROI
-            else:
-                slot_x = row*36+1
-                slot_x2 = (row*36)+36-1
-
-                slot_y = cols*43+1
-                slot_y2 = 43 + (cols*43)-1
-
-            # Selected ROI
-            slot_roi = closing[slot_x:slot_x2, slot_y:slot_y2]
-
-            # check pixel value == 255
-            if 255 in slot_roi:
-                # getting ROI from original screenshot
-                bag_roi = bag_grey[slot_x:slot_x2, slot_y:slot_y2]
-
-                item_database[count] = (slot_x,slot_x2, slot_y, slot_y2)
-
-                #cv2.imshow('image',bag_roi)
-                #cv2.waitKey(0)
-                count += 1
-            else:
-                item_database[count] = 0
-                count += 1
-
-    for img_in_db in item_database:
-        print(img_in_db)
-        if img_in_db != 0:
-            x, x2, y, y2 = img_in_db
-            img_in_db = bag_grey[x:x2,y:y2]
-            cv2.imshow('img', img_in_db)
-            cv2.waitKey(0)
-
-    return count
-
-def isInvEmpty():
-    bag, bagx,bagy = get_bag('bag and coords', 'hsv')
-    # looks for color of empty inv
-    low = np.array([10,46,58])
-    high= np.array([21,92,82])
-    # applies mask
-    mask = cv2.inRange(bag, low, high)
-    # removes any noise
-    kernel = np.ones((5,5), np.uint8)
-    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-
-    # looks to see if the inv is all white pixels
-    # returns true, else False
-    if (closing.view() == 255).all():
-        return True
-    return False
-
-def open_cw_bank():
-    """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
-    # gets RS window's position
-    rsx,rsy = position()
-
-    # Takes screenshot, as Hue-saturated-value image
-    play_window,psx,psy = getPlayingScreen()
-
-    psx += rsx
-    psy += rsy
+        psx += rsx
+        psy += rsy
 
 
 
-    lower_gray = np.array([0,15,55])
-    upper_gray = np.array([10,25,125])
+        lower_gray = np.array([0,15,55])
+        upper_gray = np.array([10,25,125])
 
-    # Makes a black/white mask
-    mask = cv2.inRange(play_window, lower_gray, upper_gray)
-    # inverts selection
-    #res = cv2.bitwise_and(play_window, play_window, mask=mask)
-    kernel = np.ones((5,5), np.uint8)
-    dilation = cv2.dilate(mask, kernel, iterations = 1)
+        # Makes a black/white mask
+        mask = cv2.inRange(play_window, lower_gray, upper_gray)
+        # inverts selection
+        #res = cv2.bitwise_and(play_window, play_window, mask=mask)
+        kernel = np.ones((5,5), np.uint8)
+        dilation = cv2.dilate(mask, kernel, iterations = 1)
 
-    #cv2.imshow('img', dilation)
-    #cv2.waitKey(0)
+        #cv2.imshow('img', dilation)
+        #cv2.waitKey(0)
 
-    # Finds contours
-    _,contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # Finds contours
+        _,contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    try:
-        # looks for center of grey color with biggest area, > 3000
-        for con in contours:
-            if cv2.contourArea(con) > 3000:
-                M = cv2.moments(con)
-                # finds centroid
-                cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                psx += cx
-                psy += cy
-                # adds randomness to coords
-                psx += random.randint(-17,17)
-                psy += random.randint(-17,17)
+        try:
+            # looks for center of grey color with biggest area, > 3000
+            for con in contours:
+                if cv2.contourArea(con) > 3000:
+                    M = cv2.moments(con)
+                    # finds centroid
+                    cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                    psx += cx
+                    psy += cy
+                    # adds randomness to coords
+                    psx += random.randint(-17,17)
+                    psy += random.randint(-17,17)
 
-                #move click chest
-                Mouse.moveClick(psx,psy,1)
-                RandTime.randTime(0,0,0,0,9,9)
-                break
-    except Exception as e:
-        print("Bank NOT found!\nMove camera around!")
+                    #move click chest
+                    Mouse.moveClick(psx,psy,1)
+                    RandTime.randTime(0,0,0,0,9,9)
+                    break
+        except Exception as e:
+            print("Bank NOT found!\nMove camera around!")
 
-def find_bank_booth():
-    """Finds bank booth and clicks it.  Returns True if found, else False"""
+    def find_bank_booth():
+        """Finds bank booth and clicks it.  Returns True if found, else False"""
 
-    bank_booth_glass_window = ([0,72,149],[179,82,163])
-    # take screenshot of playing area
-    play_area_screen,psx,psy = getPlayingScreen()
+        bank_booth_glass_window = ([0,72,149],[179,82,163])
+        # take screenshot of playing area
+        play_area_screen,psx,psy = getPlayingScreen()
 
-    # find glasswindow for bankbooth
-    mask = cv2.inRange(play_area_screen, np.array(bank_booth_glass_window[0]), np.array(bank_booth_glass_window[1]))
+        # find glasswindow for bankbooth
+        mask = cv2.inRange(play_area_screen, np.array(bank_booth_glass_window[0]), np.array(bank_booth_glass_window[1]))
 
-    # gets RS window's position
-    rsx,rsy = position()
+        # gets RS window's position
+        rsx,rsy = position()
 
-    psx += rsx
-    psy += rsy
+        psx += rsx
+        psy += rsy
 
-    kernel = np.ones((3,3), np.uint8)
-    closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-
-
-    #cv2.imshow('img', closing)
-    #cv2.waitKey(0)
-
-    # Finds contours
-    _,contours,_ = cv2.findContours(closing.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    try:
-        for con in contours:
-            if cv2.contourArea(con) > 10:
-                #print(cv2.contourArea(con))
-                M = cv2.moments(con)
-                # finds centroid
-                cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-                psx += cx
-                psy += cy
-                # adds randomness to coords
-                psx += random.randint(-7,7)
-                psy += random.randint(-7,7)
-
-                #move click
-                Mouse.moveClick(psx,psy,1)
-                RandTime.randTime(0,0,0,0,9,9)
-                return 1
-    except Exception as e:
-        print("Bank NOT found!\nMove camera around!")
-    # returns False if bank not found
-    return 0
-
-def antiban(skill):
-    rsx,rsy = position()
-    rn =random.randint(0,99)
-    if rn == 0:
-        print("Starting antiban")
-        # Tuples of locations
-        stats_btn = Mouse.genCoords(567,194,589,215)
-
-        #Clicks the skills button
-        Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
-
-        #hovers over a certain skill
-        skillHover(skill)
-        moveback(skill)
-        return True
+        kernel = np.ones((3,3), np.uint8)
+        closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
 
-        #returns true if antiban ran, to let me know if it acutally did ran
+        #cv2.imshow('img', closing)
+        #cv2.waitKey(0)
 
-    elif rn == 1:
-        print("Starting antiban")
-        skillsHover(rsx,rsy)
-        moveback(skill)
-        return True
+        # Finds contours
+        _,contours,_ = cv2.findContours(closing.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-def moveback(skill):
-    if skill == 'magic':
-        press_button('magic')
-    else:
-        #moves back to bag
-        press_button('inventory')
-    print("Antiban end")
+        try:
+            for con in contours:
+                if cv2.contourArea(con) > 10:
+                    #print(cv2.contourArea(con))
+                    M = cv2.moments(con)
+                    # finds centroid
+                    cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+                    psx += cx
+                    psy += cy
+                    # adds randomness to coords
+                    psx += random.randint(-7,7)
+                    psy += random.randint(-7,7)
 
-def greetings(skill):
-    n = random.randint(0,10)
-    if random.randint(0,10):
-        if n == 0:
-            Keyboard.type_this("What's going on guys?")
-        elif n == 1:
-            Keyboard.type_this("whats up ppl!?")
-        elif n == 2:
-            Keyboard.type_this("what you all doing?")
-        elif n == 3:
-            Keyboard.type_this("hiiiii guys!")
-        elif n == 4:
-            Keyboard.type_this("what's your guys highest skill lv??")
-        elif n == 5:
-            Keyboard.type_this("flash1:what!?")
-        elif n == 6:
-            Keyboard.type_this("what are you talking about?")
-        elif n == 7:
-            Keyboard.type_this("i dont need to be hearing this")
-        elif n == 8:
-            Keyboard.type_this("chilling...")
-        elif n == 9:
-            Keyboard.type_this("skilling, what about you all?")
-        elif n == 10:
-            Keyboard.type_this("right now im working on {}, what about you guys??".format(skill))
+                    #move click
+                    Mouse.moveClick(psx,psy,1)
+                    RandTime.randTime(0,0,0,0,9,9)
+                    return 1
+        except Exception as e:
+            print("Bank NOT found!\nMove camera around!")
+        # returns False if bank not found
+        return 0
 
-        Keyboard.press('enter')
-
-
-    RandTime.randTime(5,0,0,13,9,9)
-
-def skillsHover(rsx,rsy):
-        """Hovers over n skills by n times"""
-        n = random.randint(0,2)
-        if n > 0:
+    def antiban(skill):
+        rsx,rsy = position()
+        rn =random.randint(0,99)
+        if rn == 0:
+            print("Starting antiban")
             # Tuples of locations
             stats_btn = Mouse.genCoords(567,194,589,215)
+
             #Clicks the skills button
             Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
-            for i in range(n):
-                #                              x1  y1  x2  y2
-                stats_window = Mouse.genCoords(557,234,729,470)
-                # Randomly hovers over a random skill
-                Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
-                RandTime.randTime(1,0,0,2,9,9)
 
-def skillHover(skill):
-    """Hovers over passed skill from 1-5 secs"""
-    #Coordinates of skill's button
-    skills = {
-            'attack':0, 'hitpoints':0,'mining':0,
+            #hovers over a certain skill
+            skillHover(skill)
+            moveback(skill)
+            return True
 
-            'strength':0,'agility':0,'smithing':0,
 
-            'defence':0,'herblore':(620,295,662,311),'fishing':0,
+            #returns true if antiban ran, to let me know if it acutally did ran
 
-            'ranged':0,'thieving':0,'cooking':0,
+        elif rn == 1:
+            print("Starting antiban")
+            skillsHover(rsx,rsy)
+            moveback(skill)
+            return True
 
-            'prayer':0,'crafting':(621,358,664,373),'firemaking':0,
+    def moveback(skill):
+        if skill == 'magic':
+            press_button('magic')
+        else:
+            #moves back to bag
+            press_button('inventory')
+        print("Antiban end")
 
-            'magic':(557,388,602,402),'fletching':(620,389,666,406),'woodcutting':0,
+    def greetings(skill):
+        n = random.randint(0,10)
+        if random.randint(0,10):
+            if n == 0:
+                Keyboard.type_this("What's going on guys?")
+            elif n == 1:
+                Keyboard.type_this("whats up ppl!?")
+            elif n == 2:
+                Keyboard.type_this("what you all doing?")
+            elif n == 3:
+                Keyboard.type_this("hiiiii guys!")
+            elif n == 4:
+                Keyboard.type_this("what's your guys highest skill lv??")
+            elif n == 5:
+                Keyboard.type_this("flash1:what!?")
+            elif n == 6:
+                Keyboard.type_this("what are you talking about?")
+            elif n == 7:
+                Keyboard.type_this("i dont need to be hearing this")
+            elif n == 8:
+                Keyboard.type_this("chilling...")
+            elif n == 9:
+                Keyboard.type_this("skilling, what about you all?")
+            elif n == 10:
+                Keyboard.type_this("right now im working on {}, what about you guys??".format(skill))
 
-            'runecraft':0,'slayer':0,'farming':0,
+            Keyboard.press('enter')
 
-            'construction':0,'hunter':0
-            }
 
-    x1,y1,x2,y2 =skills[skill]
-    x,y = Mouse.genCoords(x1,y1,x2,y2)
-    Mouse.moveTo(x,y)
-    RandTime.randTime(1,0,0,5,9,9)
+        RandTime.randTime(5,0,0,13,9,9)
 
-def logout():
-    rsx,rsy = position()
-    #  Door Button
-    x,y = Mouse.genCoords(636,495,650,515)
-    x +=rsx
-    y +=rsy
-    Mouse.moveClick(x,y,1)
+    def skillsHover(rsx,rsy):
+            """Hovers over n skills by n times"""
+            n = random.randint(0,2)
+            if n > 0:
+                # Tuples of locations
+                stats_btn = Mouse.genCoords(567,194,589,215)
+                #Clicks the skills button
+                Mouse.moveClick(stats_btn[0]+rsx,stats_btn[1]+rsy,1)
+                for i in range(n):
+                    #                              x1  y1  x2  y2
+                    stats_window = Mouse.genCoords(557,234,729,470)
+                    # Randomly hovers over a random skill
+                    Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
+                    RandTime.randTime(1,0,0,2,9,9)
 
-    # Log out Button
-    x,y = Mouse.genCoords(581,428,707,450)
-    x +=rsx
-    y +=rsy
-    Mouse.moveClick(x,y,1)
+    def skillHover(skill):
+        """Hovers over passed skill from 1-5 secs"""
+        #Coordinates of skill's button
+        skills = {
+                'attack':0, 'hitpoints':0,'mining':0,
 
-def press_button(button, *args):
-    """Presses button on random coordinates stored in the buttons dictionary.  Returns button coords if 'coors' passed as argument"""
-    buttons = {
-            'combat':0,
-            'stats':(570,197,586,214),
-            'quest':0,
-            'inventory':(631,194,658,221),
-            'equipment':(666,196,687,216),
-            'prayer':(700,198,720,214),
-            'magic':(733,195,751,214),
-            'clan':0,
-            'friend':0,
-            'enemy':0,
-            'logout':0,
-            'options':0,
-            'emotes':0,
-            'music':0,
-            'quick-prayer':0,
-            'run':0
-            }
+                'strength':0,'agility':0,'smithing':0,
 
-    #unpacks the tuple
-    x1,y1,x2,y2 = buttons[button]
+                'defence':0,'herblore':(620,295,662,311),'fishing':0,
 
-    try :
-        if args[0] == 'coords':
-            return x1,y1,x2,y2
-    except:
-        pass
+                'ranged':0,'thieving':0,'cooking':0,
 
-    #generates random coords
-    x,y = Mouse.genCoords(x1,y1,x2,y2)
-    #moves to those coords
-    Mouse.moveClick(x,y,1)
+                'prayer':0,'crafting':(621,358,664,373),'firemaking':0,
 
-def is_button_selected(button_name):
-    """Returns true if button is selected, else False"""
-    x1, y1, x2, y2 = press_button(button_name, 'coords')
-    button_img = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
-    lower_red = np.array([0,179,0])
-    upper_red = np.array([4,193,255])
+                'magic':(557,388,602,402),'fletching':(620,389,666,406),'woodcutting':0,
 
-    mask = cv2.inRange(button_img, lower_red, upper_red)
+                'runecraft':0,'slayer':0,'farming':0,
 
-    for colors in mask:
-        for value in colors:
-            if value == 255:
-                #print('{} is selected'.format(button_name))
-                return 1
-    #print('{} is NOT selected'.format(button_name))
-    return 0
+                'construction':0,'hunter':0
+                }
 
-def play_sound():
-    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
+        x1,y1,x2,y2 =skills[skill]
+        x,y = Mouse.genCoords(x1,y1,x2,y2)
+        Mouse.moveTo(x,y)
+        RandTime.randTime(1,0,0,5,9,9)
+
+    def logout():
+        rsx,rsy = position()
+        #  Door Button
+        x,y = Mouse.genCoords(636,495,650,515)
+        x +=rsx
+        y +=rsy
+        Mouse.moveClick(x,y,1)
+
+        # Log out Button
+        x,y = Mouse.genCoords(581,428,707,450)
+        x +=rsx
+        y +=rsy
+        Mouse.moveClick(x,y,1)
+
+    def press_button(button, *args):
+        """Presses button on random coordinates stored in the buttons dictionary.  Returns button coords if 'coors' passed as argument"""
+        buttons = {
+                'combat':0,
+                'stats':(570,197,586,214),
+                'quest':0,
+                'inventory':(631,194,658,221),
+                'equipment':(666,196,687,216),
+                'prayer':(700,198,720,214),
+                'magic':(733,195,751,214),
+                'clan':0,
+                'friend':0,
+                'enemy':0,
+                'logout':0,
+                'options':0,
+                'emotes':0,
+                'music':0,
+                'quick-prayer':0,
+                'run':0
+                }
+
+        #unpacks the tuple
+        x1,y1,x2,y2 = buttons[button]
+
+        try :
+            if args[0] == 'coords':
+                return x1,y1,x2,y2
+        except:
+            pass
+
+        #generates random coords
+        x,y = Mouse.genCoords(x1,y1,x2,y2)
+        #moves to those coords
+        Mouse.moveClick(x,y,1)
+
+    def is_button_selected(button_name):
+        """Returns true if button is selected, else False"""
+        x1, y1, x2, y2 = press_button(button_name, 'coords')
+        button_img = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+        lower_red = np.array([0,179,0])
+        upper_red = np.array([4,193,255])
+
+        mask = cv2.inRange(button_img, lower_red, upper_red)
+
+        for colors in mask:
+            for value in colors:
+                if value == 255:
+                    #print('{} is selected'.format(button_name))
+                    return 1
+        #print('{} is NOT selected'.format(button_name))
+        return 0
+
+    def play_sound():
+        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
 
 
 if __name__ == '__main__':
-   invSlotIter()
+   #invSlotIter()
+   position()
