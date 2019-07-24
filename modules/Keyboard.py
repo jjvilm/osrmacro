@@ -13,7 +13,7 @@ def type_this(strings):
         # delay between key presses--key UP/DOWN
         #autopy.key.toggle(s, True)
         pyautogui.keyDown(s)
-        RandTime.randTime(0,0,0,0,0,9)
+        RandTime.randTime(0,0,0,0,0,5)
         pyautogui.keyUp(s)
         # delay after key UP--next key 
 

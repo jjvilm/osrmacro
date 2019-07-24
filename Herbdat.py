@@ -1,4 +1,5 @@
-import sys
+#!/bin/python3
+# import sys
 """file to store all the hsv range values of all herbs"""
 
 class Herb():
@@ -14,20 +15,21 @@ class Herb():
                }
         # returns tuple of 2 lists, low high HSV range
         self.chooseHerbs()
-            
+
     def chooseHerbs(self):
         """Displays available herbs, sets self.hsv_range to chosen herb"""
         # Prints the options
         for i, key in enumerate(self.herbdic.keys()):
-            print("[{}] : {}\n".format(i, key.upper()))
+            print(f"[{i}] : {key.upper()}")
+        herbNo = 3
         # User input
         # Assure int input
-        herbNo = None
-        while 1:
-            herbNo = raw_input("\n***CHOOSE***\nHerb No.:")
-            if herbNo.isalnum():
-                herbNo = int(herbNo)
-                break
+
+        # while 1:
+        #    # herbNo = input("\n***CHOOSE***\nHerb No.:")
+        #    if herbNo.isalnum():
+        #        herbNo = int(herbNo)
+        #        break
         # Sets object's self.range value
         for i, key in enumerate(self.herbdic.keys()):
             if herbNo == i:

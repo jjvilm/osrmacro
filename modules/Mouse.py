@@ -1,5 +1,5 @@
-#!/usr/bin/python2 
-from modules import RandTime 
+#!/usr/bin/python3
+from modules import RandTime
 import pyautogui
 import random
 import math
@@ -7,8 +7,7 @@ import time
 
 """Module to move mouse"""
 
-mouseSpeed = 20
-
+mouseSpeed = 50
 
 class MouseMovementCalculator:
 
@@ -59,6 +58,7 @@ class MouseMovementCalculator:
         maxStep = None
         D = max(min(round(round(totalDist) * 0.3) / 7, 25), 5)
         rCnc = random.randint(0, 5)
+        #print(f"rCnc:{rCnc}")
 
         if rCnc == 1:
             D = 2
@@ -99,17 +99,26 @@ class MouseMovementCalculator:
 def moveTo(x,y):
     startCoords = (pyautogui.position())
     endCoords = (x, y)
-
-    mouseCalc = MouseMovementCalculator(3, 3, mouseSpeed, 10 * mouseSpeed)
+    # print(f"Moving to ({x},{y})")
+    #                                      overshoot mousespeed  iterations
+    # mouseCalc = MouseMovementCalculator(3, 3, -2, 2 * mouseSpeed)
+    mouseCalc = MouseMovementCalculator(1, 3, mouseSpeed, 10 * mouseSpeed)
     coordsAndDelay = mouseCalc.calcCoordsAndDelay(startCoords, endCoords)
 
     pyautogui.moveTo(startCoords[0], startCoords[1])
+    #time.sleep(3)
+    #counting_iters = 0
 
     for x, y, delay in coordsAndDelay:
-        delay = delay / 10000
-        delay += random.random()
+        #delay = delay / 10000
+        #delay += random.random()
+        #print(delay)
         pyautogui.moveTo(x, y)
         #time.sleep(delay)
+
+        # counting_iters +=1
+        # if counting_iters == 10:
+        #     break
 
 
 def click(button):
@@ -120,29 +129,35 @@ def click(button):
     pyautogui.mouseUp(button='left')
 
 
-def moveClick(x,y, button=0):#moves to random X,Y of found match of template
+def moveClick(x,y, button):#moves to random X,Y of found match of template
     moveTo(x,y)
     RandTime.randTime(0,0,0,0,0,2)
-    if button != 0:
+    #print(f"button passed {button}")
+    if button == 1:
         pyautogui.mouseDown(button='left')
         RandTime.randTime(0,1,0,0,2,9)#time between click
         pyautogui.mouseUp(button='left')
+    elif button == 3:
+        pyautogui.mouseDown(button='right')
+        RandTime.randTime(0,1,0,0,2,9)#time between click
+        pyautogui.mouseUp(button='right')
+
 def randCoord(pt,w,h ):
     """Takes a top-left point as pt, and width and height of template
         returns a pair of coordinates within the the size of the template, to be used with inventory bag items only"""
     w = pt[0]+w
     h = pt[1]+h
-    print(w)
-    print(h)
+    # print(w)
+    # print(h)
 
-    x = random.random.randint(pt[0]+3,(w-3))
-    y = random.random.randint(pt[1]+3,(h-3))
+    x = random.randint(pt[0],w)
+    y = random.randint(pt[1],h)
     return x,y
 
 def genCoords(x1,y1,x2,y2):
     """Returns random coords of passed coordinates, not relative to RS window"""
-    x = random.random.randint(x1,x2)
-    y = random.random.randint(y1,y2)
+    x = random.randint(x1,x2)
+    y = random.randint(y1,y2)
     return x, y
 
 def randMove(x1,y1,x2,y2,button):
@@ -159,4 +174,3 @@ def mouse_loc():
 
 if __name__ == "__main__":
     print(mouse_loc())
-

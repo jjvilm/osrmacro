@@ -1,51 +1,19 @@
-import Screenshot
+from modules import Screenshot
 import cv2
 import numpy as np
 import pickle
+import pyautogui
 
 class ImgDb(object):
     def __init__(self):
         self.pickled_file_path = '/home/jj/github/osrmacro/modules/itemdata.pickled'
         self.pickled_dict = {}
-
-        #self.createImageDb()
-        #self.savePickledDict()
         self.loadPickledDict()
-        #self.showImgDb()
 
     def createImageDb(self):
         pass
-        # shoots images at a predefined place
-        pick = Screenshot.shoot(565,234,594,263)
-        chisel = Screenshot.shoot(613,236,633,263)
-        laws = Screenshot.shoot(649,242,678,263)
-        souls = Screenshot.shoot(691,242,720,263)
-        graceful_hood = Screenshot.shoot(573,273,591,296)
-        graceful_cape = Screenshot.shoot(611,272,635,300)
-        graceful_boots = Screenshot.shoot(651,274,677,296)
-        graceful_top = Screenshot.shoot(692,274,720,297)
-        graceful_legs = Screenshot.shoot(571,307,592,335)
-        graceful_gloves = Screenshot.shoot(694,308,719,330)
-        dramen_staff = Screenshot.shoot(609,307,633,336)
-        ring_of_dueling = Screenshot.shoot(652,308,669,328)
-        # dictonary of images
-        self.pickled_dict['pickaxe'] = pick
-        self.pickled_dict['chisel'] = chisel
-        self.pickled_dict['laws'] = laws
-        self.pickled_dict['souls'] = souls
-        self.pickled_dict['graceful_hood'] = graceful_hood
-        self.pickled_dict['graceful_cape'] = graceful_cape
-        self.pickled_dict['graceful_boots'] = graceful_boots
-        self.pickled_dict['graceful_top'] = graceful_top
-        self.pickled_dict['graceful_legs'] = graceful_legs
-        self.pickled_dict['graceful_gloves'] = graceful_gloves
-        self.pickled_dict['dramen_staff'] = dramen_staff
-        self.pickled_dict['ring_of_dueling'] = ring_of_dueling
-        print("Shots taken! images stored to a dict\n")
 
     def scrnshtIntoDb(self,name,x1,y1,x2,y2):
-        import time
-        time.sleep(3)
         img4db = Screenshot.shoot(x1,y1,x2,y2)
         self.pickled_dict[name] = img4db
         print("Screenshot: '{}' added to dict".format(name))
@@ -64,14 +32,18 @@ class ImgDb(object):
         self.savePickledDict()
 
     def savePickledDict(self):
-        with open(self.pickled_file_path,'w') as f:
+        with open(self.pickled_file_path,'wb') as f:
             pickle.dump(self.pickled_dict,f)
         print("saved dict as pickled in: {}\n".format(self.pickled_file_path))
 
     def loadPickledDict(self):
-        with open(self.pickled_file_path,'r') as f:
-            self.pickled_dict = pickle.load(f)
-        #print("pickled dict loaded from: {}\n".format(self.pickled_file_path))
+        try:
+            with open(self.pickled_file_path,'rb') as f:
+                self.pickled_dict = pickle.load(f)
+        except Exception as e:
+            self.pickled_dict = {}
+
+
 
     def showImgDb(self):
         for key in self.pickled_dict.keys():
@@ -89,6 +61,7 @@ class ImgDb(object):
         img = self.pickled_dict[img_name]
         cv2.imshow(img_name, img)
         cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     def listImgs(self):
         for i,key in enumerate(self.pickled_dict.keys()):
@@ -120,6 +93,44 @@ class ImgDb(object):
         except:
             pass
         return img
+    def promt_add(self):
+        import os
+        import pyautogui
+        import time
+
+        while 1:
+            print(f"\n[1]Adding [2]show [0]Quit")
+            item_name = input("Select action: ")
+            os.system('clear')
+
+            if item_name == '0':
+                return
+            elif item_name == '2':
+                #display available items in dict
+                for i, key in enumerate(self.pickled_dict.keys()):
+                    print(f"[{i}]:{key}")
+
+                print(f"Choose 0 - {len(self.pickled_dict)-1}")
+                # select index from above
+                item_name = input()
+                #iterate and select appropriate
+                for i, key in enumerate(self.pickled_dict.keys()):
+                    if i == int(item_name):
+                        self.showImg(key)
+                continue
+            elif item_name == '1':
+                item_name = input("Item name:")
+                print("move mouse to (x1,y1)")
+                time.sleep(5)
+                x1, y1 = pyautogui.position()
+                print("move mouse to (x2,y2)")
+                time.sleep(5)
+                x2, y2 = pyautogui.position()
+                self.scrnshtIntoDb(item_name,x1,y1,x2,y2)
+                os.system('clear')
+                self.showImg(item_name)
+                continue
+
 
     def append_parsed_dir(self,path):
         """pass full path to directory containing images"""
@@ -134,13 +145,16 @@ class ImgDb(object):
 
 if __name__ == "__main__":
     # loads image database
-    imgdb = ImgDb()
+    itmImgDb = ImgDb()
+    itmImgDb.promt_add()
+
     #imgdb.listImgs()
     #imgdb.showImgDb()
     #imgdb.rmImg()
     #img = cv2.imread('/home/jj/tmp/pickpocket.png')
     #img = imgdb.pickled_dict['drop']
-    imgdb.showImg('drop')
+    #imgdb.showImg('drop')
     #img = imgdb.turnBinary(img,'s','a')
-    
     #imgdb.addImg('pickpocket',img)
+
+    #interactive add
