@@ -8,6 +8,7 @@ import random #get random time
 import time #for sleep
 import os
 from modules import Mouse # "Human like" mouse movement
+from modules import RandTime
 # from modules import setup
 from modules import RS # to open bank at Castle Wars
 import Herbdat
@@ -44,17 +45,17 @@ def main(herb_object):
         rs.open_cw_bank()
 
         #give time for window to open up
-        # time.sleep(1.2)
+        RandTime.randTime(0,0,0,1,9,9)
 
-        #check if bank is open, if not end
+        #check if bank is NOT open, if not end
         if not rs.isBankOpen():
             bankchecking +=1
             n_secs = n_secs * bankchecking
 
             time.sleep(n_secs)
-            print(f"Waiting {n_secs} for bank to be open")
+            print(f"Waiting {n_secs}secs for bank to be open")
             continue
-
+        # continues with bank open now...
         # resets bankchecking
         bankchecking = 0
         #deposit all
@@ -62,7 +63,6 @@ def main(herb_object):
         if not rs.isInvEmpty():
             print("depositing all items, to empty out")
             rs.depositAll()
-            
 
         #loop makes sure herbs are withdrawn!
         print("Going into main loop")
@@ -109,7 +109,7 @@ def findHerbInBankInv(herb_object):
     ## debug
 
     # how big in pixels to remove noise
-    kernel = np.ones((5,5), np.uint8)
+    kernel = np.ones((4,4), np.uint8)
 
     # removes noise
     #erosion = cv2.erode(mask, kernel, iterations = 1)
@@ -150,8 +150,8 @@ def findHerbInBankInv(herb_object):
     # makes coords relative to the game window
     x += bankx
     y += banky
-    # creates a list from -20 to 20
-    pixels = [i for i in range(-15,15)]
+    # creates a list from passed ints
+    pixels = [i for i in range(-5,5)]
     # randomly adds value from pixels list
     x += random.choice(pixels)
     y += random.choice(pixels)

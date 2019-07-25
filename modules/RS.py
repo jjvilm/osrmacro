@@ -6,7 +6,7 @@ import subprocess
 import os
 import random
 import time
-
+import pyclick
 # Local Modules
 from modules import Screenshot
 from modules import Mouse
@@ -21,6 +21,8 @@ class Osr_game():
         # object contains window ID and x,y positions
         self.rs_window = setup.Window()
         self.rsx, self.rsy = self.rs_window.position
+        self.hc = pyclick.HumanClicker()
+
 
     def position(self, windowID=''):
         """ Returns top left position of Runescape window"""
@@ -35,8 +37,11 @@ class Osr_game():
         return playScreen, self.rsx, self.rsy
 
     def findOptionClick(self, x,y,option_name):
-        Mouse.moveClick(x, y, 3)
-        time.sleep(1)
+        #Mouse.moveClick(x, y, 3)
+        print(f"Right-Clicking:x{x} y:{y}")
+        self.hc.move((x,y),1)
+        Mouse.click('right')
+        RandTime.randTime(1,0,0,1,9,9)
         """Option name of in Image database only needs to be passed, x,y are obsoleate"""
         from modules import Imgdb
         # Image DB
@@ -46,8 +51,8 @@ class Osr_game():
         # turning template to graysacle if RBG
         if len(template.shape) == 3:
             template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
-
-        template_w, template_h = template.shape[::-1]#Width, height of template image
+        # getting w and h for generating random coords in range
+        template_w, template_h = template.shape[::-1]
 
         rs_window, x, y = self.getPlayingScreen('gray')
 
@@ -61,22 +66,29 @@ class Osr_game():
         for pt in zip(*loc[::-1]):#goes through each found image
             # Draw a rectangle around the matched region.
             # cv2.rectangle(rs_window, pt, (pt[0] + template_w, pt[1] + template_h), (0,255,255), 2)
-            ptx = pt[0]
-            pty = pt[1]
+
+            # creates list of possible coords
+            ptx = [i for i in range(pt[0], pt[0] + template_w)]
+            pty = [i for i in range(pt[1], pt[1] + template_h)]
+            # chooses a single coords from the list
+            ptx = random.choice(ptx)
+            pty = random.choice(pty)
             print(f"ptx{ptx} pty{pty}")
 
             # debug ###
-            # cv2.imshow('img', rs_window)
-            # cv2.waitKey(5000)
-            # cv2.destroyAllWindows()
+            #cv2.imshow('img', rs_window)
+            #cv2.waitKey(5000)
+            #cv2.destroyAllWindows()
 
             # range of x and y to click on.
             # in the options
             #Mouse.randMove(x,y1,x+(w/2),y2, 1)
-            ptx, pty = Mouse.randCoord(pt, template_w, template_h)
-            Mouse.moveClick(ptx,pty, 1)
-            # autopy.mouse.click()#taking out since it does not delay the click
-            RandTime.randTime(1,0,0,1,0,9)
+            #ptx, pty = Mouse.randCoord(pt, template_w, template_h)
+            #Mouse.moveClick(ptx,pty, 1)
+            self.hc.move((ptx,pty),1)
+            self.hc.click()
+            RandTime.randTime(1,0,0,2,9,9)
+
             break
 
 
@@ -153,8 +165,9 @@ class Osr_game():
 
         # Screenshot X button
         closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-        #cv2.imshow('img', closeButton)
-        #cv2.waitKey(0)
+        # cv2.imshow('img', closeButton)
+        # cv2.waitKey(2000)
+        # cv2.destroyAllWindows()
         # Apply hsv ranges
         mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
 
@@ -180,14 +193,18 @@ class Osr_game():
         x1 = random.randrange(x1, x2)
         y1 = random.randrange(y1, y2)
 
-        Mouse.moveClick(x1,y1,1)
+        # Mouse.moveClick(x1,y1,1)
+        self.hc.move((x1, y1), 1)
+        self.hc.click()
 
     def depositAll(self):
         x = self.rsx + random.randint(432,453)
         y = self.rsy + random.randint(324,350)
 
-        Mouse.moveClick(x,y,1)
-        RandTime.randTime(0,0,1,0,0,5)
+        # Mouse.moveClick(x,y,1)
+        self.hc.move((x, y), 1)
+        self.hc.click()
+        #RandTime.randTime(0,0,1,0,0,5)
 
     def countItemInInv(self,template_file,*args):
         """Counts the N of the item passed in INVENTORY
@@ -443,7 +460,8 @@ class Osr_game():
         dilation = cv2.dilate(mask, kernel, iterations = 1)
 
         #cv2.imshow('img', dilation)
-        #cv2.waitKey(0)
+        #cv2.waitKey(2000)
+        #cv2.destroyAllWindows()
 
         # Finds contours
         contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -451,7 +469,10 @@ class Osr_game():
         try:
             # looks for center of grey color with biggest area, > 3000
             for con in contours:
+                #print(cv2.contourArea(con))
                 if cv2.contourArea(con) > 3000:
+                    #print(f"big area found {cv2.contourArea(con)}")
+
                     M = cv2.moments(con)
                     # finds centroid
                     cx,cy = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
@@ -463,7 +484,9 @@ class Osr_game():
 
                     #move click chest
                     Mouse.moveClick(psx,psy,1)
-                    RandTime.randTime(0,0,0,0,9,9)
+                    #pyclick.HumanClicker.move((psx, psy), 1)
+                    #pyclick.HumanClicker.click()
+                    RandTime.randTime(1,0,0,2,9,9)
                     break
         except Exception as e:
             print(f"Bank NOT found!\nMove camera around!\n{e}")
@@ -618,8 +641,9 @@ class Osr_game():
 
         x1,y1,x2,y2 =skills[skill]
         x,y = Mouse.genCoords(x1,y1,x2,y2)
-        Mouse.moveTo(x,y)
-        RandTime.randTime(1,0,0,5,9,9)
+        # Mouse.moveTo(x,y)
+        randS = RandTime.randTime(0,0,1,1,0,9)
+        self.hc.move(x,y,randS)
 
     def logout(self):
         #  Door Button

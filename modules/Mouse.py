@@ -121,17 +121,18 @@ def moveTo(x,y):
         #     break
 
 
-def click(button):
+def click(btn):
+    """Pass btn as 'left' or 'right'"""
     #autopy.mouse.click()
     #
-    pyautogui.mouseDown(button='left')
-    RandTime.randTime(0,1,0,0,2,9)#time between click
-    pyautogui.mouseUp(button='left')
+    pyautogui.mouseDown(button=btn)
+    RandTime.randTime(0,0,0,0,3,9)#time between click
+    pyautogui.mouseUp(button=btn)
 
 
 def moveClick(x,y, button):#moves to random X,Y of found match of template
     moveTo(x,y)
-    RandTime.randTime(0,0,0,0,0,2)
+    # RandTime.randTime(0,0,0,0,0,2)
     #print(f"button passed {button}")
     if button == 1:
         pyautogui.mouseDown(button='left')

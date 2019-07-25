@@ -11,5 +11,5 @@ sudo pacman -S tk (tkinter (tk))
 sudo pacman -S unix-runescape-client
 sudo pacman -S i3 # window manager
 sudo yay -S hdf5
-
+github pyclick
 
