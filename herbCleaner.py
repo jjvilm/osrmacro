@@ -45,7 +45,7 @@ def main(herb_object):
         rs.open_cw_bank()
 
         #give time for window to open up
-        RandTime.randTime(0,0,0,1,9,9)
+        RandTime.randTime(0,0,0,0,9,9)
 
         #check if bank is NOT open, if not end
         if not rs.isBankOpen():
@@ -76,8 +76,11 @@ def main(herb_object):
                 return
 
             # right-clicks to find options menu
-            rs.findOptionClick(herbx,herby,'withdrawAll')
+            #rs.findOptionClick(herbx,herby,'withdrawAll')
             # Mouse.moveClick(herbx,herby,3)
+            rs.hc.move((herbx,herby),1)
+            rs.hc.click()
+            randTime(1,0,0,2,9,9)
 
             # breaks inventory if contains an item
             if not rs.isInvEmpty():
@@ -103,19 +106,25 @@ def findHerbInBankInv(herb_object):
     low = np.array(low)
     high = np.array(high)
     mask = cv2.inRange(bank_screenshot, low, high)
-    ## debug
-    #cv2.imshow('img', mask)
-    #cv2.waitKey(0)
-    ## debug
+    # ## debug
+    # cv2.imshow('img', mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # ## debug
 
     # how big in pixels to remove noise
-    kernel = np.ones((4,4), np.uint8)
+    kernel = np.ones((10,10), np.uint8)
 
     # removes noise
     #erosion = cv2.erode(mask, kernel, iterations = 1)
 
     # increases white
     dilation = cv2.dilate(mask, kernel, iterations = 1)
+    # ## debug
+    # cv2.imshow('dilation', dilation)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # ## debug
 
     contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # fills in the contours in the mask with a rect
@@ -124,21 +133,45 @@ def findHerbInBankInv(herb_object):
         cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
     # result of finding only grimmys in the hsv image
     res = cv2.bitwise_and(bank_screenshot,bank_screenshot, mask = mask.copy())
+    # ## debug
+    # cv2.imshow('res', res)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # ## debug
     # finding the passed herb here based on color range
     low, high = herb_object.hsv_range
     low = np.array(low)
     high = np.array(high)
     herb_mask = cv2.inRange(res, low, high)
     ###########
-    #debug line
-    #cv2.imshow('debug.png', herb_mask)
-    #cv2.waitKey(0)
-    #return
+    # ## debug
+    # cv2.imshow('herb_mask', herb_mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # ## debug
     ###########
+
+    # increases white
+    herb_mask = cv2.dilate(herb_mask, kernel, iterations = 1)
+    # ## debug
+    # cv2.imshow('herb_mask', herb_mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # ## debug
 
     contours, _ = cv2.findContours(herb_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # contour_areas = {}
     # finds center of herb
+    for con in contours:
+        x, y, w, h = cv2.boundingRect(con)
+        cv2.rectangle(herb_mask,(x,y),(x+w,y+h),(255,255,255),-1)
+
+    ## debug
+    # cv2.imshow('herb_mask', herb_mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    ## debug
+    contours, _ = cv2.findContours(herb_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for con in contours:
         M = cv2.moments(con)
         #print(M)
@@ -157,7 +190,7 @@ def findHerbInBankInv(herb_object):
     y += random.choice(pixels)
 
     # returns coords to right click and get options
-    print(f"166:grimmy herb @({x},{y})")
+    print(f"grimmy herb @({x},{y})")
     return x, y
 
 def find_grimmy_herbs_in_inventory(herb_object):
@@ -219,6 +252,8 @@ def find_grimmy_herbs_in_inventory(herb_object):
             for coords in rows:
                 x, y = coords
                 Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
+                #rs.hc.move((x,y),.5)
+                #rs.hc.click()
                 randTime(0,0,0,0,0,7)
                 randTime(0,0,0,0,0,5)
                 randTime(0,0,1,0,0,1)
@@ -230,6 +265,8 @@ def find_grimmy_herbs_in_inventory(herb_object):
             for coords in rows[::-1]:
                 x, y = coords
                 Mouse.moveClick(x,y, 1)#right clicks on given x,y coords
+                #rs.hc.move((x,y),.5)
+                #rs.hc.click()
                 randTime(0,0,0,0,0,7)
                 randTime(0,0,0,0,0,5)
                 randTime(0,0,1,0,0,1)

@@ -33,7 +33,9 @@ class Osr_game():
         """ Returns play screen area as an HSV image,
             and the first point of the image """
 
-        playScreen = Screenshot.shoot(self.rsx, self.rsy,517,362,color)
+        #playScreen = Screenshot.shoot(self.rsx, self.rsy,517,362,color)
+        playScreen = Screenshot.shoot(self.rsx, self.rsy,760,520,color)
+
         return playScreen, self.rsx, self.rsy
 
     def findOptionClick(self, x,y,option_name):
@@ -68,8 +70,8 @@ class Osr_game():
             # cv2.rectangle(rs_window, pt, (pt[0] + template_w, pt[1] + template_h), (0,255,255), 2)
 
             # creates list of possible coords
-            ptx = [i for i in range(pt[0], pt[0] + template_w)]
-            pty = [i for i in range(pt[1], pt[1] + template_h)]
+            ptx = [i for i in range(pt[0]+5, pt[0] + template_w)]
+            pty = [i for i in range(pt[1]+5, pt[1] + template_h)]
             # chooses a single coords from the list
             ptx = random.choice(ptx)
             pty = random.choice(pty)
