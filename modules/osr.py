@@ -1,12 +1,7 @@
 #!/usr/bin/python3
-# RS.py
 import cv2
 import numpy as np
-import subprocess
-import os
-import random
-import time
-import pyclick
+from pyautogui import press
 # Local Modules
 from modules import Screenshot
 from modules import Mouse
@@ -14,206 +9,30 @@ from modules import RandTime
 from modules import Match
 from modules import Keyboard
 from modules import setup
+from pyclick import HumanClicker
+from random import choice,randint,triangular
+from subprocess import check_output
+from os import system,getcwd
 
-
-class Osr_game():
+class Frame():
     def __init__(self):
         # object contains window ID and x,y positions
         self.rs_window = setup.Window()
         self.rsx, self.rsy = self.rs_window.position
-        self.hc = pyclick.HumanClicker()
-
-
-    def position(self, windowID=''):
-        """ Returns top left position of Runescape window"""
-        return self.rsx, self.rsy
-
-
-    def getPlayingScreen(self, color):
-        """ Returns play screen area as an HSV image,
-            and the first point of the image """
-
-        #playScreen = Screenshot.shoot(self.rsx, self.rsy,517,362,color)
-        playScreen = Screenshot.shoot(self.rsx, self.rsy,760,520,color)
-
-        return playScreen, self.rsx, self.rsy
-
-    def findOptionClick(self, x,y,option_name):
-        #Mouse.moveClick(x, y, 3)
-        print(f"Right-Clicking:x{x} y:{y}")
-        self.hc.move((x,y),1)
-        Mouse.click('right')
-        RandTime.randTime(1,0,0,1,9,9)
-        """Option name of in Image database only needs to be passed, x,y are obsoleate"""
-        from modules import Imgdb
-        # Image DB
-        idb = Imgdb.ImgDb()
-        #name of option loaded from image db
-        template = idb.pickled_dict[option_name]
-        # turning template to graysacle if RBG
-        if len(template.shape) == 3:
-            template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
-        # getting w and h for generating random coords in range
-        template_w, template_h = template.shape[::-1]
-
-        rs_window, x, y = self.getPlayingScreen('gray')
-
-
-        res = cv2.matchTemplate(rs_window,template,cv2.TM_CCOEFF_NORMED)
-        threshold = 1
-        # Store the coordinates of matched area in a numpy array
-        loc = np.where( res >= threshold)
-
-        # clicks on option here when found in pattern
-        for pt in zip(*loc[::-1]):#goes through each found image
-            # Draw a rectangle around the matched region.
-            # cv2.rectangle(rs_window, pt, (pt[0] + template_w, pt[1] + template_h), (0,255,255), 2)
-
-            # creates list of possible coords
-            ptx = [i for i in range(pt[0]+5, pt[0] + template_w)]
-            pty = [i for i in range(pt[1]+5, pt[1] + template_h)]
-            # chooses a single coords from the list
-            ptx = random.choice(ptx)
-            pty = random.choice(pty)
-            print(f"ptx{ptx} pty{pty}")
-
-            # debug ###
-            #cv2.imshow('img', rs_window)
-            #cv2.waitKey(5000)
-            #cv2.destroyAllWindows()
-
-            # range of x and y to click on.
-            # in the options
-            #Mouse.randMove(x,y1,x+(w/2),y2, 1)
-            #ptx, pty = Mouse.randCoord(pt, template_w, template_h)
-            #Mouse.moveClick(ptx,pty, 1)
-            self.hc.move((ptx,pty),1)
-            self.hc.click()
-            RandTime.randTime(1,0,0,2,9,9)
-
-            break
-
-
-    def center_window(self):
-        display_x = subprocess.check_output(['xdotool','getdisplaygeometry'])
-        display_x = display_x[:4]
-        display_x = int(display_x)
-        display_x //= 2
-
-        pos = display_x - 383
-        #moves window to center of screen
-        os.system('xdotool search --name Old windowmove {0} 0'.format(pos))
-
-    def get_bag(self, bagornot, *args):
-        #x1, y1 = position() #Get runescapes top-left coords
-
-        # bag postions, x1,y1-x2,y2
-        x1 = self.rsx + 565
-        y1 = self.rsy + 239
-        x2 = self.rsx + 721
-        y2 = self.rsy + 485
-
-        try: # block to allow this func to also get 'hsv' img objects
-            for arg in args:
-                if arg == 'hsv':
-                    rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-                    return rs_bag, x1, y1
-                if arg == 'gray':
-                    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-                    return rs_bag, x1, y1
-        except:
-            pass
-
-        rs_bag = Screenshot.shoot(x1,y1,x2,y2)
-
-        if bagornot == 'only':
-            return rs_bag
-        else:
-            return rs_bag, x1, y1
-
-    def getBankWindow(self, *args):
-        """ window only includes the items in bank, to tabs or buttons"""
-        #creates bank window boundaries
-        x1 = self.rsx + 70
-        y1 = self.rsy + 105
-        x2 = self.rsx + 440
-        y2 = self.rsy + 319
-        # passing 'hsv' to this function returns hsv image
-        try:
-            if args[0] == 'hsv':
-                #gets screenshot object
-                bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
-                ##### DEBUG
-                #cv2.imshow('bankwindow', bankWindow)
-                #cv2.waitKey(0)
-                ####
-                return bankWindow, x1, y1
-        except:
-            #gets screenshot object
-            bankWindow = Screenshot.shoot(x1,y1,x2,y2)
-            return bankWindow, x1, y1
-
-    def isBankOpen(self):
-        """checks to see if bank is open, returns True, else False"""
-        # black X button hsv values
-        buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
-        # gets current game's position
-        #self.rsx,rsy = self.position()
-        #button X on bank window coords
-        x1 = self.rsx+484
-        y1 = self.rsy+44
-        x2 = self.rsx+497
-        y2 = self.rsy+59
-
-        # Screenshot X button
-        closeButton = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-        # cv2.imshow('img', closeButton)
-        # cv2.waitKey(2000)
-        # cv2.destroyAllWindows()
-        # Apply hsv ranges
-        mask = cv2.inRange(closeButton,buttonx_hsv[0], buttonx_hsv[1])
-
-        # counts white pixels in X
-        counter = 0
-        for colors in mask:
-            for color_value in colors:
-                if color_value == 255:
-                    counter += 1
-        #print(counter)
-        #cv2.imshow('img', mask)
-        #cv2.waitKey(0)
-        # 54 = Bank is open
-        if counter == 54:
-            return True
-        return False
-
+        self.hc = HumanClicker()
     def closeBank(self):
-        x1 = self.rsx+484
-        y1 = self.rsy+44
-        x2 = self.rsx+497
-        y2 = self.rsy+59
-        x1 = random.randrange(x1, x2)
-        y1 = random.randrange(y1, y2)
-
-        # Mouse.moveClick(x1,y1,1)
-        self.hc.move((x1, y1), 1)
-        self.hc.click()
-
+        """ Keybinding 'esc' should be enabled """
+        press('esc', interval=triangular(0.05,0.3))
     def depositAll(self):
-        x = self.rsx + random.randint(432,453)
-        y = self.rsy + random.randint(324,350)
-
-        # Mouse.moveClick(x,y,1)
-        self.hc.move((x, y), 1)
-        self.hc.click()
-        #RandTime.randTime(0,0,1,0,0,5)
-
+        x = self.rsx + triangular(432,453)
+        y = self.rsy + triangular(324,350)
+        self.hc.click(x=x,y=y)
     def countItemInInv(self,template_file,*args):
         """Counts the N of the item passed in INVENTORY
         if a number is passed it will count up to that"""
         #checks to see wheater to add cur dir or not
         if "/" not in template_file:
-            template_file = os.getcwd()+"/imgs/"+template_file
+            template_file = getcwd()+"/imgs/"+template_file
         rs_bag = self.get_bag('only') #Screenshot taken here,
         #saves image for DEBUG
         #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
@@ -228,7 +47,6 @@ class Osr_game():
             count += 1
         #print(count)
         return count
-
     def inventory_counter(self, *args):
         """Counts the number of slots being used in inventory"""
         """pass a func to do something with each slot's ROI, then upper and lower """
@@ -239,8 +57,8 @@ class Osr_game():
         bag, bagx,bagy = self.get_bag('bag and coords', 'hsv')
         # HSV range passed in args
         if args:
-            low = args[1]
-            high = args[2]
+            low = np.array(args[1])
+            high = np.array(args[2])
         # HSV range of Empy Inventory
         else:
             low = np.array([10,46,58])
@@ -322,7 +140,6 @@ class Osr_game():
 
         # returns the N of items in inv
         return count
-
     def invSlotIter(self):
         # loads database of items to drop
         item_database = {}
@@ -423,29 +240,6 @@ class Osr_game():
                 cv2.waitKey(0)
 
         return count
-
-    def isInvEmpty(self):
-        bag, bagx,bagy = self.get_bag('bag and coords', 'hsv')
-        # looks for color of empty inv
-        low = np.array([10,46,58])
-        high= np.array([21,92,82])
-        # applies mask
-        mask = cv2.inRange(bag, low, high)
-        # removes any noise
-        kernel = np.ones((5,5), np.uint8)
-        closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-        # cv2.imshow('img', closing)
-        # cv2.waitKey(100)
-        # cv2.destroyAllWindows()
-
-        # looks to see if the inv is all white pixels
-        # returns true, else False
-        if (closing.view() == 255).all():
-            # print("Inventory is Empty")
-            return True
-        # print("Inventory is Full")
-        return False
-
     def open_cw_bank(self):
         """Finds the visiblest square of the chest in castle wars bank, wors better when viewing from above at shortest distance."""
 
@@ -481,18 +275,13 @@ class Osr_game():
                     psx += cx
                     psy += cy
                     # adds randomness to coords
-                    psx += random.randint(-17,17)
-                    psy += random.randint(-17,17)
+                    psx += triangular(-17,17)
+                    psy += triangular(-17,17)
 
-                    #move click chest
-                    Mouse.moveClick(psx,psy,1)
-                    #pyclick.HumanClicker.move((psx, psy), 1)
-                    #pyclick.HumanClicker.click()
-                    RandTime.randTime(1,0,0,2,9,9)
+                    self.hc.click(x=psx,y=psy)
                     break
         except Exception as e:
             print(f"Bank NOT found!\nMove camera around!\n{e}")
-
     def find_bank_booth(self):
         """Finds bank booth and clicks it.  Returns True if found, else False"""
 
@@ -503,7 +292,7 @@ class Osr_game():
         # find glasswindow for bankbooth
         mask = cv2.inRange(play_area_screen, np.array(bank_booth_glass_window[0]), np.array(bank_booth_glass_window[1]))
 
-        # gets RS window's position
+        # gets osr window's position
         #rsx,rsy = position()
 
         psx += self.rsx
@@ -529,21 +318,19 @@ class Osr_game():
                     psx += cx
                     psy += cy
                     # adds randomness to coords
-                    psx += random.randint(-7,7)
-                    psy += random.randint(-7,7)
+                    psx += triangular(-7,7)
+                    psy += triangular(-7,7)
 
-                    #move click
-                    Mouse.moveClick(psx,psy,1)
+                    self.hc.click(x=psx,y=psy)
                     RandTime.randTime(0,0,0,0,9,9)
                     return 1
         except Exception as e:
             print(f"Bank NOT found!\nMove camera around!\n{e}")
         # returns False if bank not found
         return 0
-
     def antiban(self, skill):
         #rsx,rsy = position()
-        rn =random.randint(0,99)
+        rn =randint(0,99)
         if rn == 0:
             print("Starting antiban")
             # Tuples of locations
@@ -565,7 +352,6 @@ class Osr_game():
             self.skillsHover(self.rsx,self.rsy)
             self.moveback(skill)
             return True
-
     def moveback(self, skill):
         if skill == 'magic':
             self.press_button('magic')
@@ -573,10 +359,9 @@ class Osr_game():
             #moves back to bag
             self.press_button('inventory')
         print("Antiban end")
-
     def greetings(self, skill):
-        n = random.randint(0,10)
-        if random.randint(0,10):
+        n = randint(0,10)
+        if randint(0,10):
             if n == 0:
                 Keyboard.type_this("What's going on guys?")
             elif n == 1:
@@ -604,10 +389,9 @@ class Osr_game():
 
 
         RandTime.randTime(5,0,0,13,9,9)
-
     def skillsHover(self, rsx,rsy):
             """Hovers over n skills by n times"""
-            n = random.randint(0,2)
+            n = randint(0,2)
             if n > 0:
                 # Tuples of locations
                 stats_btn = Mouse.genCoords(567,194,589,215)
@@ -619,7 +403,6 @@ class Osr_game():
                     # Randomly hovers over a random skill
                     Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
                     RandTime.randTime(1,0,0,2,9,9)
-
     def skillHover(self, skill):
         """Hovers over passed skill from 1-5 secs"""
         #Coordinates of skill's button
@@ -646,7 +429,6 @@ class Osr_game():
         # Mouse.moveTo(x,y)
         randS = RandTime.randTime(0,0,1,1,0,9)
         self.hc.move(x,y,randS)
-
     def logout(self):
         #  Door Button
         x,y = Mouse.genCoords(636,495,650,515)
@@ -659,7 +441,6 @@ class Osr_game():
         x += self.rsx
         y += self.rsy
         Mouse.moveClick(x,y,1)
-
     def press_button(self, button, *args):
         """Presses button on random coordinates stored in the buttons dictionary.  Returns button coords if 'coors' passed as argument"""
         buttons = {
@@ -694,7 +475,238 @@ class Osr_game():
         x,y = Mouse.genCoords(x1,y1,x2,y2)
         #moves to those coords
         Mouse.moveClick(x,y,1)
+    def findOptionClick(self, x,y,option_name):
+            #Mouse.moveClick(x, y, 3)
+            print(f"Right-Clicking:x{x} y:{y}")
+            self.hc.click(x=x,y=y)
+            RandTime.randTime(1,0,0,1,9,9)
+            """Option name of in Image database only needs to be passed, x,y are obsoleate"""
+            from modules import Imgdb
+            # Image DB
+            idb = Imgdb.ImgDb()
+            #name of option loaded from image db
+            template = idb.pickled_dict[option_name]
+            # turning template to graysacle if RBG
+            if len(template.shape) == 3:
+                template = cv2.cvtColor(template,cv2.COLOR_RGB2GRAY)
+            # getting w and h for generating random coords in range
+            template_w, template_h = template.shape[::-1]
 
+            rs_window, x, y = self.getPlayingScreen('gray')
+
+
+            res = cv2.matchTemplate(rs_window,template,cv2.TM_CCOEFF_NORMED)
+            threshold = 1
+            # Store the coordinates of matched area in a numpy array
+            loc = np.where( res >= threshold)
+
+            # clicks on option here when found in pattern
+            for pt in zip(*loc[::-1]):#goes through each found image
+                # Draw a rectangle around the matched region.
+                # cv2.rectangle(rs_window, pt, (pt[0] + template_w, pt[1] + template_h), (0,255,255), 2)
+
+                # creates list of possible coords
+                ptx = [i for i in range(pt[0]+5, pt[0] + template_w)]
+                pty = [i for i in range(pt[1]+5, pt[1] + template_h)]
+                # chooses a single coords from the list
+                ptx = choice(ptx)
+                pty = choice(pty)
+                print(f"ptx{ptx} pty{pty}")
+
+                # debug ###
+                #cv2.imshow('img', rs_window)
+                #cv2.waitKey(5000)
+                #cv2.destroyAllWindows()
+
+                # range of x and y to click on.
+                # in the options
+                #Mouse.randMove(x,y1,x+(w/2),y2, 1)
+                #ptx, pty = Mouse.randCoord(pt, template_w, template_h)
+                #Mouse.moveClick(ptx,pty, 1)
+                self.hc.click(x=ptx,y=pty)
+                RandTime.randTime(1,0,0,2,9,9)
+                break
+    def center_window(self):
+            display_x = check_output(['xdotool','getdisplaygeometry'])
+            display_x = display_x[:4]
+            display_x = int(display_x)
+            display_x //= 2
+
+            pos = display_x - 383
+            #moves window to center of screen
+            system('xdotool search --name Old windowmove {0} 0'.format(pos))
+    def position(self, windowID=''):
+        """ Returns top left position of Runescape window"""
+        return self.rsx, self.rsy
+    def getPlayingScreen(self, color):
+        """ Returns play screen area as an HSV image,
+            and the first point of the image """
+
+        #playScreen = Screenshot.shoot(self.rsx, self.rsy,517,362,color)
+        playScreen = Screenshot.shoot(self.rsx, self.rsy,760,520,color)
+
+        return playScreen, self.rsx, self.rsy
+    def getMinimap(self):
+        """ INCOMPLETE Returns minimap area as an HSV image,
+            and the first point of the image """
+        # bag postions, x1,y1-x2,y2
+        x1 = self.rsx + 570
+        y1 = self.rsy + 30
+        x2 = self.rsx + 720
+        y2 = self.rsy + 170
+        minimap = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        return minimap,x1, y1
+    def get_bag(self, return_coords=False, *args):
+        #x1, y1 = position() #Get runescapes top-left coords
+
+        # bag postions, x1,y1-x2,y2
+        x1 = self.rsx + 565
+        y1 = self.rsy + 239
+        x2 = self.rsx + 721
+        y2 = self.rsy + 485
+
+        try: # block to allow this func to also get 'hsv' img objects
+            for arg in args:
+                if arg == 'hsv':
+                    rs_bag = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+                    return rs_bag, x1, y1
+                if arg == 'gray':
+                    rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+                    return rs_bag, x1, y1
+        except:
+            pass
+
+        rs_bag = Screenshot.shoot(x1,y1,x2,y2)
+
+        if return_coords:
+            return rs_bag, x1, y1
+        else:
+            return rs_bag
+    def getBankWindow(self, *args):
+        """ window only includes the items in bank, to tabs or buttons"""
+        #creates bank window boundaries
+        x1 = self.rsx + 70
+        y1 = self.rsy + 105
+        x2 = self.rsx + 440
+        y2 = self.rsy + 319
+        # passing 'hsv' to this function returns hsv image
+        try:
+            if args[0] == 'hsv':
+                #gets screenshot object
+                bankWindow = Screenshot.shoot(x1,y1,x2,y2, 'hsv')
+                ##### DEBUG
+                #cv2.imshow('bankwindow', bankWindow)
+                #cv2.waitKey(0)
+                ####
+                return bankWindow, x1, y1
+        except:
+            #gets screenshot object
+            bankWindow = Screenshot.shoot(x1,y1,x2,y2)
+            return bankWindow, x1, y1
+    def isBankOpen(self):
+        """checks to see if bank is open, returns True, else False"""
+        # black X button hsv values
+        buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
+        # gets current game's position
+        #self.rsx,rsy = self.position()
+        #button X on bank window coords
+        x1 = self.rsx+484
+        y1 = self.rsy+44
+        x2 = self.rsx+497
+        y2 = self.rsy+59
+
+        # Screenshot X button
+        img = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        # cv2.imshow('img', img)
+        # cv2.waitKey(2000)
+        # cv2.destroyAllWindows()
+        # Apply hsv ranges
+        mask = cv2.inRange(img,buttonx_hsv[0], buttonx_hsv[1])
+
+        # counts white pixels in X
+        counter = 0
+        for colors in mask:
+            for color_value in colors:
+                if color_value == 255:
+                    counter += 1
+        #print(counter)
+        #cv2.imshow('img', mask)
+        #cv2.waitKey(0)
+        # 54 = Bank is open
+        if counter == 54:
+            return True
+        return False
+    def isCraftWinOpen(self):
+        """checks to see if bank is open, returns True, else False"""
+        # black X button hsv values
+        buttonx_hsv = (np.array([0,254,0]),np.array([179,255,255]))
+        # gets current game's position
+        #self.rsx,rsy = self.position()
+        #button X on bank window coords
+        x1 = self.rsx+489
+        y1 = self.rsy+62
+        x2 = self.rsx+497
+        y2 = self.rsy+72
+
+        # Screenshot X button
+        img = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        # cv2.imshow('img', img)
+        # cv2.waitKey(2000)
+        # cv2.destroyAllWindows()
+        # Apply hsv ranges
+        mask = cv2.inRange(img,buttonx_hsv[0], buttonx_hsv[1])
+
+        # counts white pixels in X
+        counter = 0
+        for colors in mask:
+            for color_value in colors:
+                if color_value == 255:
+                    counter += 1
+        #cv2.imshow('img', mask)
+        #cv2.waitKey(0)
+        # 54 = Bank is open
+        # print(counter) # uncomment to show what number should be on next line
+        if counter == 38:
+            return True
+        return False
+    def isRunActive(self):
+        """checks to see if run is active, returns True, else False"""
+        # checking color yellow on boot
+        run_icon = (np.array([25,135,236]),np.array([26,145,237]))
+        x1 = self.rsx+564
+        y1 = self.rsy+152
+        x2 = self.rsx+578
+        y2 = self.rsy+160
+
+        img = Screenshot.shoot(x1,y1,x2,y2,'hsv')
+        # Apply hsv ranges
+        mask = cv2.inRange(img,run_icon[0], run_icon[1])
+        # if true run is off
+        if mask.any():
+            return True
+        else:
+            return False
+    def isInvEmpty(self):
+        bag, bagx,bagy = self.get_bag('bag and coords', 'hsv')
+        # looks for color of empty inv
+        low = np.array([10,46,58])
+        high= np.array([21,92,82])
+        # applies mask
+        mask = cv2.inRange(bag, low, high)
+        # removes any noise
+        kernel = np.ones((5,5), np.uint8)
+        closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+        # cv2.imshow('img', closing)
+        # cv2.waitKey(100)
+        # cv2.destroyAllWindows()
+
+        # looks to see if the inv is all white pixels
+        # returns true, else False
+        if (closing.view() == 255).all():
+            # print("Inventory is Empty")
+            return True
+        # print("Inventory is Full")
+        return False
     def is_button_selected(self, button_name):
         """Returns true if button is selected, else False"""
         x1, y1, x2, y2 = self.press_button(button_name, 'coords')
@@ -712,9 +724,9 @@ class Osr_game():
         # print('{} is NOT selected'.format(button_name))
         return 0
 
-    def play_sound(self):
-        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
 
+    def play_sound(self):
+        system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
 
 if __name__ == '__main__':
     osrs = Osr_game()

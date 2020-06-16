@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+# should be deprecated! use pyclick instead to handle mouse
+# it has a better humanlike coded script
 from modules import RandTime
 import pyautogui
 import random

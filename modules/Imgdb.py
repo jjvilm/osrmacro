@@ -1,4 +1,4 @@
-from modules import Screenshot
+#from modules import Screenshot
 #import Screenshot
 import cv2
 import numpy as np
@@ -149,8 +149,8 @@ if __name__ == "__main__":
     itmImgDb = ImgDb()
     itmImgDb.promt_add()
 
-    #imgdb.listImgs()
-    #imgdb.showImgDb()
+    #itmImgDb.listImgs()
+    #itmImgDb.showImgDb()
     #imgdb.rmImg()
     #img = cv2.imread('/home/jj/tmp/pickpocket.png')
     #img = imgdb.pickled_dict['drop']
