@@ -3,18 +3,19 @@ import os
 import subprocess
 
 class Window():
-    def __init__(self):
+    def __init__(self,setupwindow=True):
+        self._setupwindow = setupwindow
         self.windowID = self.windowSelection() # makes you select window to get ID to reference later
-        self.position = None
+        self.position = (0,0)
         #self.inOrigin() # moves window to 0,0
-        if self.position == None:
-            self.win_stats() #gets stats of window
-            self.setDefaults()#sets predefined default window size
+
 
     def windowSelection(self, window_n=None):
-        print("Please select window to use")
-        windowID = subprocess.getoutput('xdotool selectwindow')
-        return windowID
+        if self._setupwindow:
+            print("Please select window to use")
+            windowID = subprocess.getoutput('xdotool selectwindow')
+            return windowID
+
 
     def win_stats(self):
         #print(subprocess.getoutput('xdotool getwindowname {}'.format(self.windowID)))
@@ -25,7 +26,7 @@ class Window():
         opnprnts = geometry.find("(")
         x = int(geometry[colon +1: comma])
         y = int(geometry[comma +1: opnprnts])
-        
+
         self.position = (x,y)
         return (x,y)
 
@@ -57,6 +58,3 @@ if __name__ == '__main__':
     X = Window()
     X.inOrigin()
     #X.centering()
-
-
-

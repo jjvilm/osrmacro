@@ -15,9 +15,9 @@ from subprocess import check_output
 from os import system,getcwd
 
 class Frame():
-    def __init__(self):
+    def __init__(self,setupwindow=True):
         # object contains window ID and x,y positions
-        self.rs_window = setup.Window()
+        self.rs_window = setup.Window(setupwindow=setupwindow)
         self.rsx, self.rsy = self.rs_window.position
         self.hc = HumanClicker()
     def closeBank(self):
@@ -47,7 +47,7 @@ class Frame():
             count += 1
         #print(count)
         return count
-    def inventory_counter(self, *args):
+    def invCount(self, *args):
         """Counts the number of slots being used in inventory"""
         """pass a func to do something with each slot's ROI, then upper and lower """
         # makes sure inventory button is selected
@@ -127,10 +127,10 @@ class Frame():
                     passed_func = args[0]
                     #x,y,_,_ = cv2.boundingRect(slot_roi)
                     #_, psx, psy = getPlayingScreen()
-                    slot_x += bagx# + psx
-                    slot_y += bagy# + psy
+                    slot_x += int(bagx + triangular(1,40))
+                    slot_y += int(bagy + triangular(5,30))
                     passed_func(slot_x,slot_y)
-                    continue
+                    return
 
                 # just count
                 else:

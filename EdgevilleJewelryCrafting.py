@@ -3,13 +3,14 @@ import functools
 import cv2
 import numpy as np
 from modules import Screenshot, osr
-#from pyautogui import click
 from random import triangular
 from time import sleep,time
 from datetime import datetime
 
 
 def decorator(func):
+    """ used to allow a passable variable to object's methods,
+    to terminate program """
     @functools.wraps(func)
     def wrapper_decorator(*args, **kwargs):
         # Do something before
@@ -32,15 +33,20 @@ class Craft():
         self.terminate = 0
     def getJewelInfo(self,*args):
         print(args)
+        rsx = self.Game.rsx
+        rsy = self.Game.rsy
         # set([[<low hsv>],[high hsv]],((<ring loc>),(<bracelet loc>)) )
-        jewels = {  'diamond':([[0,4,168],[1,6,169]],
-                        (self.Game.rsx + 270,self.Game.rsy + 190)),
-                    'ruby':([[0,227,79],[4,245,99]],
-                        (self.Game.rsx + 220,self.Game.rsy + 192)),
+        jewels = {  'diamond':([[0,4,168],[1,6,169]],#hsv
+                        (rsx + 270, rsy + 190)),#coords
+                    'ruby':([[0,227,79], [4,245,99]],
+                        (rsx + 220, rsy + 192)),
                     'emerald':([[56,202,188],[57,223,189]],
-                        (self.Game.rsx + 160, self.Game.rsy + 130),#emerald ring coords
-                        (self.Game.rsx + 170, self.Game.rsy + 310)),#bracelet
+                        (rsx + 160, rsy + 130),#emerald ring coords
+                        (rsx + 170, rsy + 310)),#bracelet
+                    'topaz':([[162,223,80],[169,233,180]],
+                        (rsx + 227, rsy + 219)),#ammy
                     'necklace':([[0,204,0],[26,235,255]]),
+                    'silver':([[118,17,76],[120,21,185]])
                         }
         return jewels[args[0]]
     @decorator
@@ -146,7 +152,7 @@ class Craft():
         tries = 0
         while tries < 3:
             bag,bx,by = self.Game.get_bag(True, 'hsv')
-            jewlry = self.getJewelInfo('necklace')
+            jewlry = self.getJewelInfo('silver')
             low = np.array(jewlry[0])
             high= np.array(jewlry[1])
             mask = cv2.inRange(bag,low,high)
@@ -218,7 +224,9 @@ class Craft():
             self.terminate = 1
             print(f"No 1st RAW item:{self.jewel}")
         # Gold bar
-        obj =  [ [23,224,177],[24,226,220] ]
+        #obj =  [ [23,224,177],[24,226,220] ]
+        # silver bar
+        obj = [[118,17,76],[120,21,185]]
         low = np.array(obj[0])
         high= np.array(obj[1])
         mask = cv2.inRange(bank,low,high)
@@ -280,7 +288,7 @@ class Craft():
     def checkRawMaterials(self,*args):
         pass
 def main():
-    G = Craft('emerald')
+    G = Craft('topaz')
     iteration = 1
     average_time = 0
     while iteration < 100 and not G.terminate:

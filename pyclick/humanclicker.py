@@ -27,10 +27,12 @@ class HumanClicker():
             pyautogui.moveTo(point)
 
     def click(self,x=None,y=None,button='left', clicks=1, duration=0,interval=0.25):
-        interval = triangular(0.05,0.3)
-        # print(f"Click interval={interval:.2f}")
-        if x == None:
-            pyautogui.click(button=button, clicks=clicks, interval=interval)
-        else:
-            self.move((x,y))
-            pyautogui.click(button=button, clicks=clicks, duration=duration,interval=interval)
+        for _ in range(clicks):
+            interval = triangular(0.05,0.4)
+            # print(f"Click interval={interval:.2f}")
+            if x == None:
+                pyautogui.click(button=button, clicks=clicks, interval=interval)
+            else:
+                if pyautogui.position() != (x,y):
+                    self.move((x,y))
+                pyautogui.click(button=button, clicks=1, duration=duration,interval=interval)

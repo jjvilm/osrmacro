@@ -1,15 +1,11 @@
-sudo pip3 install numpy 1.16.4
-sudo pip3 install pyscreenshot 0.5.1
-sudo pip3 install autopy
-sudo pip3 install pyautogui
-sudo pip3 install pillow 6.1.0
-sudo pacman -S python-pip for python3
-sudo pacman -S opencv 3.1.0-3+
-sudo pacman -S scrot or imagemagick (image backend)
-sudo pacman -S xdotool
-sudo pacman -S tk (tkinter (tk))
-sudo pacman -S unix-runescape-client
-sudo pacman -S i3 # window manager
-sudo yay -S hdf5
-github pyclick
-
+autopy==4.0.0
+html5lib==1.0.1
+matplotlib==3.2.2
+numpy==1.18.5
+Pillow==6.2.1
+PyAutoGUI==0.9.50
+pyclick==0.0.2
+pynput==1.6.8
+PyQt5==5.15.0
+pyscreenshot==2.2
+tk==0.1.0
