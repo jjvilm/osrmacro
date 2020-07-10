@@ -6,8 +6,8 @@ import numpy as np
 from modules import Screenshot
 from modules import Mouse
 from pyclick import HumanClicker
-from math import sqrt 
-from random import randint, random
+from math import sqrt
+from random import randint, random, triangular
 
 
 #import autopy
@@ -18,6 +18,7 @@ class Enemy():
         self.mask = None
         # indicates weather enemy is targeted and being attacked
         self.targete = 0
+        self.fight_length = 0
 
     def getHealth(self):
         # green color
@@ -37,20 +38,24 @@ class Enemy():
 def main_run():
     # loop while waiting on emey to die
     def wait_loop():
+        health_counter = 1
         enemy = Enemy()
         #waits until enemy health is 0
-        while 1:
+        start_time = time.time()
+        while health_counter != 50:
             enemy.getHealth()
-            #cv2.imshow('health-hsv', enemy.health_img)
-            #cv2.imshow('mask', enemy.mask)
-            #cv2.waitKey(1)
+            cv2.imshow('health-hsv', enemy.health_img)
+            cv2.imshow('mask', enemy.mask)
+            cv2.waitKey(1)
             if enemy.health == 0:
                 #time.sleep(random())
+                print(f'Fight took:{time.time()-start_time:.2f} secs\nHealth Counter={health_counter}')
+                health_counter = 1
                 return
+            health_counter += 1
             #time.sleep(1+random())
 
 
-    set_nu = 100
     # initialize HumanClicker object
     hc = HumanClicker()
 
@@ -80,7 +85,7 @@ def main_run():
         for con in (contours):
             area =  cv2.contourArea(con)
             if area > 50:
-                M = cv2.moments(con) 
+                M = cv2.moments(con)
                 #print(area)
                 cx = int(M['m10']/M['m00'])
                 cy = int(M['m01']/M['m00'])
@@ -107,14 +112,13 @@ def main_run():
         cx, cy = distances[min_distance]
 
         # move the mouse to position (100,100) on the screen in approximately 2 seconds
-        hc.move((cx,cy),random())
-        Mouse.moveClick(cx,cy,1)
+        hc.click(x=cx,y=cy)
         #autopy.mouse.move(cx,cy)
         #Mouse.moveTo(cx,cy)
         # wait after clicking to be able to see health box on top top of playscreen
-        time.sleep(2)
-        wait_loop()
-        #time.sleep(random())
+        # time.sleep(2)
+        # wait_loop()
+        time.sleep(triangular(14,29)/1.5)
         # resets time to wait
         secs_wait = 1
 

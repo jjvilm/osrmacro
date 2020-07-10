@@ -32,6 +32,7 @@ class Craft():
         self.run_energy = True
         self.terminate = 0
     def getJewelInfo(self,*args):
+        """ returns hsv values of items passed to find in bank"""
         print(args)
         rsx = self.Game.rsx
         rsy = self.Game.rsy
@@ -46,7 +47,9 @@ class Craft():
                     'topaz':([[162,223,80],[169,233,180]],
                         (rsx + 227, rsy + 219)),#ammy
                     'necklace':([[0,204,0],[26,235,255]]),
-                    'silver':([[118,17,76],[120,21,185]])
+                    'silver':([[118,17,76],[120,21,185]]),
+                    'gold':([[23,224,177],[24,226,220]],
+                        (rsx + 77, rsy + 127)) # gold rings coords
                         }
         return jewels[args[0]]
     @decorator
@@ -149,10 +152,12 @@ class Craft():
                 return
     @decorator
     def depositJewelry(self,*args):
+        self.Game.depositAll()
+        return
         tries = 0
         while tries < 3:
             bag,bx,by = self.Game.get_bag(True, 'hsv')
-            jewlry = self.getJewelInfo('silver')
+            jewlry = self.getJewelInfo('gold')[0]
             low = np.array(jewlry[0])
             high= np.array(jewlry[1])
             mask = cv2.inRange(bag,low,high)
@@ -190,43 +195,43 @@ class Craft():
     def withdrawMaterials(self,*args):
         # Taking out item from bank window
         bank, bx, by = self.Game.getBankWindow('hsv')
-
-        jewel = self.getJewelInfo(self.jewel)[0]
-
-        low = np.array(jewel[0])
-        high= np.array(jewel[1])
-        mask = cv2.inRange(bank,low,high)
-
-        # cv2.imshow('mask',mask)
-        # cv2.waitKey(1)
-
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        #  Boudning rectangle
-        try:
-            for cnt in contours:
-                # creates a white rectangle around items
-                # x,y,w,h = cv2.boundingRect(cnt)
-                # cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
-
-                M = cv2.moments(cnt)
-                # center of bank icon found on minimap
-                cx = int(M['m10']/M['m00'])
-                cy = int(M['m01']/M['m00'])
-                rx = int(triangular(-7,7))
-                ry = int(triangular(-10,10))
-                x = cx+rx+bx
-                y = cy+ry+by
-                #self.Game.hc.move((x,y),duration=self.rinterval('duration'))
-                self.Game.hc.click(x=x,y=y)
-                #print(f"{x,y}")
-                break
-        except:
-            self.terminate = 1
-            print(f"No 1st RAW item:{self.jewel}")
+        # actual jewel like gems
+        # jewel = self.getJewelInfo(self.jewel)[0]
+        #
+        # low = np.array(jewel[0])
+        # high= np.array(jewel[1])
+        # mask = cv2.inRange(bank,low,high)
+        #
+        # # cv2.imshow('mask',mask)
+        # # cv2.waitKey(1)
+        #
+        # contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # #  Boudning rectangle
+        # try:
+        #     for cnt in contours:
+        #         # creates a white rectangle around items
+        #         # x,y,w,h = cv2.boundingRect(cnt)
+        #         # cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
+        #
+        #         M = cv2.moments(cnt)
+        #         # center of bank icon found on minimap
+        #         cx = int(M['m10']/M['m00'])
+        #         cy = int(M['m01']/M['m00'])
+        #         rx = int(triangular(-7,7))
+        #         ry = int(triangular(-10,10))
+        #         x = cx+rx+bx
+        #         y = cy+ry+by
+        #         #self.Game.hc.move((x,y),duration=self.rinterval('duration'))
+        #         self.Game.hc.click(x=x,y=y)
+        #         #print(f"{x,y}")
+        #         break
+        # except:
+        #     self.terminate = 1
+        #     print(f"No 1st RAW item:{self.jewel}")
         # Gold bar
-        #obj =  [ [23,224,177],[24,226,220] ]
+        obj =  [ [23,224,177],[24,226,220] ]
         # silver bar
-        obj = [[118,17,76],[120,21,185]]
+        #obj = [[118,17,76],[120,21,185]]
         low = np.array(obj[0])
         high= np.array(obj[1])
         mask = cv2.inRange(bank,low,high)
@@ -249,6 +254,8 @@ class Craft():
                 #self.Game.hc.move((x,y),duration=self.rinterval('duration'))
                 self.Game.hc.click(x=x,y=y)
                 #print(f"{x,y}")
+                # closes bank too fast! slow it DOWN
+                sleep(triangular(.3,1))
                 break
         except:
             self.terminate = 1
@@ -260,8 +267,8 @@ class Craft():
             if self.Game.isCraftWinOpen():
                 x,y = self.getJewelInfo(self.jewel)[self.jewelry_type]
 
-                x = x + int(triangular(-10.5,10.5))
-                y = y + int(triangular(-9,9))
+                x = x + int(triangular(-5,5))
+                y = y + int(triangular(-5,5))
                 #self.Game.hc.move((x, y),duration=self.rinterval('duration'))
                 self.Game.hc.click(x=x,y=y)
                 # makes sure bank is found next if already crafted items
@@ -288,7 +295,7 @@ class Craft():
     def checkRawMaterials(self,*args):
         pass
 def main():
-    G = Craft('topaz')
+    G = Craft('gold')
     iteration = 1
     average_time = 0
     while iteration < 100 and not G.terminate:
@@ -310,7 +317,9 @@ def main():
 
         print("Select item to smelt")
         G.smeltWindow()
-        sleep(23.5)
+        n = triangular(43,48)
+        # sleep(23.5 )
+        sleep(n)
         G.enableEnergy()
         print("***RUN END***")
 

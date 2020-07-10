@@ -16,7 +16,8 @@ markets = {
             'market':['willow logs', 'nature rune', 'death rune', 'swordfish',
                     'yew logs', 'maple logs', 'cosmic rune', 'gold ore',
                     'lobster','plank','jug of water','silver ore','fishing bait',
-                    'jug of wine','jug','thread'],
+                    'jug of wine','jug','thread','bucket of milk',
+                    'bucket of water', 'bucket'],
             'food':['lobster','swordfish','salmon','tuna'],#all raw
             'log':['logs','oak logs','willow logs','maple logs','yew logs'],
             'metal':['bronze bar','iron bar', 'steel bar', 'gold bar',
@@ -45,10 +46,29 @@ herb = choice(markets['herb'])
 potion = choice(markets['potion'])
 botfarm = choice(markets['botfarm'])
 
-notallowlist = ['maple logs','jug']
+# notallowlist = ['maple logs','jug', 'mind rune', 'fire rune', 'earth rune',
+#                 'air rune', 'water rune','raw lobster','chaos rune','lobster'
+#                 'yew logs', 'willow logs', 'vial','vial of water',]
 items = [market, food, log, rune, botfarm]
-items = [item for item in items if item not in notallowlist]
-print(items)
+
+# items = [item for item in items if item not in notallowlist]
+items = ['chaos rune', 'death rune', 'nature rune', 'law rune', 'gold ore',
+        'cosmic rune', 'steel bar', 'vial of water', 'grapes', 'iron ore',
+        'maple logs', 'jug of water', 'yew logs', 'mithril ore', 'adamantite bar',
+        'mithril bar', 'oak logs', 'jug of wine', 'adamantite ore', 'gold amulet (u)'
+        'black bead', 'raw shrimp', 'beer', 'logs', 'bowl of water', 'green dye',
+        'cadava berries', 'energy potion(4)']
+
+# pick 3 random items from list above
+new = set()
+for _ in range(3):
+    new.add(choice(items))
+items = []
+for item in new:
+    items.append(item)
+
+
+print(f"Price checking these items...:\n{items}")
 
 
 def getitemhsv(itemname):
@@ -78,7 +98,7 @@ class GE_Trading():
         self.cash = 0
         # clicks for when buying above or below market price @+5%
         self.clicks = int(triangular(5,9))
-        self.wbc = (.7,2)
+        self.wbc = (.5,1.3)
         self.item_stat = {}
     def rndWait(self,*args):
         initial = self.wbc[0]
@@ -221,6 +241,29 @@ class GE_Trading():
 
         self.confNcoll()
         self.rndWait()
+    def checkTransaction(self):
+        # waits until item transaction is complete
+        while 1:
+            # green complete bar hsv values
+            low = np.array([59,250,95])
+            high = np.array([60,255,96])
+            window,_,_ = rs.getPlayingScreen('hsv')
+            mask = cv2.inRange(window, low, high)
+
+            # cv2.imshow('mask',mask)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
+
+            contours,_ = cv2.findContours(mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            try:
+                # breaking only if complete transcation
+                for con in contours:
+                    print("Found complete transaction")
+                    break
+                return 1 # trans found returning value
+            except Exception as e:
+                print(e)
+                continue
     def confNcoll(self,conf=True,coll=True):
         """ clicks on confirm button then on collect button """
         # clicks confirm
@@ -229,6 +272,8 @@ class GE_Trading():
             x,y = self.clickArea((195,302),143,30)
             rs.hc.click(x=x ,y=y)
             self.rndWait(2,5)
+        # waits until item transaction is complete
+        self.checkTransaction()
         # clicks on collect
         if coll:
             x,y = self.clickArea((418,87),76,15)
@@ -250,8 +295,6 @@ class GE_Trading():
         rs.hc.click(x=x ,y=y,clicks=self.clicks)
 
         self.confNcoll()
-    def buyItem(self,itemname,qty,price):
-        pass
     def readHistory(self,itemaction):
         def singles(buysell):
             x1 = 360
@@ -475,7 +518,7 @@ class GE_Trading():
                 return i
         return -1
     def marginInvest(self):
-        """ invest on top 3 item from self.item_stat.
+        """ invest on top 1 of 3 item from self.item_stat.
             assumes self.item_stat is a populated """
 
         items = []
@@ -489,7 +532,7 @@ class GE_Trading():
         #             updated_margins.pop(itemname)
         #             break
         # gathers top 3 highest roi items
-        for i in range(3):
+        for i in range(1):
             for itemname,stats in updated_margins.items():
                 highest_roi = max([self.item_stat[itemname]['roi'] for itemname in self.item_stat.keys()])
                 if highest_roi == stats['roi']:
@@ -522,7 +565,6 @@ class GE_Trading():
 if __name__ == "__main__":
     Trade = GE_Trading()
     Trade.set_main_wndw()
-    shuffle(items)
     Trade.collMargins(items)
     # print(Trade.item_stat)
     Trade.marginInvest()

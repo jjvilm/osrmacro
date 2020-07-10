@@ -4,15 +4,11 @@ import numpy as np
 from pyautogui import press
 # Local Modules
 from modules import Screenshot
-from modules import Mouse
-from modules import RandTime
-from modules import Match
 from modules import Keyboard
 from modules import setup
 from pyclick import HumanClicker
 from random import choice,randint,triangular
-from subprocess import check_output
-from os import system,getcwd
+
 
 class Frame():
     def __init__(self,setupwindow=True):
@@ -24,35 +20,15 @@ class Frame():
         """ Keybinding 'esc' should be enabled """
         press('esc', interval=triangular(0.05,0.3))
     def depositAll(self):
-        x = self.rsx + triangular(432,453)
-        y = self.rsy + triangular(324,350)
+        x = self.rsx + int(triangular(432,453))
+        y = self.rsy + int(triangular(324,350))
         self.hc.click(x=x,y=y)
-    def countItemInInv(self,template_file,*args):
-        """Counts the N of the item passed in INVENTORY
-        if a number is passed it will count up to that"""
-        #checks to see wheater to add cur dir or not
-        if "/" not in template_file:
-            template_file = getcwd()+"/imgs/"+template_file
-        rs_bag = self.get_bag('only') #Screenshot taken here,
-        #saves image for DEBUG
-        #cv2.imwrite('debug_rs_bag_log_count.png',rs_bag)
-        #loc == coordinates found in match
-        loc, w, h = Match.this(rs_bag, template_file)
-        #starts fount
-        count = 0
-        for pt in zip(*loc[::-1]):#goes through each found image
-            if args != ():
-                if args[0] == 1:
-                    return 1
-            count += 1
-        #print(count)
-        return count
     def invCount(self, *args):
         """Counts the number of slots being used in inventory"""
         """pass a func to do something with each slot's ROI, then upper and lower """
         # makes sure inventory button is selected
-        if not self.is_button_selected('inventory'):
-            self.press_button('inventory')
+        # if not self.is_button_selected('inventory'):
+        #     self.press_button('inventory')
 
         bag, bagx,bagy = self.get_bag('bag and coords', 'hsv')
         # HSV range passed in args
@@ -526,15 +502,6 @@ class Frame():
                 self.hc.click(x=ptx,y=pty)
                 RandTime.randTime(1,0,0,2,9,9)
                 break
-    def center_window(self):
-            display_x = check_output(['xdotool','getdisplaygeometry'])
-            display_x = display_x[:4]
-            display_x = int(display_x)
-            display_x //= 2
-
-            pos = display_x - 383
-            #moves window to center of screen
-            system('xdotool search --name Old windowmove {0} 0'.format(pos))
     def position(self, windowID=''):
         """ Returns top left position of Runescape window"""
         return self.rsx, self.rsy
@@ -723,11 +690,6 @@ class Frame():
                     return 1
         # print('{} is NOT selected'.format(button_name))
         return 0
-
-
-    def play_sound(self):
-        system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 1, 8000))
-
 if __name__ == '__main__':
     osrs = Osr_game()
     osrs.isBankOpen()

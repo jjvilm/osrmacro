@@ -1,26 +1,26 @@
 #Keyboard.py
-import pyautogui
-import time
 from random import triangular
+from time import sleep
+import pyautogui
 
-def write(strings):
+def write(characters):
     """Types the passed characters with random pauses in between strokes"""
-    for s in strings:
+    for char in characters:
         # delay between key presses--key UP/DOWN
         #autopy.key.toggle(s, True)
-        pyautogui.keyDown(s)
-        time.sleep(triangular(.050,0.300))
-        pyautogui.keyUp(s)
+        pyautogui.keyDown(char)
+        sleep(triangular(.050,0.300))
+        pyautogui.keyUp(char)
         # delay after key UP--next key
 
 def press(button):
     if button == 'enter':
         pyautogui.keyDown('enter')
-        time.sleep(triangular(.050,0.300))
+        sleep(triangular(.050,0.300))
         pyautogui.keyUp('enter')
 
     else:
         pyautogui.key.toggle(pyautogui.key.button, True)
         pyautogui.keyDown(button)
-        time.sleep(triangular(.050,0.300))
+        sleep(triangular(.050,0.300))
         pyautogui.keyUp(button)

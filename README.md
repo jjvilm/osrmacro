@@ -1,16 +1,15 @@
 # osrmacro
-This folder contains different scripts that do different tasks in Old School Runescape
+This lib contains scripts that help automate tasks in Old School Runescape, for
+research and educational purposes only.
 
 Setup:
 OS: Linux
 For now only Linux operating systems are supported, with i3 as your window manager
 
-You must have installed: 
-Python2
-Opencv
+You must have installed:
+Python3
+Opencv4
 numpy
-matplolib
-autogui
-pyscreenschot
+pyautogui
 imagemagick or scrot
-xdotool 
+xdotool
