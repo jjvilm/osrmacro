@@ -271,14 +271,13 @@ class GE_Trading():
             self.rndWait()
             x,y = self.clickArea((195,302),143,30)
             rs.hc.click(x=x ,y=y)
-            self.rndWait(2,5)
+            self.rndWait()
         # waits until item transaction is complete
         self.checkTransaction()
         # clicks on collect
         if coll:
             x,y = self.clickArea((418,87),76,15)
             rs.hc.click(x=x ,y=y)
-            self.rndWait(.5,1.5)
     def sellItem(self,itemname):
         """ select itemname from bag and click to sell, then confirm and coll """
         def click(x,y):

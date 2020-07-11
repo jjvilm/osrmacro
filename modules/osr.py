@@ -50,29 +50,6 @@ class Frame():
 
             #inverts mask
             closing = cv2.bitwise_not(closing)
-
-        # finds contours
-        #_,contours,_ = cv2.findContours(closing.copy(), 1, 2)
-
-        ### draws white rectangle on found itmes ###
-        #for cnt in contours:
-        #    # creates a white rectangle around items
-        #    x,y,w,h = cv2.boundingRect(cnt)
-        #    cv2.rectangle(closing,(x,y),(x+w,y+h),(255,255,255),-1)
-        ############################################
-
-        ### Draws division lines ###
-        # draws row lines
-        #sloth = closing.shape[0] / 7
-        #slotw = closing.shape[1] / 4
-        #for i,rows in enumerate(xrange(6)):
-        #    cv2.line(closing,(0, sloth*(i+1)),(173,sloth*(i+1)),(255,255,255),1)
-        # draws col lines
-        #for i,cols in enumerate(xrange(3)):
-        #    cv2.line(closing,(slotw*(i+1),0),(slotw*(i+1),253),(255,255,255),1)
-        ############################
-
-        # checks each slot for white pixels
         count = 0
         for row in range(7):
             for cols in range(4):
@@ -221,19 +198,19 @@ class Frame():
 
         # Takes screenshot, as Hue-saturated-value image
         play_window,psx,psy = self.getPlayingScreen('hsv')
-        lower_gray = np.array([0,15,55])
-        upper_gray = np.array([10,25,125])
+        lower_gray = np.array([0,0,0])
+        upper_gray = np.array([255,255,1])
 
         # Makes a black/white mask
         mask = cv2.inRange(play_window, lower_gray, upper_gray)
         # inverts selection
         #res = cv2.bitwise_and(play_window, play_window, mask=mask)
-        kernel = np.ones((5,5), np.uint8)
+        kernel = np.ones((2,2), np.uint8)
         dilation = cv2.dilate(mask, kernel, iterations = 1)
 
-        #cv2.imshow('img', dilation)
-        #cv2.waitKey(2000)
-        #cv2.destroyAllWindows()
+        # cv2.imshow('img', dilation)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
         # Finds contours
         contours,_ = cv2.findContours(dilation.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -241,8 +218,8 @@ class Frame():
         try:
             # looks for center of grey color with biggest area, > 3000
             for con in contours:
-                #print(cv2.contourArea(con))
-                if cv2.contourArea(con) > 3000:
+                # print(cv2.contourArea(con))
+                if cv2.contourArea(con) > 10000:
                     #print(f"big area found {cv2.contourArea(con)}")
 
                     M = cv2.moments(con)
@@ -251,9 +228,8 @@ class Frame():
                     psx += cx
                     psy += cy
                     # adds randomness to coords
-                    psx += triangular(-17,17)
-                    psy += triangular(-17,17)
-
+                    psx += int(triangular(-17,17))
+                    psy += int(triangular(-17,17))
                     self.hc.click(x=psx,y=psy)
                     break
         except Exception as e:
@@ -298,7 +274,7 @@ class Frame():
                     psy += triangular(-7,7)
 
                     self.hc.click(x=psx,y=psy)
-                    RandTime.randTime(0,0,0,0,9,9)
+                    sleep(triangular(.1,.5))
                     return 1
         except Exception as e:
             print(f"Bank NOT found!\nMove camera around!\n{e}")
@@ -362,9 +338,7 @@ class Frame():
                 Keyboard.type_this("right now im working on {}, what about you guys??".format(skill))
 
             Keyboard.press('enter')
-
-
-        RandTime.randTime(5,0,0,13,9,9)
+        sleep(triangular(.1,.5))
     def skillsHover(self, rsx,rsy):
             """Hovers over n skills by n times"""
             n = randint(0,2)
@@ -378,7 +352,7 @@ class Frame():
                     stats_window = Mouse.genCoords(557,234,729,470)
                     # Randomly hovers over a random skill
                     Mouse.moveTo(stats_window[0]+rsx,stats_window[1]+rsy)
-                    RandTime.randTime(1,0,0,2,9,9)
+                    sleep(triangular(.1,.5))
     def skillHover(self, skill):
         """Hovers over passed skill from 1-5 secs"""
         #Coordinates of skill's button
@@ -403,7 +377,7 @@ class Frame():
         x1,y1,x2,y2 =skills[skill]
         x,y = Mouse.genCoords(x1,y1,x2,y2)
         # Mouse.moveTo(x,y)
-        randS = RandTime.randTime(0,0,1,1,0,9)
+        randS = triangular(.1,.5)
         self.hc.move(x,y,randS)
     def logout(self):
         #  Door Button
@@ -455,7 +429,7 @@ class Frame():
             #Mouse.moveClick(x, y, 3)
             print(f"Right-Clicking:x{x} y:{y}")
             self.hc.click(x=x,y=y)
-            RandTime.randTime(1,0,0,1,9,9)
+            sleep(triangular(.5,1))
             """Option name of in Image database only needs to be passed, x,y are obsoleate"""
             from modules import Imgdb
             # Image DB
@@ -500,7 +474,7 @@ class Frame():
                 #ptx, pty = Mouse.randCoord(pt, template_w, template_h)
                 #Mouse.moveClick(ptx,pty, 1)
                 self.hc.click(x=ptx,y=pty)
-                RandTime.randTime(1,0,0,2,9,9)
+                sleep(triangular(1,2))
                 break
     def position(self, windowID=''):
         """ Returns top left position of Runescape window"""
@@ -663,9 +637,9 @@ class Frame():
         # removes any noise
         kernel = np.ones((5,5), np.uint8)
         closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-        # cv2.imshow('img', closing)
-        # cv2.waitKey(100)
-        # cv2.destroyAllWindows()
+        cv2.imshow('img', closing)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         # looks to see if the inv is all white pixels
         # returns true, else False
@@ -691,5 +665,5 @@ class Frame():
         # print('{} is NOT selected'.format(button_name))
         return 0
 if __name__ == '__main__':
-    osrs = Osr_game()
-    osrs.isBankOpen()
+    osrs = Frame()
+    osrs.isInvEmpty()
