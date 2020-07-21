@@ -80,8 +80,8 @@ class Frame():
                     passed_func = args[0]
                     #x,y,_,_ = cv2.boundingRect(slot_roi)
                     #_, psx, psy = getPlayingScreen()
-                    slot_x += int(bagx + triangular(1,40))
-                    slot_y += int(bagy + triangular(5,30))
+                    slot_x += int(bagx + triangular(1,30))
+                    slot_y += int(bagy + triangular(5,25))
                     passed_func(slot_x,slot_y)
                     return
 
@@ -189,8 +189,8 @@ class Frame():
             if img_in_db != 0:
                 x, x2, y, y2 = img_in_db
                 img_in_db = bag_grey[x:x2,y:y2]
-                cv2.imshow('img', img_in_db)
-                cv2.waitKey(0)
+                # cv2.imshow('img', img_in_db)
+                # cv2.waitKey(0)
 
         return count
     def open_cw_bank(self):
@@ -378,7 +378,7 @@ class Frame():
         x,y = Mouse.genCoords(x1,y1,x2,y2)
         # Mouse.moveTo(x,y)
         randS = triangular(.1,.5)
-        self.hc.move(x,y,randS)
+        self.hc.move((x,y),randS)
     def logout(self):
         #  Door Button
         x,y = Mouse.genCoords(636,495,650,515)
@@ -627,7 +627,7 @@ class Frame():
             return True
         else:
             return False
-    def isInvEmpty(self):
+    def isInvEmpty(self,bagimg=0):
         bag, bagx,bagy = self.get_bag('bag and coords', 'hsv')
         # looks for color of empty inv
         low = np.array([10,46,58])
@@ -637,17 +637,25 @@ class Frame():
         # removes any noise
         kernel = np.ones((5,5), np.uint8)
         closing = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-        cv2.imshow('img', closing)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-        # looks to see if the inv is all white pixels
-        # returns true, else False
-        if (closing.view() == 255).all():
-            # print("Inventory is Empty")
-            return True
-        # print("Inventory is Full")
-        return False
+        # cv2.imshow('img', closing)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        if bagimg == 0:
+            # looks to see if the inv is all white pixels
+            # returns true, else False
+            if (closing.view() == 255).all():
+                # print("Inventory is Empty")
+                return True
+            # print("Inventory is Full")
+            return False
+        if bagimg == 1:
+            # looks to see if the inv is all white pixels
+            # returns true, else False
+            if (closing.view() == 255).all():
+                # print("Inventory is Empty")
+                return True, (bag, bagx, bagy)
+            # print("Inventory is Full")
+            return False, (bag, bagx, bagy)
     def is_button_selected(self, button_name):
         """Returns true if button is selected, else False"""
         x1, y1, x2, y2 = self.press_button(button_name, 'coords')

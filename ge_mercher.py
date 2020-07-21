@@ -53,11 +53,11 @@ items = [market, food, log, rune, botfarm]
 
 # items = [item for item in items if item not in notallowlist]
 items = ['chaos rune', 'death rune', 'nature rune', 'law rune', 'gold ore',
-        'cosmic rune', 'steel bar', 'vial of water', 'grapes', 'iron ore',
-        'maple logs', 'jug of water', 'yew logs', 'mithril ore', 'adamantite bar',
-        'mithril bar', 'oak logs', 'jug of wine', 'adamantite ore', 'gold amulet (u)'
-        'black bead', 'raw shrimp', 'beer', 'logs', 'bowl of water', 'green dye',
-        'cadava berries', 'energy potion(4)']
+        'cosmic rune', 'steel bar', 'vial of water', 'iron ore',
+        'maple logs', 'yew logs', 'mithril ore', 'adamantite bar',
+        'mithril bar', 'oak logs', 'adamantite ore', 'gold amulet (u)'
+        'black bead', 'raw shrimp','logs', 'green dye',
+        'energy potion(4)']
 
 # pick 3 random items from list above
 new = set()
@@ -92,12 +92,12 @@ def getitemhsv(itemname):
 
 class GE_Trading():
 
-    def __init__(self):
+    def __init__(self, cash=0):
         # below is tuple w/ 4 elements: x, y , w, h
         self.pos = 0
-        self.cash = 0
+        self.cash = cash
         # clicks for when buying above or below market price @+5%
-        self.clicks = int(triangular(5,9))
+        self.clicks = int(triangular(5,20))
         self.wbc = (.5,1.3)
         self.item_stat = {}
     def rndWait(self,*args):
@@ -143,13 +143,14 @@ class GE_Trading():
         contours, h = cv2.findContours(mask, 1, 2)
         return contours
     def set_main_wndw(self):
+        """ Finds the GE trading window when slots are visible """
         # gets screen size
         w, h = pyautogui.size()
         # takes screen screenshot. Returns  hsv format image
         scrn_scrnshot = Screenshot.this(0, 0, w, h, 'hsv')
 
         # find Grand exchange window
-        # the  rectangule only the GE can have when GE Trading window active
+        # the  rectangle only the GE can have when GE Trading window active
         lower_hsv = np.array([12, 0, 7])
         upper_hsv = np.array([40, 62, 64])
         # mask of applied values
@@ -177,6 +178,8 @@ class GE_Trading():
                     self.pos = (x, y, w, h)
                     print(f"Trading window at:X={self.pos[0]} Y={self.pos[1]}")
                     return
+        else:
+            print("Finished successfully")
     def clickArea(self,pnt,w,h):
         """ Returns random coords from area of pnt based
             on its width and height'"""
@@ -225,9 +228,9 @@ class GE_Trading():
             rs.hc.click(x=x ,y=y)
             self.rndWait()
             Keyboard.write(str(int(qty)))
-            self.rndWait(.3,.7)
+            self.rndWait(.1,.7)
             Keyboard.press('enter')
-            self.rndWait(.3,1)
+            self.rndWait(.5,1)
             #clicks on enter price
             x,y = self.clickArea((386,231),24,13)
             rs.hc.click(x=x ,y=y)
@@ -237,8 +240,6 @@ class GE_Trading():
             Keyboard.press('enter')
             self.confNcoll(coll=False)
             return
-
-
         self.confNcoll()
         self.rndWait()
     def checkTransaction(self):
@@ -258,11 +259,13 @@ class GE_Trading():
             try:
                 # breaking only if complete transcation
                 for con in contours:
-                    print("Found complete transaction")
-                    break
-                return 1 # trans found returning value
+                    # print("Found complete transaction")
+                    return 1
+                #return 1 # trans found returning value
             except Exception as e:
+                # if it waits too long, move on to diff item cancel current
                 print(e)
+                self.rndWait(.5,1)
                 continue
     def confNcoll(self,conf=True,coll=True):
         """ clicks on confirm button then on collect button """
@@ -271,7 +274,7 @@ class GE_Trading():
             self.rndWait()
             x,y = self.clickArea((195,302),143,30)
             rs.hc.click(x=x ,y=y)
-            self.rndWait()
+            self.rndWait(1,2)
         # waits until item transaction is complete
         self.checkTransaction()
         # clicks on collect
@@ -279,8 +282,9 @@ class GE_Trading():
             x,y = self.clickArea((418,87),76,15)
             rs.hc.click(x=x ,y=y)
     def sellItem(self,itemname):
-        """ select itemname from bag and click to sell, then confirm and coll """
+        """ select 1st item from bag and clicks it to sell, then confirm and coll """
         def click(x,y):
+            """ Used as a passable func for invCount"""
             # print(f"Clicking ({x,y})")
             rs.hc.click(x=x,y=y)
 
@@ -288,8 +292,9 @@ class GE_Trading():
 
         rs.invCount(click,low,high)
 
+        # give time for sell window to come up
+        self.rndWait(1,2)
         #click @-5%
-        self.rndWait()
         x,y = self.clickArea((284,233),27,20)
         rs.hc.click(x=x ,y=y,clicks=self.clicks)
 
@@ -298,16 +303,16 @@ class GE_Trading():
         def singles(buysell):
             x1 = 360
             w = 36
-            h = 11
+            h = 9
             if buysell == 's':
                 # finds line of text where price is displayed when sold
                 #PIL format as RGB
-                y1 = 100
+                y1 = 97
                 return pyautogui.screenshot(region=(x1,y1,w,h)) #X1,Y1,X2,Y2
             elif buysell == 'b':
                 # finds line of text where price is displayed when bought
                 #PIL format as RGB
-                y1 = 138
+                y1 = 136
                 return pyautogui.screenshot(region=(x1,y1,w,h)) #X1,Y1,X2,Y2
         def mults():
             #PIL format as RGB
@@ -331,14 +336,6 @@ class GE_Trading():
         # cv2.imshow('img',thresh)
         # cv2.waitKey(500)
         # cv2.destroyAllWindows()
-
-        # Adding custom options
-        # custom_config = r'--oem 3 --psm 6 outputbase digits'
-        custom_config = r'--oem 3 --psm 10 outputbase digits'
-
-        # #dilate to see if it heals reading
-        # kernel = np.ones((1,1),np.uint8)
-        # thresh = cv2.dilate(thresh, kernel, iterations = 1)
 
         digits = ''
         contours,_ = cv2.findContours(thresh.copy(), 1, 2)
@@ -383,16 +380,16 @@ class GE_Trading():
             digits = int(digits)
             return digits
         except:
-            print("Soemthing happenned...No numbers found")
+            print("something happenned...No numbers found.  check screenshots")
             return 0
     def getMargin(self,itemname):
         self.buySellItem('buy',itemname)
         self.sellItem(itemname)
-        # clicks on history wait time
+        # clicks on history button in GE window
         self.rndWait()
-        x,y = self.clickArea((32,57),40,15)
+        x,y = self.clickArea((32,57),40,12)
         rs.hc.click(x=x ,y=y)
-
+        # give time for buysell history to come up
         self.rndWait(2,3)
         #reads the prices on history
         # bought price
@@ -412,9 +409,9 @@ class GE_Trading():
         self.item_stat[itemname]['roi'] = roi
 
         # click on Exchange to go buy to buy/buysell
-        x,y = self.clickArea((45,57),50,13)
+        x,y = self.clickArea((45,57),47,11)# pnt, w h
         rs.hc.click(x=x ,y=y)
-        self.rndWait()
+        self.rndWait(1,2)
     def collMargins(self,itemList):
         for item in itemList:
             self.getMargin(item)
@@ -562,7 +559,7 @@ class GE_Trading():
             price = buying_list[itemname][1]
             self.buySellItem('buy',itemname,qty=qty,price=price)
 if __name__ == "__main__":
-    Trade = GE_Trading()
+    Trade = GE_Trading(237000)
     Trade.set_main_wndw()
     Trade.collMargins(items)
     # print(Trade.item_stat)

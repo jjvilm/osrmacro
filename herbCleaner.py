@@ -32,9 +32,11 @@ def main(herb_object):
                 print(e)
                 return
             rs.hc.click(x=herbx,y=herby)
-            sleep(triangular(.1,.3))
-            # breaks inventory if contains an item
-            if not rs.isInvEmpty():
+            # give time for items to appear in inventory
+            sleep(triangular(1,1.7))
+            # breaks if inventory contains an item
+            ret, bagimg = rs.isInvEmpty(1) # 1 to return img and x and y
+            if not ret:
                 break
             else:
                 # deposits all items from inventory
@@ -44,7 +46,7 @@ def main(herb_object):
         rs.closeBank()
         # start cleaning here
         print(f"Starting to find grimy herbs")
-        find_grimmy_herbs_in_inventory(herb_object)
+        find_grimmy_herbs_in_inventory(herb_object,bagimg)
 def findHerbInBankInv(herb_object):
     """ returns grimy herb in bank inv with randomized position withing rect"""
     #takes bank screenshot
@@ -141,9 +143,10 @@ def findHerbInBankInv(herb_object):
     # returns coords to right click and get options
     print(f"grimmy herb @({x},{y})")
     return x, y
-def find_grimmy_herbs_in_inventory(herb_object):
+def find_grimmy_herbs_in_inventory(herb_object, bagimg=None):
     global rs
-    rs_bag, bagx, bagy = rs.get_bag('bag and its coords', 'hsv')
+    #rs_bag, bagx, bagy = rs.get_bag('bag and its coords', 'hsv')
+    rs_bag, bagx, bagy = bagimg
     # finds all grimmys first
     low, high = herb_object.herbdic['grimmy2']
     low = np.array(low)
@@ -155,9 +158,20 @@ def find_grimmy_herbs_in_inventory(herb_object):
     # contours of all grimys found
     contours, _ = cv2.findContours(dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # adds a white rectangle to all grimmys
-    for con in contours:
+    for con in contours[::-1]:
         x, y, w, h = cv2.boundingRect(con)
+        ## # DEBUG
+        rs.hc.move((x+bagx,y+bagy))
+
+        sleep(triangular(.05,.2))
+        continue
+        ## # DEBUG:
         cv2.rectangle(mask,(x,y),(x+w,y+h),(255,255,255),-1)
+    ## # DEBUG:
+    print('END IT NOW!!!!')
+    sleep(30)
+    return
+    ## # DEBUG:
     # goes through each item and clicks it
     contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     items_coords = []
@@ -194,7 +208,7 @@ def find_grimmy_herbs_in_inventory(herb_object):
             for coords in rows:
                 x, y = coords
                 rs.hc.click(x=x,y=y)#right clicks on given x,y coords
-                sleep(triangular(.3,1))
+                sleep(triangular(.05,.3))
             row += 1
             continue
         else:
@@ -202,7 +216,7 @@ def find_grimmy_herbs_in_inventory(herb_object):
             for coords in rows[::-1]:
                 x, y = coords
                 #rs.hc.click()
-                sleep(triangular(1,2))
+                sleep(triangular(.05,.1))
         row += 1
 
 if __name__ == '__main__':
