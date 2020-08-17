@@ -13,59 +13,57 @@ from modules import osr
 
 rs = osr.Frame(setupwindow=False)
 markets = {
-            'market':['willow logs', 'nature rune', 'death rune', 'swordfish',
-                    'yew logs', 'maple logs', 'cosmic rune', 'gold ore',
-                    'lobster','plank','jug of water','silver ore','fishing bait',
-                    'jug of wine','jug','thread','bucket of milk',
-                    'bucket of water', 'bucket'],
-            'food':['lobster','swordfish','salmon','tuna'],#all raw
-            'log':['logs','oak logs','willow logs','maple logs','yew logs'],
+            'market':['willow logs', 'nature rune', 'death rune', 'raw swordfish',
+                    'yew logs', 'cosmic rune', 'gold ore',
+                    'lobster','plank','silver ore','jug of wine'],
+            'food':['lobster','raw swordfish','raw salmon','raw tuna'],#all raw
+            'log':['logs','oak logs','willow logs','yew logs'],
             'metal':['bronze bar','iron bar', 'steel bar', 'gold bar',
                     'mithril bar','adamantite bar', 'runite bar'],
             'rune':['law rune', 'nature rune', 'death rune', 'cosmic rune',
-                    'chaos rune','body rune', 'fire rune', 'earth rune',
-                    'water rune', 'air rune','mind rune'],
+                    'chaos rune',],
             'raids':['rune scimitar','rune platebody', 'rune platelegs',
                     'rune full helm','rune med helm','rune chainbody',
                     'iron arrow','steel arrow','bronze arrow'],
             'herb':['grapes'],
             'potion':['vial','strength potion(3)','vial of water'],
             'botfarm':['adamantite bar','iron ore','mithril bar',
-                        'nature rune', 'pure essence','raw lobster',
-                        'raw swordfish','rune essence','runite bar','steel bar',
-                        'wine of zamorak', 'yew logs']
+                        'nature rune','raw lobster',
+                        'raw swordfish','runite bar','steel bar',
+                        'wine of zamorak', 'yew logs'],
+            'longterm':['maple logs','body rune', 'fire rune', 'earth rune',
+                        'water rune', 'air rune', 'pure essence','rune essence',
+                        'bucket'],
+            'fastflips':['law rune', 'nature rune', 'death rune','chaos rune']
 }
+def getItemList():
+    market = choice(markets['market'])
+    food = choice(markets['food'])
+    log = choice(markets['log'])
+    metal = choice(markets['metal'])
+    rune = choice(markets['rune'])
+    raids = choice(markets['raids'])
+    herb = choice(markets['herb'])
+    potion = choice(markets['potion'])
+    botfarm = choice(markets['botfarm'])
+    longterm = choice(markets['longterm'])
+    fastflips = choice(markets['fastflips'])
 
-market = choice(markets['market'])
-food = choice(markets['food'])
-log = choice(markets['log'])
-metal = choice(markets['metal'])
-rune = choice(markets['rune'])
-raids = choice(markets['raids'])
-herb = choice(markets['herb'])
-potion = choice(markets['potion'])
-botfarm = choice(markets['botfarm'])
+    return [market, food, log, rune, botfarm,botfarm,botfarm,fastflips]
 
 # notallowlist = ['maple logs','jug', 'mind rune', 'fire rune', 'earth rune',
 #                 'air rune', 'water rune','raw lobster','chaos rune','lobster'
 #                 'yew logs', 'willow logs', 'vial','vial of water',]
-items = [market, food, log, rune, botfarm]
+
 
 # items = [item for item in items if item not in notallowlist]
-items = ['chaos rune', 'death rune', 'nature rune', 'law rune', 'gold ore',
-        'cosmic rune', 'steel bar', 'vial of water', 'iron ore',
-        'maple logs', 'yew logs', 'mithril ore', 'adamantite bar',
-        'mithril bar', 'oak logs', 'adamantite ore', 'gold amulet (u)'
-        'black bead', 'raw shrimp','logs', 'green dye',
-        'energy potion(4)']
+items = getItemList()
 
 # pick 3 random items from list above
-new = set()
-for _ in range(3):
-    new.add(choice(items))
-items = []
-for item in new:
-    items.append(item)
+unique_set = set()
+for i,ele in enumerate(items):
+    unique_set.add(items[i])
+items = unique_set
 
 
 print(f"Price checking these items...:\n{items}")
@@ -100,6 +98,7 @@ class GE_Trading():
         self.clicks = int(triangular(5,20))
         self.wbc = (.5,1.3)
         self.item_stat = {}
+        self.idle = True
     def rndWait(self,*args):
         initial = self.wbc[0]
         wait = self.wbc[1]
@@ -222,26 +221,27 @@ class GE_Trading():
             # buy @5%. clicks
             x,y = self.clickArea((440,233),28,20)
             rs.hc.click(x=x ,y=y,clicks=self.clicks)
-        else:
-            # types n quantiy of item
-            x,y = self.clickArea((231,234),24,13)
-            rs.hc.click(x=x ,y=y)
+            self.confNcoll()
             self.rndWait()
-            Keyboard.write(str(int(qty)))
-            self.rndWait(.1,.7)
-            Keyboard.press('enter')
-            self.rndWait(.5,1)
-            #clicks on enter price
-            x,y = self.clickArea((386,231),24,13)
-            rs.hc.click(x=x ,y=y)
-            self.rndWait()
-            Keyboard.write(str(int(price)))
-            self.rndWait(.3,.7)
-            Keyboard.press('enter')
-            self.confNcoll(coll=False)
             return
-        self.confNcoll()
+        # types n quantiy of item
+        x,y = self.clickArea((231,234),24,13)
+        rs.hc.click(x=x ,y=y)
+        self.rndWait(.5,1)
+        Keyboard.write(str(int(qty)))
+        self.rndWait(.1,.7)
+        Keyboard.press('enter')
+        self.rndWait(.5,1)
+        #clicks on enter price
+        x,y = self.clickArea((386,231),24,13)
+        rs.hc.click(x=x ,y=y)
         self.rndWait()
+        Keyboard.write(str(int(price)))
+        self.rndWait(.3,.7)
+        Keyboard.press('enter')
+        self.confNcoll(coll=False,transaction=False)
+
+
     def checkTransaction(self):
         # waits until item transaction is complete
         while 1:
@@ -267,7 +267,7 @@ class GE_Trading():
                 print(e)
                 self.rndWait(.5,1)
                 continue
-    def confNcoll(self,conf=True,coll=True):
+    def confNcoll(self,conf=True,coll=True,transaction=True):
         """ clicks on confirm button then on collect button """
         # clicks confirm
         if conf:
@@ -276,7 +276,8 @@ class GE_Trading():
             rs.hc.click(x=x ,y=y)
             self.rndWait(1,2)
         # waits until item transaction is complete
-        self.checkTransaction()
+        if transaction:
+            self.checkTransaction()
         # clicks on collect
         if coll:
             x,y = self.clickArea((418,87),76,15)
@@ -302,12 +303,12 @@ class GE_Trading():
     def readHistory(self,itemaction):
         def singles(buysell):
             x1 = 360
-            w = 36
-            h = 9
+            w = 40
+            h = 14
             if buysell == 's':
                 # finds line of text where price is displayed when sold
                 #PIL format as RGB
-                y1 = 97
+                y1 = 98
                 return pyautogui.screenshot(region=(x1,y1,w,h)) #X1,Y1,X2,Y2
             elif buysell == 'b':
                 # finds line of text where price is displayed when bought
@@ -384,6 +385,7 @@ class GE_Trading():
             return 0
     def getMargin(self,itemname):
         self.buySellItem('buy',itemname)
+        self.rndWait(.5,1)
         self.sellItem(itemname)
         # clicks on history button in GE window
         self.rndWait()
@@ -396,10 +398,10 @@ class GE_Trading():
         hp = self.readHistory('b')
         print(f"\tHIGH: {hp} gc")
         lp = self.readHistory('s')
-        print(f"\t LOW: {lp} gc")
-        roi = (1 - (lp/hp))*100
-        print(f"\tMRGN: {hp-lp} gc\tROI= {roi:.2f}%")
         margin = hp - lp
+        print(f"\t LOW: {lp} gc")
+        roi = (margin/lp)*100
+        print(f"\tMRGN: {margin} gc\tROI= {roi:.2f}%")
 
         # Add entries to item's stat
         self.item_stat[itemname] = {}
@@ -518,16 +520,8 @@ class GE_Trading():
             assumes self.item_stat is a populated """
 
         items = []
-        updated_margins = self.item_stat
-        # # gathers top 3 highest margins
-        # for i in range(3):
-        #     for itemname,stats in updated_margins.items():
-        #         highst_mrgn = max([self.item_stat[itemname]['margin'] for itemname in self.item_stat.keys()])
-        #         if highst_mrgn == stats['margin']:
-        #             items.append(itemname)
-        #             updated_margins.pop(itemname)
-        #             break
-        # gathers top 3 highest roi items
+        updated_margins = self.item_stat.copy()
+
         for i in range(1):
             for itemname,stats in updated_margins.items():
                 highest_roi = max([self.item_stat[itemname]['roi'] for itemname in self.item_stat.keys()])
@@ -536,9 +530,9 @@ class GE_Trading():
                     updated_margins.pop(itemname)
                     break
         # display top 3 items to invest
-        print(items)
-        for item in items:
-            self.getMargin(item)
+        # print(items)
+        # for item in items:
+        #     self.getMargin(item)
         # buy X amnt of items at low based on roi weight
         total_roi = sum([self.item_stat[itemname]['roi'] for itemname in items])
         if self.cash == 0:
@@ -549,18 +543,27 @@ class GE_Trading():
             weight = self.item_stat[itemname]['roi']/total_roi
             low = self.item_stat[itemname]['low']
             high = self.item_stat[itemname]['high']
+            margin = self.item_stat[itemname]['margin']
             qty = (weight * self.cash)//low
             print(f"\n{itemname.upper()}\nBUY: {qty:.0f} @{low}gc:")
             print(f"SELL: @{high}gc")
-            buying_list[itemname] = (qty,low)
+            print(f"PROFIT: {margin*qty}gc")
+            buying_list[itemname] = (qty,low,margin)
         # start buying x amount based on weight
         for itemname in buying_list.keys():
+            if margin == 1:
+                continue
             qty = buying_list[itemname][0]
             price = buying_list[itemname][1]
+            margin = buying_list[itemname][2]
+
             self.buySellItem('buy',itemname,qty=qty,price=price)
 if __name__ == "__main__":
-    Trade = GE_Trading(237000)
+    Trade = GE_Trading(0)
     Trade.set_main_wndw()
-    Trade.collMargins(items)
+
     # print(Trade.item_stat)
-    Trade.marginInvest()
+    while True:
+        Trade.collMargins(items)
+        Trade.marginInvest()
+        input("Press ENTER for another investment")
