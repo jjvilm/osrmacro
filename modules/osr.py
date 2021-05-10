@@ -584,18 +584,21 @@ class Frame():
         # gets current game's position
         #self.rsx,rsy = self.position()
         #button X on bank window coords
-        x1 = self.rsx+489
-        y1 = self.rsy+62
+        x1 = self.rsx+480
+        y1 = self.rsy+53
         x2 = self.rsx+497
-        y2 = self.rsy+72
+        y2 = self.rsy+70
 
         # Screenshot X button
         img = Screenshot.shoot(x1,y1,x2,y2,'hsv')
-        # cv2.imshow('img', img)
-        # cv2.waitKey(2000)
-        # cv2.destroyAllWindows()
         # Apply hsv ranges
         mask = cv2.inRange(img,buttonx_hsv[0], buttonx_hsv[1])
+        # cv2.imshow('img', img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        # cv2.imshow('mask', mask)
+        # cv2.waitKey(00)
+        # cv2.destroyAllWindows()
 
         # counts white pixels in X
         counter = 0
@@ -606,8 +609,9 @@ class Frame():
         #cv2.imshow('img', mask)
         #cv2.waitKey(0)
         # 54 = Bank is open
+        # uncomment to see the number to set it to
         # print(counter) # uncomment to show what number should be on next line
-        if counter == 38:
+        if counter == 54:
             return True
         return False
     def isRunActive(self):

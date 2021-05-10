@@ -92,7 +92,7 @@ class GE_Trading():
 
     def __init__(self, cash=0):
         # below is tuple w/ 4 elements: x, y , w, h
-        self.pos = 0
+        self.pos = (0,0,500,500)
         self.cash = cash
         # clicks for when buying above or below market price @+5%
         self.clicks = int(triangular(5,20))
@@ -383,6 +383,7 @@ class GE_Trading():
         except:
             print("something happenned...No numbers found.  check screenshots")
             return 0
+
     def getMargin(self,itemname):
         self.buySellItem('buy',itemname)
         self.rndWait(.5,1)

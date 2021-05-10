@@ -150,7 +150,7 @@ class Craft():
                 self.bank = True
                 # print(f'self.bank = {self.bank}')
                 maxx = max([pnt[0] for pnt in bankFurnance_coords.keys()])
-                #print(f'maxx = {maxx}')
+                # print(f'maxx = {maxx}')
                 pnt = [pnt for pnt in bankFurnance_coords.keys() if pnt[0] == maxx]
                 # print(f"pnt[0]={pnt}\npoints:{bankFurnance_coords.keys()}")
                 get_markedtile_coords(pnt[0])
@@ -301,7 +301,7 @@ class Craft():
     def checkRawMaterials(self,*args):
         pass
 def main():
-    G = Craft('emerald')
+    G = Craft('ruby')
     iteration = 1
     average_time = 0
     while iteration < 100 and not G.terminate:
@@ -322,6 +322,7 @@ def main():
         G.backForth(G.terminate)
 
         print("Select item to smelt")
+        # if window not detected probaly bank X button not found correctly
         G.smeltWindow()
         n = triangular(43,48)
         sleep(23.5 )
@@ -338,4 +339,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # Program to show the use of lambda functions
+    # craft = Craft('emerald')
+    # tf = craft.Game.isCraftWinOpen()
+    # print(tf)
