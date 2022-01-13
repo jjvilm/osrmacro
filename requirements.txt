@@ -2,7 +2,7 @@ autopy==4.0.0
 html5lib==1.0.1
 matplotlib==3.2.2
 numpy==1.18.5
-Pillow==6.2.1
+Pillow==9.0.0
 PyAutoGUI==0.9.50
 pyclick==0.0.2
 pynput==1.6.8
