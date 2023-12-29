@@ -4,7 +4,7 @@ import time
 import cv2
 import numpy as np
 from modules import Screenshot
-from modules import Mouse
+# from modules import Mouse
 from pyclick import HumanClicker
 from math import sqrt
 from random import randint, random, triangular
@@ -46,7 +46,7 @@ def main_run():
             enemy.getHealth()
             cv2.imshow('health-hsv', enemy.health_img)
             cv2.imshow('mask', enemy.mask)
-            cv2.waitKey(1)
+            cv2.waitKey(0)
             if enemy.health == 0:
                 #time.sleep(random())
                 print(f'Fight took:{time.time()-start_time:.2f} secs\nHealth Counter={health_counter}')

@@ -7,7 +7,7 @@ import pyautogui
 
 class ImgDb(object):
     def __init__(self):
-        self.pickled_file_path = '/home/jj/github/osrmacro/modules/itemdata.pickled'
+        self.pickled_file_path = '.\modules\itemdata.pickled'
         self.pickled_dict = {}
         self.loadPickledDict()
 
@@ -42,6 +42,7 @@ class ImgDb(object):
             with open(self.pickled_file_path,'rb') as f:
                 self.pickled_dict = pickle.load(f)
         except Exception as e:
+            print(e)
             self.pickled_dict = {}
 
 
@@ -52,7 +53,7 @@ class ImgDb(object):
                 print(key)
                 img = self.pickled_dict[key]
                 cv2.imshow('{}'.format(key),img)
-                cv2.waitKey(600)
+                cv2.waitKey(0)
                 cv2.destroyAllWindows()
             except Exception as e:
                 print(e)
@@ -65,6 +66,7 @@ class ImgDb(object):
         cv2.destroyAllWindows()
 
     def listImgs(self):
+        print("This ran")
         for i,key in enumerate(self.pickled_dict.keys()):
             print("{} {}".format(i,key))
 
@@ -147,14 +149,14 @@ class ImgDb(object):
 if __name__ == "__main__":
     # loads image database
     itmImgDb = ImgDb()
-    itmImgDb.promt_add()
+    # itmImgDb.promt_add()
 
-    #itmImgDb.listImgs()
-    #itmImgDb.showImgDb()
+    # itmImgDb.listImgs()
+    itmImgDb.showImgDb()
     #imgdb.rmImg()
     #img = cv2.imread('/home/jj/tmp/pickpocket.png')
     #img = imgdb.pickled_dict['drop']
-    #imgdb.showImg('drop')
+    # imgdb.showImg('drop')
     #img = imgdb.turnBinary(img,'s','a')
     #imgdb.addImg('pickpocket',img)
 

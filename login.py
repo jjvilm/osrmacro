@@ -4,7 +4,7 @@ import os
 import random
 import time
 import subprocess
-import autopy
+# import autopy
 
 ### My modules
 from modules import RS

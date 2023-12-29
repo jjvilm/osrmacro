@@ -16,7 +16,7 @@ markets = {
             'market':['willow logs', 'nature rune', 'death rune', 'raw swordfish',
                     'yew logs', 'cosmic rune', 'gold ore',
                     'lobster','plank','silver ore','jug of wine'],
-            'food':['lobster','raw swordfish','raw salmon','raw tuna'],#all raw
+            'food': ['lobster','raw swordfish','raw salmon','raw tuna'],#all raw
             'log':['logs','oak logs','willow logs','yew logs'],
             'metal':['bronze bar','iron bar', 'steel bar', 'gold bar',
                     'mithril bar','adamantite bar', 'runite bar'],
@@ -327,9 +327,9 @@ class GE_Trading():
         img = singles(itemaction)
         img = np.array(img)
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        # cv2.imshow('img',gray)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow('img',gray)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         # Blur and perform text extraction
         # thresh = cv2.GaussianBlur(gray, (1,1), 0)
         thresh = 255 - cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
